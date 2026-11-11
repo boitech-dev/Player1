@@ -1,0 +1,149 @@
+@use "../styles/media" as *;
+
+.header {
+	position: fixed;
+	inset: 0 0 auto;
+	z-index: 5;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 14px var(--gutter);
+	background: linear-gradient(var(--velours) 0%, #17121fcc 55%, #17121f00);
+
+	// the TV app's own player draws under the page
+	:global(html[data-native]) & {
+		visibility: hidden;
+	}
+
+	// phones: brand, pages, language and profile on one row; search and devices under it
+	@include phone {
+		flex-wrap: wrap;
+		gap: 6px;
+		row-gap: 10px;
+	}
+}
+
+.brand {
+	font: 900 30px/1 var(--display);
+	color: var(--lampe);
+	margin-right: 8px;
+	border-radius: 6px;
+
+	@include phone {
+		font-size: 26px;
+		margin-right: 0;
+	}
+}
+
+.nav {
+	display: flex;
+	gap: 2px;
+
+	a {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		height: 48px;
+		padding: 0 14px;
+		border-radius: 999px;
+		color: var(--brume);
+		font-weight: 600;
+
+		&:hover,
+		&[aria-current="page"] {
+			color: var(--ecran);
+			background: #2f2539b3;
+		}
+
+		@include narrow {
+			padding: 0 12px;
+
+			span {
+				display: none;
+			}
+		}
+
+		@include phone {
+			padding: 0 11px;
+		}
+	}
+}
+
+.search {
+	flex: 1;
+	min-width: 0;
+	max-width: 520px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	height: 48px;
+	padding: 0 16px;
+	border-radius: 999px;
+	background: #2f2539b3;
+	color: var(--brume);
+
+	&:focus-within {
+		outline: 3px solid var(--lampe);
+	}
+
+	input {
+		flex: 1;
+		min-width: 0;
+		border: 0;
+		background: none;
+		color: var(--ecran);
+
+		&::placeholder {
+			color: var(--brume);
+		}
+	}
+
+	@include phone {
+		order: 9;
+		flex: 1 1 calc(100% - 56px);
+		max-width: none;
+	}
+}
+
+.spacer {
+	flex: 1;
+
+	@include phone {
+		display: none;
+	}
+}
+
+// the language preset: outlined in lamp light
+.mode {
+	box-shadow: inset 0 0 0 2px var(--lampe);
+	background: transparent;
+	color: var(--lampe);
+
+	@include phone {
+		margin-left: auto;
+		max-width: 32vw;
+		padding: 0 12px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		display: block;
+		line-height: 48px;
+	}
+}
+
+.devices {
+	@include narrow {
+		width: 48px;
+		padding: 0;
+		justify-content: center;
+
+		span {
+			display: none;
+		}
+	}
+
+	@include phone {
+		order: 10;
+		width: 44px;
+	}
+}

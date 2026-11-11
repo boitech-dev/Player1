@@ -1,0 +1,11 @@
+{
+	"recommendations": [
+		"vitest.explorer",
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"lingui.vscode-lingui"
+	],
+	"unwantedRecommendations": [
+		"orta.vscode-jest"
+	]
+}

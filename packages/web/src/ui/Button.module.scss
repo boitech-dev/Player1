@@ -1,0 +1,58 @@
+// buttons: one lamp-lit button per screen, the rest stay quiet
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 48px;
+	padding: 0 20px;
+	border-radius: 999px;
+	border: 0;
+	background: var(--rideau-2);
+	color: var(--ecran);
+	font-weight: 600;
+	cursor: pointer;
+	white-space: nowrap;
+
+	&:hover {
+		background: #3a2f46;
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+}
+
+.lampe {
+	background: var(--lampe);
+	color: #21180a;
+
+	&:hover {
+		background: #ffd27f;
+	}
+
+	&:disabled {
+		opacity: 1;
+		background: var(--rideau-2);
+		color: var(--brume);
+	}
+}
+
+.ghost {
+	background: transparent;
+
+	&:hover {
+		background: var(--rideau-2);
+	}
+}
+
+// on: a state that's set (in my favorites, seen, a language held for this title)
+.on {
+	color: var(--lampe);
+}
+
+.icon {
+	width: 48px;
+	padding: 0;
+	justify-content: center;
+}

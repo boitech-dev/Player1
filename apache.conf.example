@@ -1,0 +1,13 @@
+# Player1 behind Apache (example: replace player.example.com). Then: certbot --apache --redirect -d player.example.com
+# Needs: a2enmod proxy proxy_http headers
+<VirtualHost *:80>
+	ServerName player.example.com
+	ProxyRequests Off
+	ProxyPreserveHost On
+	RequestHeader set X-Forwarded-Proto expr=%{REQUEST_SCHEME}
+	ProxyPass /.well-known/acme-challenge/ !
+	# /api/events is a long-lived stream (devices, "send to"): no timeout
+	ProxyPass /api/events http://127.0.0.1:6510/api/events timeout=86400
+	ProxyPass / http://127.0.0.1:6510/
+	ProxyPassReverse / http://127.0.0.1:6510/
+</VirtualHost>

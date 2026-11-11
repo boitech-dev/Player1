@@ -1,0 +1,14 @@
+// a download's state, lit over the row's grey subtitle
+.state {
+	&.good {
+		color: var(--good);
+	}
+
+	&.bad {
+		color: var(--bad);
+	}
+
+	&.low {
+		color: var(--lampe);
+	}
+}

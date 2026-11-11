@@ -1,0 +1,267 @@
+@use "../styles/media" as *;
+
+// one row per way to watch, a real button on each
+.way {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	align-items: center;
+	gap: 8px 24px;
+	padding: 14px;
+
+	& + & {
+		border-top: 1px solid var(--rideau-2);
+	}
+
+	> button {
+		grid-column: 2;
+		grid-row: 1 / span 2;
+		min-height: 56px;
+		padding: 0 26px;
+		font-weight: 700;
+		font-size: 17px;
+		white-space: nowrap;
+
+		svg {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	// a quiet play button: no hover change
+	.play {
+		&,
+		&:hover {
+			background: var(--rideau-2);
+		}
+	}
+
+	.more {
+		grid-column: 2;
+		grid-row: 3;
+		justify-self: center;
+		justify-content: center;
+		min-height: 40px;
+		padding: 0 18px;
+		box-shadow: inset 0 0 0 1.5px var(--rideau-2);
+		font-weight: 600;
+		font-size: 15px;
+		color: var(--brume);
+
+		&,
+		&:hover {
+			background: transparent;
+		}
+	}
+
+	@include phone {
+		grid-template-columns: 1fr;
+
+		> button {
+			grid-column: 1;
+			grid-row: auto;
+			width: 100%;
+			justify-content: center;
+		}
+
+		.more {
+			grid-column: 1;
+			grid-row: auto;
+			justify-self: stretch;
+		}
+	}
+}
+
+// what plays: the language badge, the resolution, the size
+.what {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+	font: 800 26px/1 var(--display);
+
+	.badge {
+		font-size: 26px;
+		padding: 8px 14px;
+		min-width: 0;
+		border-radius: 10px;
+	}
+
+	> span:not(.badge) {
+		color: var(--brume);
+	}
+}
+
+// the release ready to play now, or already in a library: one smaller line
+.quick {
+	padding: 10px 14px;
+
+	.what {
+		font-size: 22px;
+
+		.badge {
+			font-size: 20px;
+			padding: 6px 10px;
+		}
+
+		em {
+			font: 500 15px/1 var(--body);
+			font-style: normal;
+			color: var(--brume);
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+
+			svg {
+				width: 17px;
+				height: 17px;
+			}
+
+			&.low {
+				color: var(--lampe);
+			}
+		}
+	}
+
+	> button {
+		grid-row: 1;
+		min-height: 48px;
+	}
+
+	@include phone {
+		grid-template-columns: 1fr auto;
+
+		> button {
+			grid-column: 2;
+			grid-row: 1;
+			width: auto;
+			padding: 0 18px;
+		}
+	}
+}
+
+// sources, free space, ratio
+.facts {
+	grid-column: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 20px;
+	font-size: 15px;
+	color: var(--brume);
+	margin-bottom: 14px;
+
+	span {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+	}
+
+	svg {
+		width: 18px;
+		height: 18px;
+		color: var(--brume);
+	}
+
+	.good {
+		color: var(--good);
+	}
+
+	.low {
+		color: var(--lampe);
+	}
+
+	.bad {
+		color: var(--bad);
+		font-weight: 700;
+	}
+}
+
+// the release's full name
+.rel {
+	grid-column: 1;
+	grid-row: 3;
+	margin: 0;
+	font-size: 12px;
+	color: var(--brume);
+	opacity: 0.7;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+// the other releases
+.alts {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 4px 6px 12px;
+}
+
+.alt {
+	display: grid;
+	grid-template-columns: auto auto auto auto 1fr;
+	align-items: center;
+	gap: 14px;
+	width: 100%;
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 12px;
+	background: color-mix(in srgb, var(--rideau-2) 55%, transparent);
+	color: var(--ecran);
+	font: inherit;
+	font-size: 15px;
+	text-align: left;
+	cursor: pointer;
+
+	&:hover {
+		background: var(--rideau-2);
+	}
+
+	&:focus-visible {
+		outline: 3px solid var(--lampe);
+		outline-offset: 2px;
+	}
+
+	.badge {
+		min-width: 0;
+		font-size: 15px;
+		padding: 4px 8px;
+	}
+
+	b {
+		font: 800 19px/1 var(--display);
+	}
+
+	small {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: var(--brume);
+		opacity: 0.7;
+		font-size: 12px;
+	}
+
+	@include phone {
+		grid-template-columns: auto auto auto 1fr;
+
+		small {
+			grid-column: 1 / -1;
+		}
+	}
+}
+
+// how many share it
+.n {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	color: var(--brume);
+
+	svg {
+		width: 15px;
+		height: 15px;
+	}
+
+	&.bad {
+		color: var(--bad);
+	}
+}

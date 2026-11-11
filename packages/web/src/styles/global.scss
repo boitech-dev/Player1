@@ -1,0 +1,74 @@
+// The page itself: colours and type, the reset, what every element shares. Everything a component
+// draws lives in its own .module.scss next to it.
+
+// Projection room: velvet seats, warm lamp light, marquee letters.
+:root {
+	--velours: #17121f;
+	--rideau: #221a2c;
+	--rideau-2: #2f2539;
+	--ecran: #f3eee6;
+	--brume: #a497b3;
+	--lampe: #f5c46b;
+	--good: #9fe3b0;
+	--bad: #ff9d8a;
+	--display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+	--body: "Instrument Sans", system-ui, sans-serif;
+	--gutter: clamp(16px, 4vw, 56px);
+	--poster: clamp(112px, 12.5vw, 184px);
+	// the header's real height, measured by the header itself
+	--head: 76px;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	background: var(--velours);
+}
+
+body {
+	margin: 0;
+	color: var(--ecran);
+	font: 16px/1.5 var(--body);
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+button,
+input {
+	font: inherit;
+	color: inherit;
+}
+
+:focus {
+	outline: none;
+}
+
+:focus-visible {
+	outline: 3px solid var(--lampe);
+	outline-offset: 3px;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+// focused items never hide under the fixed header
+a,
+button,
+input {
+	scroll-margin: 96px 24px 24px;
+}
+
+// TV app: Android's own player draws under the page, which clears its backgrounds while it plays
+html[data-native] {
+	&,
+	body {
+		background: transparent;
+	}
+}

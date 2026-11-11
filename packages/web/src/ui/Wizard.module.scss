@@ -1,0 +1,264 @@
+@use "../styles/stage" as *;
+
+// A few steps, one per screen: a card centered on the stage with its own way forward. Used by the
+// server's first setup and by a profile's welcome.
+
+.wizard {
+	@include stage;
+
+	// exactly the window's height, so the spaces can shrink; a card too tall for it overflows and
+	// the page scrolls
+	height: 100vh;
+	height: 100dvh;
+	// The card stands in the middle of the screen: the space above it (the header, the greeting)
+	// and the space below share what's left equally. When there isn't enough for that, the space
+	// below gives way first; the page only scrolls if the card can't fit at all.
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 20px var(--gutter);
+
+	// starts from the same 32px the space above keeps before the card, so the two stay equal
+	&::after {
+		content: "";
+		flex: 1 1 32px;
+	}
+}
+
+.above,
+.panel {
+	width: 100%;
+	max-width: 560px;
+}
+
+.above {
+	position: relative;
+	flex: 1 1 32px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 32px;
+	// room between what's above and the card
+	padding-bottom: 32px;
+}
+
+// the app's name, where we are, how far there is to go
+.head {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	color: var(--brume);
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+
+	b {
+		font: 900 26px/1 var(--display);
+		color: var(--lampe);
+		letter-spacing: 0.02em;
+	}
+}
+
+.prog {
+	flex: 1;
+	display: flex;
+	gap: 4px;
+
+	i {
+		flex: 1;
+		height: 4px;
+		border-radius: 2px;
+		background: var(--rideau-2);
+		transition: background 0.3s;
+
+		&[data-st="ok"] {
+			background: var(--good);
+		}
+
+		&[data-st="bad"] {
+			background: var(--bad);
+		}
+
+		// passed without being set up
+		&[data-st="skip"] {
+			background: #a497b38c;
+		}
+
+		&.now {
+			background: var(--lampe);
+		}
+	}
+}
+
+// the greeting above the first step's card
+.hello {
+	text-align: center;
+	transition:
+		opacity 0.45s,
+		translate 0.45s;
+
+	h1 {
+		font: 900 clamp(56px, 15vw, 96px) / 0.9 var(--display);
+		color: var(--lampe);
+		margin: 0;
+	}
+
+	p {
+		color: #ddd5e4;
+		font-size: 17px;
+		max-width: 36ch;
+		margin: 14px auto 0;
+	}
+}
+
+// Past the first step: faded out where it stood, and no longer taking room. It leaves the flow
+// (anchored to the same spot, the bottom of the space above the card), so a tall card gets the
+// whole height to center itself in.
+.gone {
+	position: absolute;
+	inset: auto 0 32px;
+	opacity: 0;
+	translate: 0 -12px;
+	visibility: hidden;
+	transition:
+		opacity 0.45s,
+		translate 0.45s,
+		visibility 0s 0.45s;
+}
+
+// the card; its ring takes the color of the current step's state
+.panel {
+	--ring: transparent;
+	flex: none;
+	background: var(--rideau);
+	border-radius: 28px;
+	padding: clamp(22px, 5vw, 36px);
+	box-shadow:
+		0 0 0 2px var(--ring),
+		0 30px 80px #0009;
+	transition: box-shadow 0.3s;
+
+	&[data-st="ok"] {
+		--ring: #9fe3b066;
+	}
+
+	&[data-st="bad"] {
+		--ring: #ff9d8a66;
+	}
+
+	&[data-st="wait"] {
+		--ring: #f5c46b55;
+	}
+}
+
+// The step's content: its height glides between steps (ui/smooth.ts). The margin lets focus rings
+// show while it is clipped.
+.body {
+	margin: -8px;
+	padding: 8px;
+}
+
+// a new step's content comes in softly while the card takes its size
+.step {
+	animation: step-in 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes step-in {
+	from {
+		opacity: 0;
+		translate: 0 10px;
+	}
+}
+
+// a step's title: its picture, its name, a tag pushed to the right
+.title {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin: 0 0 12px;
+	font: 800 clamp(36px, 9vw, 52px) / 1 var(--display);
+
+	small {
+		margin-left: auto;
+		padding: 5px 12px;
+		border-radius: 999px;
+		background: var(--rideau-2);
+		font: 500 13px var(--body);
+		color: var(--brume);
+	}
+}
+
+// the title's small picture, as tall as it: an icon on a lamp-lit tile
+.visual {
+	flex: none;
+	display: grid;
+	place-items: center;
+	width: 1em;
+	height: 1em;
+	border-radius: 0.28em;
+	background: linear-gradient(160deg, #f5c46b38, #f5c46b14);
+	box-shadow: inset 0 0 0 1px #f5c46b40;
+	color: var(--lampe);
+
+	svg {
+		width: 0.52em;
+		height: 0.52em;
+	}
+}
+
+// what the step is about, under its title
+.text {
+	color: var(--brume);
+	margin: 0 0 12px;
+	font-size: 16px;
+	max-width: 60ch;
+}
+
+// Back on the left, Skip and Next on the right
+.go {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 14px 16px 14px 22px;
+
+	> button {
+		padding: 0 16px;
+	}
+}
+
+.back {
+	margin-left: -16px;
+	margin-right: auto;
+}
+
+// a labelled text field in a step
+.field {
+	display: block;
+	margin: 12px 0 0;
+	font-size: 14px;
+	color: var(--brume);
+
+	input {
+		display: block;
+		width: 100%;
+		height: 48px;
+		margin-top: 6px;
+		padding: 0 16px;
+		border-radius: 12px;
+		border: 2px solid var(--rideau-2);
+		background: var(--velours);
+		color: var(--ecran);
+		font-size: 16px;
+
+		&:focus {
+			border-color: var(--lampe);
+		}
+	}
+}
+
+// a small heading over a group of controls in a step
+.label {
+	margin: 18px 0 8px;
+	font-size: 14px;
+	font-weight: 400;
+	color: var(--brume);
+}

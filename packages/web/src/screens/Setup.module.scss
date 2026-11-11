@@ -1,0 +1,109 @@
+// a service's own form, in the first-run wizard and on the settings page: what it is, its fields,
+// each with its live check
+.svc {
+	> p {
+		color: var(--brume);
+		margin: 0 0 12px;
+		font-size: 15px;
+		max-width: 60ch;
+
+		a {
+			color: var(--lampe);
+			text-decoration: underline;
+			text-underline-offset: 3px;
+		}
+	}
+
+	label {
+		display: block;
+		margin: 12px 0 0;
+		font-size: 14px;
+		color: var(--brume);
+	}
+
+	input {
+		display: block;
+		width: 100%;
+		height: 48px;
+		margin-top: 6px;
+		padding: 0 16px;
+		border-radius: 12px;
+		border: 2px solid var(--rideau-2);
+		background: var(--velours);
+
+		&:focus {
+			border-color: var(--lampe);
+		}
+
+		&:disabled {
+			opacity: 0.6;
+		}
+	}
+
+	> button,
+	> a {
+		margin: 12px 8px 0 0;
+		min-height: 40px;
+		font-size: 15px;
+	}
+
+	// a second way, after the block's main one
+	> p.more {
+		margin-top: 28px;
+	}
+
+	// an address to copy onto another device
+	> p.addr {
+		color: var(--lampe);
+		font-size: 17px;
+		overflow-wrap: anywhere;
+		user-select: all;
+	}
+
+	// a check's answer
+	.st {
+		margin: 12px 0 0;
+		font-size: 15px;
+		color: var(--brume);
+
+		&.ok {
+			color: var(--good);
+		}
+
+		&.bad {
+			color: var(--bad);
+		}
+	}
+
+	.seg {
+		margin: 12px 8px 0 0;
+
+		> button {
+			font-size: 15px;
+		}
+	}
+}
+
+// a password, but not this site's: no password-manager prompts. Dots once something is typed;
+// the placeholder stays readable.
+.masked:not(:placeholder-shown) {
+	-webkit-text-security: disc;
+}
+
+// in the first-run wizard (ui/Wizard.tsx)
+.steps {
+	.svc > p {
+		font-size: 16px;
+	}
+
+	// a dot before the check's answer (inside its Stack)
+	.st > * > :not([aria-hidden]):not(:empty)::before {
+		content: "";
+		display: inline-block;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: currentColor;
+		margin: 0 10px 1px 0;
+	}
+}

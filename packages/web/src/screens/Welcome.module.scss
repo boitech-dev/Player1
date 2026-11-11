@@ -1,0 +1,67 @@
+// a profile's first visit: who they are, their languages, their other presets
+
+// the languages of a preset, as rows set to the card's edges
+.rows {
+	margin: 0 -14px;
+}
+
+// languages that can still be added, one small button each
+.chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+
+	> button {
+		min-height: 36px;
+		padding: 0 14px;
+		font-size: 14px;
+	}
+}
+
+// what Player1 will look for, first to last
+.order {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: grid;
+	gap: 8px;
+	font-size: 14px;
+	color: var(--brume);
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+}
+
+// the presets made so far, and the ones offered
+.presets {
+	margin: 0 -14px;
+}
+
+// the round plus leading a row that adds a preset
+.plus {
+	flex: none;
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--rideau-2);
+	color: var(--lampe);
+}
+
+// a preset being added or changed, set apart from the list
+.editing {
+	margin-top: 14px;
+	padding: 4px 16px 16px;
+	border-radius: 16px;
+	background: var(--velours);
+}
+
+.done {
+	display: flex;
+	gap: 8px;
+	margin-top: 16px;
+}

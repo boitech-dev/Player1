@@ -1,0 +1,275 @@
+<!doctype html>
+<!-- The LG TV app: it opens the server's website, like the TV's browser would, but from its own icon.
+     __SITE__ is the server's address when the server built this package. When there is none, or it no longer answers,
+     the app looks for Player1 on the TV's network (every address of its subnet is asked /api/here, and each server
+     that answers names the address to reach it at) and the person picks one, or types an address.
+     Written for old TVs: no syntax or API newer than Chrome 38. -->
+<html lang="en">
+<meta charset="utf-8">
+<title>Player1</title>
+<style>
+	html, body { margin: 0; height: 100%; background: #17121f; color: #f3eee6; font: 28px system-ui, sans-serif; }
+	body { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+	[hidden] { display: none !important; }
+	h1 { margin: 0 0 20px; font-size: 96px; font-weight: 900; letter-spacing: -2px; color: #f5c46b; }
+	p { margin: 0 0 28px; max-width: 1200px; color: #a497b3; }
+	#why { color: #ff9d8a; }
+	#pick { width: 820px; max-width: 86vw; }
+	input, button { box-sizing: border-box; width: 100%; font: inherit; padding: 18px 28px; border-radius: 18px; border: 3px solid #2f2539; }
+	input { background: #221a2c; color: inherit; }
+	button { display: block; margin: 0 0 16px; background: #2f2539; color: inherit; text-align: left; cursor: pointer; }
+	button small { float: right; margin-top: 6px; font-size: 20px; color: #a497b3; }
+	form button { background: #f3eee6; color: #17121f; text-align: center; margin: 16px 0 0; }
+	input:focus, button:focus { outline: none; border-color: #f5c46b; }
+	button:focus { background: #f5c46b; color: #17121f; }
+	button:focus small { color: inherit; }
+	label { display: block; margin: 24px 0 12px; font-size: 22px; color: #a497b3; }
+</style>
+<h1>Player1</h1>
+<p id="why" hidden></p>
+<p id="state">…</p>
+<div id="pick" hidden>
+	<div id="found"></div>
+	<form id="ask" novalidate>
+		<label for="site">Type the address you open Player1 at, for example 192.168.1.20:6510</label>
+		<input id="site" type="url" autocomplete="off" spellcheck="false">
+		<button>Open</button>
+	</form>
+</div>
+<script>
+	var BUILT = '__SITE__'.indexOf('__') === 0 ? '' : '__SITE__';
+	var stored = null;
+	try { stored = localStorage.getItem('site'); } catch (e) { /* no storage: found again each time */ }
+	var el = function (id) { return document.getElementById(id); };
+	var why = el('why'), state = el('state'), pick = el('pick'), found = el('found'), input = el('site');
+
+	function clean(s) {
+		s = (s || '').trim().replace(/\/+$/, '');
+		if (s && !/^https?:\/\//.test(s)) s = 'http://' + s;
+		return /^https?:\/\/[^\s\/]+$/.test(s) ? s : '';
+	}
+	var host = function (site) { return site.replace(/^https?:\/\//, ''); };
+	var saved = clean(stored), built = clean(BUILT);
+
+	// --- opening a server: one of its public icons loads (no CORS needed for an image), then the site replaces
+	// this page; otherwise the next address is tried, or the choice comes up ---
+	function open(site, next) {
+		var img = new Image(), done = false;
+		state.textContent = 'Opening ' + host(site) + '…';
+		var fail = function () {
+			if (done) return;
+			done = true;
+			if (next) open(next);
+			else choose('Player1 doesn’t answer at ' + host(site) + '. Is the server on?');
+		};
+		var timer = setTimeout(fail, 8000);
+		img.onload = function () {
+			if (done) return;
+			done = true;
+			clearTimeout(timer);
+			try { localStorage.setItem('site', site); } catch (e) { /* found again next time */ }
+			location.replace(site + '/');
+		};
+		img.onerror = function () { clearTimeout(timer); fail(); };
+		img.src = site + '/icons/icon-192.png?t=' + Date.now();
+	}
+
+	// --- the choice: the servers found on the network, and an address typed by hand ---
+	var searched = false, looking = false, count = 0, seen = {};
+	function choose(reason) {
+		why.textContent = reason || '';
+		why.hidden = !reason;
+		pick.hidden = false;
+		if (!searched) search();
+		else settle();
+	}
+	// the words above the list, and the remote's focus on something useful
+	function settle() {
+		if (looking) state.textContent = 'Looking for Player1 on your network…';
+		else if (count) state.textContent = 'Found on your network:';
+		else state.textContent = 'No Player1 found on this network.';
+		var at = document.activeElement;
+		if (at && pick.contains(at) && at !== document.body) return;
+		if (count) found.firstChild.focus();
+		else if (!looking) input.focus(); // brings up the TV's keyboard: only once there is nothing to pick
+	}
+	// a server that answered at `at` and wants to be reached at `url` (the same one, without a public address)
+	function add(url, at) {
+		if (seen[url]) return;
+		seen[url] = true;
+		count++;
+		var b = document.createElement('button'), via = document.createElement('small');
+		b.type = 'button';
+		b.textContent = host(url);
+		if (at !== url) {
+			via.textContent = host(at);
+			b.appendChild(via);
+		}
+		b.onclick = function () { open(url, at !== url && at); };
+		found.appendChild(b);
+		settle();
+	}
+	el('ask').onsubmit = function (e) {
+		e.preventDefault();
+		var site = clean(input.value);
+		if (site) open(site);
+	};
+	// up and down on the remote
+	document.onkeydown = function (e) {
+		var step = e.keyCode === 40 ? 1 : e.keyCode === 38 ? -1 : 0;
+		if (!step || pick.hidden) return;
+		var all = pick.querySelectorAll('button, input'), i = [].indexOf.call(all, document.activeElement);
+		var to = i < 0 ? all[0] : all[i + step];
+		if (to) to.focus();
+		e.preventDefault();
+	};
+
+	// --- looking for servers: where this TV is on the network, then every address around it ---
+	var LOCAL = /^(10|127|192\.168|169\.254|172\.(1[6-9]|2\d|3[01]))\./;
+	// the TV says its own address (webOS's connection manager)
+	function tvAddresses(then) {
+		var Bridge = window.WebOSServiceBridge || window.PalmServiceBridge, list = [], told = false;
+		var tell = function () {
+			if (told) return;
+			told = true;
+			then(list);
+		};
+		if (!Bridge) return tell();
+		try {
+			var bridge = new Bridge();
+			bridge.onservicecallback = function (answer) {
+				try {
+					var r = JSON.parse(answer);
+					[r.wired, r.wifi].forEach(function (n) {
+						if (n && n.state === 'connected' && n.ipAddress) list.push(n.ipAddress);
+					});
+				} catch (e) { /* no answer worth reading */ }
+				tell();
+			};
+			bridge.call('luna://com.palm.connectionmanager/getStatus', '{}');
+		} catch (e) { /* not a TV */ }
+		setTimeout(tell, 1500);
+	}
+	// elsewhere (and on TVs that keep the above to themselves), older browsers give it away when preparing a call
+	function callAddresses(then) {
+		var Peer = window.RTCPeerConnection || window.webkitRTCPeerConnection, list = [], peer;
+		var nothing = function () { /* no call is ever made */ };
+		try {
+			peer = new Peer({ iceServers: [] });
+			peer.createDataChannel('');
+			peer.onicecandidate = function (e) {
+				var m = e.candidate && /(\d+\.\d+\.\d+\.\d+)/.exec(e.candidate.candidate);
+				if (m) list.push(m[1]);
+			};
+			peer.createOffer(function (offer) { peer.setLocalDescription(offer, nothing, nothing); }, nothing);
+		} catch (e) {
+			return then(list);
+		}
+		setTimeout(function () {
+			try { peer.close(); } catch (e) { /* gone already */ }
+			then(list);
+		}, 700);
+	}
+	// failing those, the usual home networks whose router answers on the web's port. Never a network that isn't
+	// there: each address that stays silent holds one of the browser's connections for minutes
+	var HOMES = ['192.168.1', '192.168.0', '192.168.2', '192.168.10', '192.168.50', '192.168.68', '192.168.86',
+		'192.168.100', '192.168.178', '10.0.0', '10.0.1', '172.16.0'];
+	function homeNetworks(then) {
+		var list = [], told = false;
+		// browsers too old for this one give their address away above
+		if (!window.fetch) return then(list);
+		HOMES.forEach(function (net) {
+			['.1', '.254'].forEach(function (router) {
+				// an answer of any kind, unreadable from here but an answer; a refusal or a dead end is not one
+				fetch('http://' + net + router + '/', { mode: 'no-cors' }).then(function () {
+					if (list.indexOf(net) < 0) list.push(net);
+				}, function () { /* nobody there */ });
+			});
+		});
+		setTimeout(function () {
+			if (!told) then(list.slice(0, 2));
+			told = true;
+		}, 2000);
+	}
+	// the networks to search, as "192.168.1"
+	function networks(then) {
+		var list = [];
+		var take = function (ip) {
+			var m = /^(\d+\.\d+\.\d+)\.\d+$/.exec(ip || '');
+			if (m && LOCAL.test(ip) && list.indexOf(m[1]) < 0) list.push(m[1]);
+		};
+		tvAddresses(function (ips) {
+			ips.forEach(take);
+			if (list.length) return then(list);
+			callAddresses(function (more) {
+				more.forEach(take);
+				if (list.length) then(list);
+				else homeNetworks(then);
+			});
+		});
+	}
+	// one address: a Player1 there says so, and where to reach it
+	function probe(at, then) {
+		var x = new XMLHttpRequest(), told = false;
+		var tell = function (url) {
+			if (told) return;
+			told = true;
+			then(url);
+		};
+		x.onload = function () {
+			var r = null;
+			try { r = JSON.parse(x.responseText); } catch (e) { /* something else lives there */ }
+			tell(r && r.app === 'player1' ? clean(r.url) || at : '');
+		};
+		x.onerror = x.ontimeout = x.onabort = function () { tell(''); };
+		try {
+			x.open('GET', at + '/api/here');
+			x.timeout = 1200;
+			x.send();
+		} catch (e) {
+			tell('');
+		}
+	}
+	function search() {
+		searched = looking = true;
+		settle();
+		// Player1's own port, the web's, and the one this TV last used
+		var ports = [6510, 80];
+		[saved, built].forEach(function (s) {
+			var m = /^http:\/\/[^\/:]+:(\d+)$/.exec(s);
+			if (m && ports.indexOf(+m[1]) < 0) ports.unshift(+m[1]);
+		});
+		networks(function (nets) {
+			var todo = [], left;
+			ports.forEach(function (port) {
+				nets.forEach(function (net) {
+					for (var i = 1; i < 255; i++) todo.push('http://' + net + '.' + i + (port === 80 ? '' : ':' + port));
+				});
+			});
+			left = todo.length;
+			if (!left) {
+				looking = false;
+				return settle();
+			}
+			var next = function () {
+				var at = todo.shift();
+				if (!at) return;
+				probe(at, function (url) {
+					if (url) add(url, at);
+					if (--left) return next();
+					looking = false;
+					settle();
+				});
+			};
+			// few at a time: an address nobody holds keeps its connection busy for a few seconds
+			for (var i = 0; i < 32; i++) next();
+		});
+	}
+
+	// the address that worked last time first; the one this package was built for when that one is gone
+	// (the server moved, and the app was installed again); then whatever is on the network
+	if (saved) open(saved, built !== saved && built);
+	else if (built) open(built);
+	else choose('');
+</script>
+</html>

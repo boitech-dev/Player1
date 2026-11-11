@@ -1,0 +1,153 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-11-10 12:55+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+
+#: src/catalog.ts
+msgid "{genre}: movies"
+msgstr "{genre}: movies"
+
+#: src/catalog.ts
+msgid "{genre}: series"
+msgstr "{genre}: series"
+
+#: src/household.ts
+msgid "12 profiles at most"
+msgstr "12 profiles at most"
+
+#: src/catalog.ts
+msgid "Anime"
+msgstr "Anime"
+
+#: src/downloads.ts
+msgid "Download not found"
+msgstr "Download not found"
+
+#: src/catalog.ts
+msgid "Japanese animated films"
+msgstr "Japanese animated films"
+
+#: src/household.ts
+msgid "Keep at least one preset, with at least one language in it"
+msgstr "Keep at least one preset, with at least one language in it"
+
+#: src/catalog.ts
+msgid "Popular movies"
+msgstr "Popular movies"
+
+#: src/catalog.ts
+msgid "Popular series"
+msgstr "Popular series"
+
+#: src/household.ts
+msgid "Profile 1"
+msgstr "Profile 1"
+
+#: src/qbit.ts
+msgid "qBittorrent’s download folder is missing from the server settings"
+msgstr "qBittorrent’s download folder is missing from the server settings"
+
+#: src/play.ts
+msgid "Real-Debrid has no source ready for this title."
+msgstr "Real-Debrid has no source ready for this title."
+
+#: src/catalog.ts
+msgid "Season {n}"
+msgstr "Season {n}"
+
+#: src/downloads.ts
+msgid "Source or title missing"
+msgstr "Source or title missing"
+
+#: src/downloads.ts
+msgid "The Jellyfin library folder isn’t set in the server settings"
+msgstr "The Jellyfin library folder isn’t set in the server settings"
+
+#: src/lgtv.ts
+msgid "The TV doesn’t accept connections. Check that Developer Mode is on."
+msgstr "The TV doesn’t accept connections. Check that Developer Mode is on."
+
+#: src/lgtv.ts
+msgid "The TV doesn’t answer at this address. Check the address, that the TV is on, and that Key Server is on in its Developer Mode app."
+msgstr "The TV doesn’t answer at this address. Check the address, that the TV is on, and that Key Server is on in its Developer Mode app."
+
+#: src/lgtv.ts
+msgid "The TV refused the connection. Turn Key Server off and on again in its Developer Mode app, then retry."
+msgstr "The TV refused the connection. Turn Key Server off and on again in its Developer Mode app, then retry."
+
+#: src/lgtv.ts
+msgid "The TV refused to install the app. Check that Developer Mode is still on, then retry."
+msgstr "The TV refused to install the app. Check that Developer Mode is still on, then retry."
+
+#: src/devices.ts
+msgid "This code has expired"
+msgstr "This code has expired"
+
+#: src/devices.ts
+msgid "This code is wrong or has expired"
+msgstr "This code is wrong or has expired"
+
+#: src/devices.ts
+msgid "This device is no longer connected"
+msgstr "This device is no longer connected"
+
+#: src/qbit.ts
+msgid "This download contains no video."
+msgstr "This download contains no video."
+
+#: src/play.ts
+msgid "This file is no longer in Jellyfin."
+msgstr "This file is no longer in Jellyfin."
+
+#: src/play.ts
+msgid "This file is no longer in qBittorrent."
+msgstr "This file is no longer in qBittorrent."
+
+#: src/lgtv.ts
+msgid "This isn’t a TV’s address. It looks like 192.168.1.42."
+msgstr "This isn’t a TV’s address. It looks like 192.168.1.42."
+
+#: src/sources.ts
+msgid "This source isn’t ready on Real-Debrid yet"
+msgstr "This source isn’t ready on Real-Debrid yet"
+
+#: src/play.ts
+#: src/sources.ts
+msgid "This version is no longer listed. Search again."
+msgstr "This version is no longer listed. Search again."
+
+#: src/devices.ts
+msgid "Too many devices are waiting to be connected. Try again in a few minutes."
+msgstr "Too many devices are waiting to be connected. Try again in a few minutes."
+
+#: src/catalog.ts
+msgid "Top rated movies"
+msgstr "Top rated movies"
+
+#: src/catalog.ts
+msgid "Top rated series"
+msgstr "Top rated series"
+
+#: src/catalog.ts
+msgid "Trending movies"
+msgstr "Trending movies"
+
+#: src/catalog.ts
+msgid "Trending series"
+msgstr "Trending series"
+
+#: src/catalog.ts
+msgid "Unknown category"
+msgstr "Unknown category"
+
+#: src/household.ts
+msgid "Unknown preset"
+msgstr "Unknown preset"
+
+#: src/lgtv.ts
+msgid "Wrong passphrase. Type the 6 characters the TV’s Developer Mode app shows, capitals included."
+msgstr "Wrong passphrase. Type the 6 characters the TV’s Developer Mode app shows, capitals included."

@@ -1,0 +1,118 @@
+// poster rows (one line that scrolls sideways), poster grids, and the posters in them
+
+.shelf {
+	margin-top: 36px;
+
+	h2 {
+		display: flex;
+		align-items: baseline;
+		gap: 16px;
+		font: 800 30px/1 var(--display);
+		margin: 0 var(--gutter) 14px;
+	}
+
+	h2 a {
+		font: 600 15px var(--body);
+		color: var(--brume);
+		border-radius: 6px;
+
+		&:hover {
+			color: var(--lampe);
+		}
+	}
+}
+
+.row {
+	display: flex;
+	gap: 16px;
+	overflow-x: auto;
+	padding: 6px var(--gutter) 14px;
+	scroll-padding: 0 var(--gutter);
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(var(--poster), 1fr));
+	gap: 24px 16px;
+	padding: 0 var(--gutter);
+}
+
+.card {
+	flex: 0 0 var(--poster);
+	min-width: 0;
+	border-radius: 10px;
+
+	&:focus-visible {
+		outline: none;
+	}
+
+	&:focus-visible .art,
+	&:hover .art {
+		transform: translateY(-4px);
+		box-shadow:
+			0 0 0 3px var(--lampe),
+			0 14px 40px -8px #f5c46b55;
+	}
+
+	p {
+		margin: 8px 0 0;
+		font-size: 14px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	small {
+		color: var(--brume);
+		font-size: 13px;
+	}
+}
+
+.art {
+	position: relative;
+	display: block;
+	aspect-ratio: 2/3;
+	border-radius: 10px;
+	background: var(--rideau);
+	overflow: hidden;
+	transition: transform 0.15s;
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	// no poster: the title in its place
+	span {
+		display: flex;
+		height: 100%;
+		align-items: flex-end;
+		padding: 12px;
+		font: 800 22px/1 var(--display);
+	}
+
+	// how much was watched
+	i {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		height: 4px;
+		background: var(--lampe);
+	}
+}
+
+.sub {
+	display: block;
+	color: #cfc6d8;
+	font-size: 13px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

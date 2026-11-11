@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="bgGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffdc94"/><stop offset="1" stop-color="#eda43c"/></linearGradient>
+  <linearGradient id="glyphGold" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffdc94"/><stop offset="1" stop-color="#eda43c"/></linearGradient></defs><style>
+  .bg{fill:#17121f}.p{fill:url(#glyphGold)}.o{fill:#f3eee6}
+  @media (prefers-color-scheme: light){.bg{fill:url(#bgGold)}.p,.o{fill:#17121f}}</style>
+  <rect class="bg" width="512" height="512" rx="112"/><path class="p"  fill-rule="evenodd" transform="translate(64.0 365.8) scale(0.3191 -0.3191) translate(-74 0)" d="M74 0V688H480Q545 688 594.5 658.5Q644 629 672.0 577.0Q700 525 700 456Q700 385 671.5 332.5Q643 280 593.5 251.0Q544 222 480 222H295V0Z M295 340.4 L295 567.6 L547.6800000000001 454 Z"/><path class="o"  transform="translate(282.4 365.8) scale(0.3191 -0.3191) translate(-105 0)" d="M105 0V154H268V465H105V581Q152 584 205.5 600.0Q259 616 310.0 640.0Q361 664 400 689H467V154H624V0Z"/></svg>

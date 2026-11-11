@@ -1,0 +1,16 @@
+// a release's language badge: VOSTFR, VF, VO…
+.tag {
+	flex: none;
+	min-width: 68px;
+	text-align: center;
+	padding: 5px 8px;
+	border-radius: 6px;
+	background: var(--rideau-2);
+	font: 800 17px/1 var(--display);
+	color: var(--ecran);
+}
+
+.dub {
+	background: var(--lampe);
+	color: #21180a;
+}

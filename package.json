@@ -1,0 +1,45 @@
+{
+	"name": "player1",
+	"private": true,
+	"license": "AGPL-3.0-only",
+	"type": "module",
+	"description": "Player1: a household streaming app over Real-Debrid, a Torznab indexer, qBittorrent and Jellyfin",
+	"workspaces": [
+		"packages/shared",
+		"packages/server",
+		"packages/web"
+	],
+	"scripts": {
+		"dev": "concurrently -n server,web -c green,magenta npm:dev:server npm:dev:web",
+		"dev:server": "npm -w @player1/server run dev",
+		"dev:web": "npm -w @player1/web run dev",
+		"build": "npm -w @player1/server run build && npm -w @player1/web run build",
+		"typecheck": "npm run typecheck --workspaces --if-present",
+		"lint": "eslint . && npm run lint:css",
+		"lint:fix": "eslint . --fix && npm run lint:css:fix",
+		"lint:css": "prettier --check \"packages/**/*.{css,scss}\"",
+		"lint:css:fix": "prettier --write \"packages/**/*.{css,scss}\"",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"i18n:extract": "npm run extract --workspaces --if-present",
+		"check": "npm run typecheck && npm run lint && npm test && npm run build"
+	},
+	"devDependencies": {
+		"@eslint/js": "10.0.1",
+		"@stylistic/eslint-plugin": "5.10.0",
+		"@types/node": "26.6.6",
+		"concurrently": "10.0.7",
+		"eslint": "10.14.0",
+		"eslint-plugin-import-newlines": "2.0.0",
+		"eslint-plugin-react-hooks": "7.1.1",
+		"eslint-plugin-simple-import-sort": "14.0.0",
+		"globals": "17.14.0",
+		"prettier": "3.9.10",
+		"typescript": "6.0.3",
+		"typescript-eslint": "8.72.2",
+		"vitest": "5.1.0"
+	},
+	"allowScripts": {
+		"@parcel/watcher": false
+	}
+}

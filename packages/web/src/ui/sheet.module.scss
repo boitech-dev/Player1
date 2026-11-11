@@ -1,0 +1,111 @@
+// sheets: the native dialog (focus trap, Esc closes it) showing one sheet at a time
+.sheet {
+	border: 0;
+	padding: 0;
+	width: min(600px, calc(100vw - 32px));
+	max-height: min(82vh, 780px);
+	border-radius: 20px;
+	background: var(--rideau);
+	color: var(--ecran);
+	box-shadow: 0 30px 80px #000a;
+
+	&::backdrop {
+		background: #0d0a12b3;
+	}
+}
+
+// the subtitle sheet sits at the top without dimming: the subtitles stay visible while they move
+.peek {
+	margin: 20px auto auto;
+	max-height: 56vh;
+
+	.body {
+		max-height: calc(56vh - 80px);
+	}
+
+	&::backdrop {
+		background: transparent;
+	}
+}
+
+.head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 18px 16px 6px 24px;
+
+	h3 {
+		margin: 0;
+		flex: 1;
+		font: 800 32px/1 var(--display);
+	}
+}
+
+.body {
+	padding: 6px 12px 18px;
+	overflow: auto;
+	max-height: calc(min(82vh, 780px) - 80px);
+
+	h5 {
+		margin: 18px 14px 4px;
+		font-weight: 600;
+		color: var(--brume);
+		font-size: 14px;
+	}
+}
+
+// one row: optional leading badge, title, subtitle, a tick when it's the current one
+.opt {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 14px;
+	text-align: left;
+	padding: 12px 14px;
+	border: 0;
+	border-radius: 14px;
+	background: none;
+	cursor: pointer;
+
+	&:hover {
+		background: var(--rideau-2);
+	}
+
+	&:focus-visible {
+		outline-offset: -3px;
+	}
+
+	> div {
+		flex: 1;
+		min-width: 0;
+
+		> strong {
+			display: block;
+			font-weight: 600;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		// the subtitle: grey unless what's inside says otherwise
+		> span {
+			font-size: 14px;
+
+			&:not([class]) {
+				color: var(--brume);
+			}
+		}
+	}
+}
+
+.tick {
+	color: var(--lampe);
+	flex: none;
+}
+
+// a row's large leading text (a resolution: 4K, 1080p)
+.big {
+	flex: none;
+	width: 84px;
+	font: 900 34px/1 var(--display);
+	color: var(--ecran);
+}

@@ -1,0 +1,25 @@
+# Player1 in Docker. install.sh writes .env (PUID, PGID, PORT, BIND, and the address when it set one up) and
+# compose.override.yml (folders to mount); every other setting lives in data/config.json, edited from the app.
+services:
+  player1:
+    build: .
+    working_dir: /app
+    command: node run.mjs # keeps the server up, installs updates from master (see run.mjs)
+    user: "${PUID:-1000}:${PGID:-1000}" # the checkout's owner: git and data/ stay theirs
+    env_file: .env
+    environment: { HOME: /tmp, PORT: 6510 } # inside the container; .env PORT is the host side
+    volumes: [".:/app"] # the Jellyfin library and qBittorrent's folder: compose.override.yml (written by install.sh)
+    ports: ["${BIND:-127.0.0.1}:${PORT:-6510}:6510"]
+    restart: unless-stopped
+    logging: { driver: json-file, options: { max-size: 10m } }
+  # The front door, when install.sh was given a domain name and nothing else answers on ports 80 and 443 here:
+  # HTTPS for that domain, certificates fetched and renewed by itself. Its site is in data/caddy/Caddyfile.
+  caddy:
+    image: caddy:2.11.9 # also in install.sh
+    profiles: [caddy] # only with COMPOSE_PROFILES=caddy in .env
+    command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile --watch
+    volumes: ["./data/caddy:/etc/caddy:ro", "caddy:/data"]
+    ports: ["${HTTP_PORT:-80}:80", "${HTTPS_PORT:-443}:443", "${HTTPS_PORT:-443}:443/udp"]
+    restart: unless-stopped
+    logging: { driver: json-file, options: { max-size: 10m } }
+volumes: { caddy: } # the certificates

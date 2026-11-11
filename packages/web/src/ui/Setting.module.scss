@@ -1,0 +1,28 @@
+@use "../styles/media" as *;
+
+// one setting: its name and what it does (or its state) on the left, its control on the right
+.setting {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 10px 16px;
+	padding: 10px 14px;
+
+	strong {
+		display: block;
+		font-weight: 600;
+	}
+
+	@include phone {
+		grid-template-columns: 1fr;
+	}
+}
+
+.says {
+	font-size: 14px;
+}
+
+// no tone given: grey
+.quiet {
+	color: var(--brume);
+}

@@ -1,0 +1,51 @@
+// the playback test: its button and last result, or the test running
+.top {
+	padding: 6px 14px 12px;
+}
+
+// both states keep the taller one's height (a Stack), so the rows below never move
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px 16px;
+	height: 100%;
+
+	p {
+		margin: 0;
+		flex: 1 1 240px;
+		color: var(--brume);
+		font-size: 14px;
+
+		strong {
+			color: var(--ecran);
+			font-weight: 600;
+		}
+	}
+}
+
+.bar {
+	flex: 1 1 100%;
+	height: 6px;
+	border-radius: 3px;
+	background: var(--velours);
+	overflow: hidden;
+
+	i {
+		display: block;
+		height: 100%;
+		background: var(--lampe);
+		transition: width 0.4s;
+	}
+}
+
+// a format's verdict, lit over the row's grey text
+.verdict {
+	&.good {
+		color: var(--good);
+	}
+
+	&.bad {
+		color: var(--bad);
+	}
+}

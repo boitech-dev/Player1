@@ -1,0 +1,140 @@
+@use "../styles/media" as *;
+
+// a series: its seasons, then the season's episodes
+.seasons {
+	display: flex;
+	gap: 8px;
+	overflow-x: auto;
+	padding: 6px var(--gutter) 10px;
+	margin-top: 28px;
+	scrollbar-width: none;
+
+	> button[aria-pressed="true"] {
+		background: var(--ecran);
+		color: var(--velours);
+	}
+}
+
+.eps {
+	display: grid;
+	gap: 4px;
+	padding: 0 var(--gutter);
+	max-width: 1100px;
+}
+
+// one episode: its still and summary (plays it), then seen, download, send
+.ep {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	border-radius: 14px;
+
+	&:hover,
+	&:focus-within {
+		background: var(--rideau);
+	}
+
+	h4 {
+		margin: 0 0 4px;
+		font-weight: 600;
+	}
+
+	h4 b {
+		color: var(--lampe);
+		font: 800 20px/1 var(--display);
+		margin-right: 8px;
+	}
+
+	p {
+		margin: 0;
+		color: var(--brume);
+		font-size: 14px;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	> button:last-child {
+		margin-right: 8px;
+	}
+
+	> button[aria-pressed="true"] {
+		color: var(--lampe);
+	}
+
+	@include phone {
+		gap: 2px;
+
+		h4 {
+			overflow-wrap: anywhere;
+		}
+
+		p {
+			display: none;
+		}
+
+		> button:not(.open) {
+			width: 40px;
+			min-height: 40px;
+			padding: 0;
+		}
+
+		> button:last-child {
+			margin-right: 0;
+		}
+	}
+}
+
+.open {
+	flex: 1;
+	min-width: 0;
+	display: grid;
+	grid-template-columns: clamp(120px, 18vw, 220px) 1fr;
+	gap: 18px;
+	align-items: center;
+	padding: 8px;
+	border: 0;
+	border-radius: 14px;
+	background: none;
+	text-align: left;
+	cursor: pointer;
+
+	&:focus-visible {
+		outline-offset: -3px;
+	}
+
+	@include phone {
+		grid-template-columns: 96px minmax(0, 1fr);
+		gap: 10px;
+		padding: 6px;
+	}
+}
+
+.still {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 16/9;
+	border-radius: 8px;
+	background: var(--rideau-2) center/cover;
+
+	// how much was watched
+	i {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		height: 4px;
+		background: var(--lampe);
+	}
+}
+
+.seen {
+	.still {
+		filter: grayscale(0.6) brightness(0.6);
+	}
+
+	h4,
+	p {
+		color: var(--brume);
+	}
+}

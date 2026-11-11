@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="55%" r="55%"><stop offset="0" stop-color="#fff4da"/><stop offset=".45" stop-color="#f5c46b"/><stop offset="1" stop-color="#c9772f"/></radialGradient>
+    <linearGradient id="velvet" x1="0" x2="1"><stop offset="0" stop-color="#4a1530"/><stop offset=".18" stop-color="#8c3557"/><stop offset=".34" stop-color="#5a1b3a"/><stop offset=".52" stop-color="#93395d"/><stop offset=".7" stop-color="#561936"/><stop offset=".86" stop-color="#7e2e4f"/><stop offset="1" stop-color="#3d1027"/></linearGradient>
+    <clipPath id="sq"><rect width="512" height="512" rx="112"/></clipPath>
+  </defs>
+  <g clip-path="url(#sq)">
+    <rect width="512" height="512" fill="#17121f"/>
+    <rect x="120" y="60" width="272" height="400" fill="url(#glow)"/>
+    <path d="M226 226 L226 318 L306 272 Z" fill="#17121f" opacity=".92"/>
+    <path d="M0 0 H218 C204 150 166 300 140 512 H0 Z" fill="url(#velvet)"/>
+    <path d="M512 0 H294 C308 150 346 300 372 512 H512 Z" fill="url(#velvet)"/>
+    <rect width="512" height="70" fill="#3d1027"/><path d="M0 70 H512 V84 Q256 104 0 84 Z" fill="#2a0b1b"/>
+  </g>
+</svg>

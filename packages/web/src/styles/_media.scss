@@ -1,0 +1,13 @@
+// the layout's widths: phones, then tablets and small laptops
+
+@mixin phone {
+	@media (max-width: 640px) {
+		@content;
+	}
+}
+
+@mixin narrow {
+	@media (max-width: 1100px) {
+		@content;
+	}
+}

@@ -1,0 +1,81 @@
+@use "../styles/media" as *;
+
+// a profile's color, one round button each
+.swatches {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+
+	button {
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		border: 0;
+		cursor: pointer;
+
+		&[aria-pressed="true"] {
+			box-shadow:
+				0 0 0 3px var(--rideau),
+				0 0 0 6px var(--ecran);
+		}
+	}
+}
+
+// a picker, set in from the sheet's edge like its rows
+.inset {
+	padding: 6px 14px;
+}
+
+// a profile's picture: a row per family, the chosen one ringed like a color
+.avatars {
+	display: grid;
+	gap: 14px;
+
+	h6 {
+		margin: 0 0 8px;
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--brume);
+	}
+
+	// eight a row: each family fills its rows evenly, the tiles grow with the room
+	> div > div {
+		display: grid;
+		grid-template-columns: repeat(8, 1fr);
+		gap: 8px;
+
+		// a phone's tiles stay big enough for a thumb
+		@include phone {
+			grid-template-columns: repeat(6, 1fr);
+		}
+	}
+
+	button {
+		padding: 0;
+		border: 0;
+		border-radius: 28%;
+		background: none;
+		cursor: pointer;
+		transition: transform 0.15s;
+
+		&:hover,
+		&:focus-visible {
+			outline: none;
+			transform: scale(1.08);
+		}
+
+		&[aria-pressed="true"] {
+			box-shadow:
+				0 0 0 3px var(--rideau),
+				0 0 0 6px var(--ecran);
+		}
+	}
+
+	button > span {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1;
+		border-radius: 28%;
+		font-size: 28px;
+	}
+}

@@ -1,0 +1,83 @@
+// what the catalog's pages share: the space under the header, the big backdrop, the title's facts
+
+// under the fixed header
+.pad {
+	padding: calc(var(--head) + 20px) var(--gutter) 0;
+}
+
+// the home page's featured title and a title page's backdrop
+.hero {
+	position: relative;
+	min-height: min(78vh, 760px);
+	display: flex;
+	align-items: flex-end;
+	padding: 140px var(--gutter) 40px;
+	background-size: cover;
+	background-position: center 20%;
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(
+				90deg,
+				var(--velours) 0%,
+				#17121fd9 32%,
+				#17121f33 72%
+			),
+			linear-gradient(0deg, var(--velours) 0%, #17121f00 45%);
+	}
+
+	> div {
+		position: relative;
+		max-width: 760px;
+	}
+}
+
+// a title in marquee letters
+.marquee {
+	font: 900 clamp(56px, 9vw, 136px)/0.86 var(--display);
+	margin: 0 0 18px;
+	text-wrap: balance;
+}
+
+// the other name it goes by
+.aka {
+	margin: -6px 0 14px;
+	font: 700 clamp(20px, 2.4vw, 32px)/1.1 var(--display);
+	color: #cfc6d8;
+}
+
+// year, genres, length…
+.facts {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 18px;
+	color: var(--brume);
+	margin-bottom: 14px;
+}
+
+.overview {
+	max-width: 62ch;
+	color: #ddd5e4;
+	margin: 0 0 24px;
+	display: -webkit-box;
+	-webkit-line-clamp: 4;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: center;
+}
+
+// "Show more" under an endless grid
+.more {
+	display: flex;
+	justify-content: center;
+	padding: 32px;
+}

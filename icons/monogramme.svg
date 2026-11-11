@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs><clipPath id="sq"><rect width="512" height="512" rx="112"/></clipPath>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd98e"/><stop offset="1" stop-color="#f0ac45"/></linearGradient></defs>
+  <g clip-path="url(#sq)">
+    <rect width="512" height="512" fill="#17121f"/>
+    <path fill="url(#g)" fill-rule="evenodd" d="M72 88 H232 A128 128 0 0 1 232 344 H148 V424 H72 Z M148 158 V274 L250 216 Z"/>
+    <path d="M362 150 L414 88 H448 V424 H384 V176 L362 194 Z" fill="#f3eee6"/>
+  </g>
+</svg>

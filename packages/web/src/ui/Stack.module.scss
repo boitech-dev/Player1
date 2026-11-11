@@ -1,0 +1,16 @@
+// every state in the same grid cell, only the current one visible
+.stack {
+	display: grid;
+
+	> * {
+		grid-area: 1 / 1;
+	}
+
+	> [aria-hidden] {
+		visibility: hidden;
+	}
+}
+
+.inline {
+	display: inline-grid;
+}

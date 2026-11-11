@@ -1,0 +1,38 @@
+// The house before the film starts: velvet curtains drawn to the sides. For the screens that stand
+// alone, without the app's header: setup, pairing, who's watching.
+//
+//   @use "../styles/stage" as *;
+//   .screen { @include stage; }
+
+@mixin stage {
+	position: relative;
+	isolation: isolate;
+
+	// the curtains: velvet folds on each side, fading out towards the middle
+	&::before {
+		content: "";
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		background:
+			linear-gradient(#0000 0, #0000 70%, #0006 100%),
+			repeating-linear-gradient(
+				90deg,
+				#6a448047 0,
+				#6a448000 22px,
+				#00000070 50px,
+				#6a448000 76px,
+				#6a448047 92px
+			);
+		mask-image: linear-gradient(
+			90deg,
+			#000 0,
+			#000c 8%,
+			transparent 27%,
+			transparent 73%,
+			#000c 92%,
+			#000 100%
+		);
+	}
+}

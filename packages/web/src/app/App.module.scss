@@ -1,0 +1,24 @@
+// the page under the header and the player
+.view {
+	padding-bottom: 64px;
+
+	// the TV app's own player draws under the page
+	:global(html[data-native]) & {
+		visibility: hidden;
+	}
+}
+
+// screens that fit the screen exactly (the setup wizard)
+.bare {
+	padding-bottom: 0;
+}
+
+// the server couldn't be reached at all
+.message {
+	min-height: 100vh;
+	display: grid;
+	place-content: center;
+	text-align: center;
+	padding: 32px var(--gutter);
+	color: #ddd5e4;
+}

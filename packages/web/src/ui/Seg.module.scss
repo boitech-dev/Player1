@@ -1,0 +1,25 @@
+// a few choices side by side, the current one lit
+.seg {
+	display: inline-flex;
+	gap: 2px;
+	padding: 3px;
+	border-radius: 999px;
+	background: var(--velours);
+
+	> button {
+		min-height: 40px;
+		padding: 0 14px;
+		background: none;
+		color: var(--brume);
+		font-size: 14px;
+
+		&:hover {
+			background: none;
+		}
+
+		&[aria-pressed="true"] {
+			background: var(--ecran);
+			color: var(--velours);
+		}
+	}
+}

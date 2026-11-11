@@ -1,0 +1,90 @@
+@use "../styles/stage" as *;
+
+// a profile's initial on its color
+.ava {
+	display: inline-grid;
+	place-items: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	flex: none;
+	font: 800 20px / 1 var(--display);
+	color: #21180a;
+	overflow: hidden;
+
+	img {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+// the header's profile button
+button.whoBtn {
+	padding: 0 6px;
+	width: 48px;
+	justify-content: center;
+
+	.ava {
+		width: 34px;
+		height: 34px;
+	}
+}
+
+// who's watching
+.who {
+	@include stage;
+
+	min-height: 100vh;
+	display: grid;
+	place-content: center;
+	justify-items: center;
+	gap: 40px;
+	padding: 40px var(--gutter);
+
+	h1 {
+		font: 900 clamp(48px, 7vw, 88px) / 1 var(--display);
+		margin: 0;
+	}
+}
+
+.people {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 28px;
+
+	button {
+		display: grid;
+		justify-items: center;
+		gap: 12px;
+		border: 0;
+		background: none;
+		cursor: pointer;
+		padding: 10px;
+		border-radius: 22px;
+		font-size: 19px;
+
+		&:focus-visible {
+			outline: none;
+		}
+
+		&:focus-visible .ava,
+		&:hover .ava {
+			transform: scale(1.07);
+			box-shadow: 0 0 0 4px var(--lampe);
+		}
+	}
+
+	.ava {
+		width: clamp(96px, 11vw, 140px);
+		height: clamp(96px, 11vw, 140px);
+		font-size: clamp(48px, 6vw, 72px);
+		border-radius: 28px;
+		transition: transform 0.15s;
+	}
+
+	.add .ava {
+		background: var(--rideau-2) !important;
+		color: var(--ecran);
+	}
+}

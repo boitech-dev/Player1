@@ -1,0 +1,34 @@
+// device test: the clip plays full screen, like a film
+.testplay {
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	background: #000;
+
+	// TV app: Android's own player draws the clip under the page
+	&.native {
+		background: transparent;
+	}
+
+	:global(movi-player) {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	p {
+		position: absolute;
+		left: var(--gutter);
+		bottom: 24px;
+		margin: 0;
+		padding: 10px 16px;
+		border-radius: 12px;
+		background: #17121fd9;
+		color: var(--brume);
+
+		strong {
+			color: var(--ecran);
+			margin-right: 8px;
+		}
+	}
+}

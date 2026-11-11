@@ -1,0 +1,28 @@
+// short texts many places share
+
+// a line under a control: what it does, what's set
+.hint {
+	color: var(--brume);
+	font-size: 14px;
+	margin: 12px 0 0;
+}
+
+// nothing to show here (yet)
+.empty {
+	color: var(--brume);
+	padding: 8px 14px;
+	margin: 0;
+}
+
+// how a check, a test or a release looks
+.good {
+	color: var(--good);
+}
+
+.bad {
+	color: var(--bad);
+}
+
+.low {
+	color: var(--lampe);
+}

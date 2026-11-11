@@ -1,0 +1,1655 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-11-10 12:52+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+
+#: src/player/engine.ts
+msgid "(forced)"
+msgstr "(forced)"
+
+#: src/player/engine.ts
+msgid "(OpenSubtitles)"
+msgstr "(OpenSubtitles)"
+
+#: src/sheets/indexer.tsx
+msgid "{indexer} doesn’t let you download right now"
+msgstr "{indexer} doesn’t let you download right now"
+
+#: src/sheets/download.tsx
+msgid "{indexer}, downloaded by {seedbox}"
+msgstr "{indexer}, downloaded by {seedbox}"
+
+#: src/lib/tiers.ts
+msgid "{lang} audio, no subtitles"
+msgstr "{lang} audio, no subtitles"
+
+#: src/screens/Title.tsx
+msgid "{mode}. Chosen for this title only."
+msgstr "{mode}. Chosen for this title only."
+
+#: src/ui/Wizard.tsx
+msgid "{n} of {total}"
+msgstr "{n} of {total}"
+
+#: src/sheets/indexer.tsx
+msgid "{n} other version"
+msgstr "{n} other version"
+
+#: src/sheets/indexer.tsx
+msgid "{n} other versions"
+msgstr "{n} other versions"
+
+#: src/screens/Title.tsx
+msgid "{n} season"
+msgstr "{n} season"
+
+#: src/screens/Title.tsx
+msgid "{n} seasons"
+msgstr "{n} seasons"
+
+#: src/sheets/quality.tsx
+msgid "{n} source"
+msgstr "{n} source"
+
+#: src/player/engine.ts
+#: src/sheets/indexer.tsx
+#: src/sheets/quality.tsx
+msgid "{n} sources"
+msgstr "{n} sources"
+
+#: src/sheets/lists.tsx
+msgid "{n} title"
+msgstr "{n} title"
+
+#: src/sheets/lists.tsx
+msgid "{n} titles"
+msgstr "{n} titles"
+
+#: src/sheets/devices.tsx
+msgid "{name} is connected"
+msgstr "{name} is connected"
+
+#: src/sheets/quality.tsx
+msgid "{name} will remember this choice and pick the closest quality next time."
+msgstr "{name} will remember this choice and pick the closest quality next time."
+
+#: src/sheets/quality.tsx
+msgid "{name}, download first"
+msgstr "{name}, download first"
+
+#: src/player/engine.ts
+#: src/sheets/download.tsx
+msgid "{seedbox} is downloading it: {n}%"
+msgstr "{seedbox} is downloading it: {n}%"
+
+#: src/player/engine.ts
+msgid "{seedbox} is preparing the download"
+msgstr "{seedbox} is preparing the download"
+
+#: src/sheets/indexer.tsx
+msgid "{size} free"
+msgstr "{size} free"
+
+#: src/sheets/download.tsx
+msgid "{size} free on the Jellyfin drive."
+msgstr "{size} free on the Jellyfin drive."
+
+#: src/ui/Card.tsx
+msgid "{time} left"
+msgstr "{time} left"
+
+#: src/screens/Discover.tsx
+msgid "{title} added to your watchlist"
+msgstr "{title} added to your watchlist"
+
+#: src/sheets/titleLanguage.tsx
+msgid "{title} follows your language preset again"
+msgstr "{title} follows your language preset again"
+
+#: src/screens/Discover.tsx
+msgid "{title} hidden"
+msgstr "{title} hidden"
+
+#: src/screens/Discover.tsx
+msgid "{title} marked as seen"
+msgstr "{title} marked as seen"
+
+#: src/screens/Discover.tsx
+msgid "{title} postponed to tomorrow"
+msgstr "{title} postponed to tomorrow"
+
+#: src/sheets/titleLanguage.tsx
+msgid "{title}: always in {mode}"
+msgstr "{title}: always in {mode}"
+
+#: src/screens/Setup.tsx
+msgid "{user} isn’t a premium account. Real-Debrid needs one."
+msgstr "{user} isn’t a premium account. Real-Debrid needs one."
+
+#: src/screens/Settings.tsx
+msgid "A TV with Homebrew Channel installs it by itself: in Homebrew Channel’s settings, add this repository, then pick Player1 in the list."
+msgstr "A TV with Homebrew Channel installs it by itself: in Homebrew Channel’s settings, add this repository, then pick Player1 in the list."
+
+#: src/screens/Who.tsx
+msgid "Add"
+msgstr "Add"
+
+#: src/sheets/devices.tsx
+msgid "Add a device"
+msgstr "Add a device"
+
+#: src/screens/Welcome.tsx
+#: src/sheets/presets.tsx
+msgid "Add a language"
+msgstr "Add a language"
+
+#: src/sheets/profiles.tsx
+msgid "Add a profile"
+msgstr "Add a profile"
+
+#: src/screens/Welcome.tsx
+#: src/sheets/presets.tsx
+msgid "Add at least one language"
+msgstr "Add at least one language"
+
+#: src/screens/Setup.tsx
+msgid "Add its download folder"
+msgstr "Add its download folder"
+
+#: src/screens/Welcome.tsx
+msgid "Add the languages you know, your favorite first. For each one, choose whether you want to hear it or only read it in subtitles."
+msgstr "Add the languages you know, your favorite first. For each one, choose whether you want to hear it or only read it in subtitles."
+
+#: src/sheets/lists.tsx
+msgid "Added to {name}"
+msgstr "Added to {name}"
+
+#: src/sheets/lists.tsx
+msgid "Added to favorites"
+msgstr "Added to favorites"
+
+#: src/screens/Setup.tsx
+msgid "Addon address"
+msgstr "Addon address"
+
+#: src/screens/Settings.tsx
+msgid "Address"
+msgstr "Address"
+
+#: src/screens/Setup.tsx
+msgid "Adds posters, summaries, categories and trailers. Without it, the catalog only shows popular titles."
+msgstr "Adds posters, summaries, categories and trailers. Without it, the catalog only shows popular titles."
+
+#: src/screens/Discover.tsx
+msgid "All"
+msgstr "All"
+
+#: src/sheets/download.tsx
+msgid "Already in Jellyfin"
+msgstr "Already in Jellyfin"
+
+#: src/screens/Setup.tsx
+msgid "An address starts with http:// or https://"
+msgstr "An address starts with http:// or https://"
+
+#: src/screens/Settings.tsx
+msgid "Android TV app"
+msgstr "Android TV app"
+
+#: src/screens/Discover.tsx
+msgid "Anime"
+msgstr "Anime"
+
+#: src/screens/Setup.tsx
+msgid "API key"
+msgstr "API key"
+
+#: src/screens/Setup.tsx
+msgid "API key (in Jellyfin: Dashboard, then API Keys)"
+msgstr "API key (in Jellyfin: Dashboard, then API Keys)"
+
+#: src/screens/Setup.tsx
+msgid "API key or read access token"
+msgstr "API key or read access token"
+
+#: src/player/engine.ts
+msgid "Arabic"
+msgstr "Arabic"
+
+#: src/player/Player.tsx
+#: src/sheets/tracks.tsx
+msgid "Audio"
+msgstr "Audio"
+
+#: src/sheets/presets.tsx
+msgid "Audio or subtitles"
+msgstr "Audio or subtitles"
+
+#: src/sheets/devices.tsx
+msgid "Auto (no)"
+msgstr "Auto (no)"
+
+#: src/sheets/devices.tsx
+msgid "Auto (yes)"
+msgstr "Auto (yes)"
+
+#: src/screens/Settings.tsx
+#: src/sheets/quality.tsx
+msgid "Automatic"
+msgstr "Automatic"
+
+#: src/screens/Settings.tsx
+msgid "Automatic updates"
+msgstr "Automatic updates"
+
+#: src/lib/device.ts
+msgid "AV1 1080p"
+msgstr "AV1 1080p"
+
+#: src/sheets/indexer.tsx
+msgid "Available on {indexer}"
+msgstr "Available on {indexer}"
+
+#: src/sheets/download.tsx
+msgid "Available versions"
+msgstr "Available versions"
+
+#: src/player/Player.tsx
+#: src/ui/sheet.tsx
+#: src/ui/Wizard.tsx
+msgid "Back"
+msgstr "Back"
+
+#: src/player/Player.tsx
+msgid "Back 10 seconds"
+msgstr "Back 10 seconds"
+
+#: src/screens/Settings.tsx
+msgid "Building the TV app…"
+msgstr "Building the TV app…"
+
+#: src/screens/Settings.tsx
+msgid "Building…"
+msgstr "Building…"
+
+#: src/screens/Setup.tsx
+msgid "Can’t open this address. Install Tailscale on this device and sign in."
+msgstr "Can’t open this address. Install Tailscale on this device and sign in."
+
+#: src/player/engine.ts
+msgid "Can’t play"
+msgstr "Can’t play"
+
+#: src/screens/Setup.tsx
+msgid "Can’t reach this address. Check it for typos."
+msgstr "Can’t reach this address. Check it for typos."
+
+#: src/screens/Welcome.tsx
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/sheets/download.tsx
+msgid "Cancelled"
+msgstr "Cancelled"
+
+#: src/sheets/presets.tsx
+msgid "Captioned"
+msgstr "Captioned"
+
+#: src/app/Header.tsx
+msgid "Categories"
+msgstr "Categories"
+
+#: src/screens/Settings.tsx
+msgid "Check for updates"
+msgstr "Check for updates"
+
+#: src/screens/Settings.tsx
+msgid "Checking for updates…"
+msgstr "Checking for updates…"
+
+#: src/screens/Setup.tsx
+#: src/ui/Wizard.tsx
+msgid "Checking…"
+msgstr "Checking…"
+
+#: src/player/engine.ts
+msgid "Chinese"
+msgstr "Chinese"
+
+#: src/screens/Welcome.tsx
+msgid "Choose its languages yourself"
+msgstr "Choose its languages yourself"
+
+#: src/sheets/devices.tsx
+msgid "Choppy: skips {n} frames out of 10"
+msgstr "Choppy: skips {n} frames out of 10"
+
+#: src/ui/sheet.tsx
+msgid "Close"
+msgstr "Close"
+
+#: src/sheets/devices.tsx
+msgid "Code shown on the device"
+msgstr "Code shown on the device"
+
+#: src/screens/Welcome.tsx
+#: src/sheets/profiles.tsx
+msgid "Color"
+msgstr "Color"
+
+#: src/sheets/profiles.tsx
+msgid "Color {n}"
+msgstr "Color {n}"
+
+#: src/sheets/devices.tsx
+msgid "Confirm"
+msgstr "Confirm"
+
+#: src/screens/Pair.tsx
+msgid "Connect this device"
+msgstr "Connect this device"
+
+#: src/screens/Pair.tsx
+msgid "Connect this PC"
+msgstr "Connect this PC"
+
+#: src/screens/Setup.tsx
+msgid "Connected as {user}, premium until {until}"
+msgstr "Connected as {user}, premium until {until}"
+
+#: src/sheets/devices.tsx
+msgid "Connected right now"
+msgstr "Connected right now"
+
+#: src/screens/Setup.tsx
+msgid "Connected to {name}"
+msgstr "Connected to {name}"
+
+#: src/screens/Setup.tsx
+msgid "Connected to {name} (Jellyfin {version})"
+msgstr "Connected to {name} (Jellyfin {version})"
+
+#: src/screens/Setup.tsx
+msgid "Connected to qBittorrent {version}"
+msgstr "Connected to qBittorrent {version}"
+
+#: src/screens/Setup.tsx
+msgid "Connected to qBittorrent {version}, files read from Whatbox"
+msgstr "Connected to qBittorrent {version}, files read from Whatbox"
+
+#: src/screens/Setup.tsx
+msgid "Connected to the torrent site"
+msgstr "Connected to the torrent site"
+
+#: src/screens/Setup.tsx
+msgid "Connected. No downloads: the folder is read-only."
+msgstr "Connected. No downloads: the folder is read-only."
+
+#: src/sheets/lists.tsx
+#: src/sheets/profiles.tsx
+msgid "Create"
+msgstr "Create"
+
+#: src/sheets/profiles.tsx
+msgid "Delete"
+msgstr "Delete"
+
+#: src/sheets/profiles.tsx
+msgid "Delete {name}"
+msgstr "Delete {name}"
+
+#: src/sheets/profiles.tsx
+msgid "Delete the profile {name}?"
+msgstr "Delete the profile {name}?"
+
+#: src/sheets/presets.tsx
+msgid "Delete this preset"
+msgstr "Delete this preset"
+
+#: src/sheets/devices.tsx
+msgid "Device renamed"
+msgstr "Device renamed"
+
+#: src/app/Header.tsx
+#: src/sheets/devices.tsx
+msgid "Devices"
+msgstr "Devices"
+
+#: src/app/Header.tsx
+msgid "Discover"
+msgstr "Discover"
+
+#: src/screens/Title.tsx
+msgid "Download"
+msgstr "Download"
+
+#: src/sheets/download.tsx
+msgid "Download added. It will show up in Jellyfin when it’s done."
+msgstr "Download added. It will show up in Jellyfin when it’s done."
+
+#: src/screens/Title.tsx
+msgid "Download episode {e} into Jellyfin"
+msgstr "Download episode {e} into Jellyfin"
+
+#: src/sheets/download.tsx
+msgid "Download into Jellyfin"
+msgstr "Download into Jellyfin"
+
+#: src/screens/Settings.tsx
+msgid "Download the app"
+msgstr "Download the app"
+
+#: src/screens/Settings.tsx
+msgid "Download the package"
+msgstr "Download the package"
+
+#: src/player/Player.tsx
+msgid "Download this version into Jellyfin"
+msgstr "Download this version into Jellyfin"
+
+#: src/sheets/indexer.tsx
+msgid "Download, {wait}"
+msgstr "Download, {wait}"
+
+#: src/sheets/download.tsx
+msgid "Downloads"
+msgstr "Downloads"
+
+#: src/screens/Setup.tsx
+msgid "Downloads what the torrent site finds. What it already has plays right away. On a seedbox or a computer at home."
+msgstr "Downloads what the torrent site finds. What it already has plays right away. On a seedbox or a computer at home."
+
+#: src/player/engine.ts
+msgid "Dutch"
+msgstr "Dutch"
+
+#: src/screens/Settings.tsx
+msgid "Each new version is tested before it replaces this one. If it doesn’t start, the previous one comes back."
+msgstr "Each new version is tested before it replaces this one. If it doesn’t start, the previous one comes back."
+
+#: src/screens/Welcome.tsx
+msgid "Each person at home has their own lists, languages and progress. This one is yours."
+msgstr "Each person at home has their own lists, languages and progress. This one is yours."
+
+#: src/sheets/presets.tsx
+msgid "Edit presets"
+msgstr "Edit presets"
+
+#: src/sheets/profiles.tsx
+msgid "Edit profile"
+msgstr "Edit profile"
+
+#: src/sheets/profiles.tsx
+msgid "Edit this profile"
+msgstr "Edit this profile"
+
+#: src/player/engine.ts
+msgid "English"
+msgstr "English"
+
+#: src/screens/Settings.tsx
+msgid "Everything is connected."
+msgstr "Everything is connected."
+
+#: src/sheets/profiles.tsx
+msgid "Faces"
+msgstr "Faces"
+
+#: src/sheets/download.tsx
+msgid "Failed: {err}"
+msgstr "Failed: {err}"
+
+#: src/screens/Title.tsx
+msgid "Favorite"
+msgstr "Favorite"
+
+#: src/screens/Settings.tsx
+msgid "Films and series"
+msgstr "Films and series"
+
+#: src/screens/Setup.tsx
+msgid "Find your key here"
+msgstr "Find your key here"
+
+#: src/screens/Setup.tsx
+msgid "Finds and plays movies and series."
+msgstr "Finds and plays movies and series."
+
+#: src/ui/Wizard.tsx
+msgid "Finish"
+msgstr "Finish"
+
+#: src/screens/Welcome.tsx
+#: src/sheets/profiles.tsx
+msgid "First name"
+msgstr "First name"
+
+#: src/screens/Setup.tsx
+msgid "Folder found"
+msgstr "Folder found"
+
+#: src/screens/Welcome.tsx
+msgid "For each film, Player1 will look for, in this order:"
+msgstr "For each film, Player1 will look for, in this order:"
+
+#: src/player/Player.tsx
+msgid "Forward 30 seconds"
+msgstr "Forward 30 seconds"
+
+#: src/player/engine.ts
+msgid "French"
+msgstr "French"
+
+#: src/sheets/devices.tsx
+msgid "Froze {n} times in 8 seconds"
+msgstr "Froze {n} times in 8 seconds"
+
+#: src/player/Player.tsx
+msgid "Full screen"
+msgstr "Full screen"
+
+#: src/lib/format.ts
+#: src/sheets/download.tsx
+msgid "GB"
+msgstr "GB"
+
+#: src/player/engine.ts
+msgid "German"
+msgstr "German"
+
+#: src/screens/Setup.tsx
+msgid "Get a free TMDB key"
+msgstr "Get a free TMDB key"
+
+#: src/screens/Welcome.tsx
+msgid "Give it a name"
+msgstr "Give it a name"
+
+#: src/lib/device.ts
+msgid "H.264 1080p, Blu-ray bitrate"
+msgstr "H.264 1080p, Blu-ray bitrate"
+
+#: src/sheets/indexer.tsx
+msgid "heavy"
+msgstr "heavy"
+
+#: src/sheets/quality.tsx
+msgid "heavy for this device"
+msgstr "heavy for this device"
+
+#: src/sheets/indexer.tsx
+msgid "Heavy for this device"
+msgstr "Heavy for this device"
+
+#: src/screens/Welcome.tsx
+msgid "Hello {name}"
+msgstr "Hello {name}"
+
+#: src/lib/device.ts
+msgid "HEVC 10-bit 1080p"
+msgstr "HEVC 10-bit 1080p"
+
+#: src/lib/device.ts
+msgid "HEVC 10-bit 4K HDR"
+msgstr "HEVC 10-bit 4K HDR"
+
+#: src/screens/Discover.tsx
+msgid "Hide"
+msgstr "Hide"
+
+#: src/screens/Discover.tsx
+msgid "Hide: never suggest again"
+msgstr "Hide: never suggest again"
+
+#: src/sheets/download.tsx
+#: src/sheets/quality.tsx
+msgid "In {name}"
+msgstr "In {name}"
+
+#: src/sheets/download.tsx
+msgid "In Jellyfin"
+msgstr "In Jellyfin"
+
+#: src/screens/Title.tsx
+msgid "In my favorites"
+msgstr "In my favorites"
+
+#: src/sheets/profiles.tsx
+msgid "Initial"
+msgstr "Initial"
+
+#: src/screens/Setup.tsx
+msgid "Initial setup"
+msgstr "Initial setup"
+
+#: src/screens/Settings.tsx
+msgid "Install it on a TV from here"
+msgstr "Install it on a TV from here"
+
+#: src/screens/Settings.tsx
+msgid "Install on the TV"
+msgstr "Install on the TV"
+
+#: src/screens/Settings.tsx
+msgid "Installed: Player1 is among the TV’s apps."
+msgstr "Installed: Player1 is among the TV’s apps."
+
+#: src/screens/Settings.tsx
+msgid "Installing on the TV…"
+msgstr "Installing on the TV…"
+
+#: src/screens/Welcome.tsx
+#: src/sheets/profiles.tsx
+msgid "Interface language"
+msgstr "Interface language"
+
+#: src/sheets/download.tsx
+msgid "Interrupted"
+msgstr "Interrupted"
+
+#: src/lib/device.ts
+msgid "iPad"
+msgstr "iPad"
+
+#: src/lib/device.ts
+msgid "iPhone"
+msgstr "iPhone"
+
+#: src/screens/Setup.tsx
+msgid "It answered with an error (code {code})."
+msgstr "It answered with an error (code {code})."
+
+#: src/screens/Setup.tsx
+msgid "It was chosen during installation: run the installer again to change it."
+msgstr "It was chosen during installation: run the installer again to change it."
+
+#: src/player/engine.ts
+msgid "Italian"
+msgstr "Italian"
+
+#: src/screens/Setup.tsx
+msgid "Its download folder, as seen from this server (empty with Whatbox)"
+msgstr "Its download folder, as seen from this server (empty with Whatbox)"
+
+#: src/player/engine.ts
+msgid "Japanese"
+msgstr "Japanese"
+
+#: src/screens/Setup.tsx
+msgid "Jellyfin"
+msgstr "Jellyfin"
+
+#: src/screens/Setup.tsx
+msgid "Jellyfin address"
+msgstr "Jellyfin address"
+
+#: src/sheets/download.tsx
+msgid "Jellyfin won’t show these files until its API key is added in the server settings."
+msgstr "Jellyfin won’t show these files until its API key is added in the server settings."
+
+#: src/screens/Setup.tsx
+msgid "Key accepted"
+msgstr "Key accepted"
+
+#: src/player/engine.ts
+msgid "Korean"
+msgstr "Korean"
+
+#: src/app/Header.tsx
+#: src/screens/Title.tsx
+#: src/sheets/presets.tsx
+msgid "Language"
+msgstr "Language"
+
+#: src/sheets/titleLanguage.tsx
+msgid "Language for this title"
+msgstr "Language for this title"
+
+#: src/player/engine.ts
+msgid "Language not verified"
+msgstr "Language not verified"
+
+#: src/sheets/indexer.tsx
+msgid "Language?"
+msgstr "Language?"
+
+#: src/screens/Welcome.tsx
+#: src/sheets/presets.tsx
+msgid "Languages, the one you prefer first"
+msgstr "Languages, the one you prefer first"
+
+#: src/screens/Discover.tsx
+msgid "Later"
+msgstr "Later"
+
+#: src/screens/Welcome.tsx
+msgid "Let’s set up your languages."
+msgstr "Let’s set up your languages."
+
+#: src/lib/device.ts
+msgid "LG TV"
+msgstr "LG TV"
+
+#: src/screens/Settings.tsx
+msgid "LG TV app"
+msgstr "LG TV app"
+
+#: src/screens/Settings.tsx
+msgid "Library and downloads"
+msgstr "Library and downloads"
+
+#: src/screens/Setup.tsx
+msgid "Library folder on this server"
+msgstr "Library folder on this server"
+
+#: src/screens/Title.tsx
+#: src/sheets/lists.tsx
+msgid "Lists"
+msgstr "Lists"
+
+#: src/player/engine.ts
+msgid "Looking for a {mode} source"
+msgstr "Looking for a {mode} source"
+
+#: src/sheets/quality.tsx
+msgid "Looking for sources…"
+msgstr "Looking for sources…"
+
+#: src/sheets/download.tsx
+msgid "Looking for versions…"
+msgstr "Looking for versions…"
+
+#: src/screens/Welcome.tsx
+msgid "Make your own"
+msgstr "Make your own"
+
+#: src/screens/Title.tsx
+msgid "Mark as seen"
+msgstr "Mark as seen"
+
+#: src/screens/Title.tsx
+msgid "Mark as seen: episode {e}"
+msgstr "Mark as seen: episode {e}"
+
+#: src/screens/Title.tsx
+msgid "Marked as not seen"
+msgstr "Marked as not seen"
+
+#: src/screens/Title.tsx
+msgid "Marked as seen"
+msgstr "Marked as seen"
+
+#: src/lib/format.ts
+#: src/sheets/download.tsx
+msgid "MB"
+msgstr "MB"
+
+#: src/player/engine.ts
+#: src/sheets/download.tsx
+msgid "MB/s"
+msgstr "MB/s"
+
+#: src/screens/Welcome.tsx
+msgid "More presets"
+msgstr "More presets"
+
+#: src/sheets/presets.tsx
+msgid "Move up"
+msgstr "Move up"
+
+#: src/screens/Discover.tsx
+msgid "Movie"
+msgstr "Movie"
+
+#: src/app/Header.tsx
+msgid "Movie, series, anime"
+msgstr "Movie, series, anime"
+
+#: src/screens/Categories.tsx
+#: src/screens/Discover.tsx
+msgid "Movies"
+msgstr "Movies"
+
+#: src/app/state.ts
+msgid "My favorites"
+msgstr "My favorites"
+
+#: src/sheets/profiles.tsx
+msgid "Name, picture, color, language"
+msgstr "Name, picture, color, language"
+
+#: src/screens/Welcome.tsx
+msgid "Never dubbed: the original voices, with subtitles"
+msgstr "Never dubbed: the original voices, with subtitles"
+
+#: src/sheets/lists.tsx
+msgid "New list"
+msgstr "New list"
+
+#: src/sheets/lists.tsx
+msgid "New list name"
+msgstr "New list name"
+
+#: src/sheets/presets.tsx
+msgid "New preset"
+msgstr "New preset"
+
+#: src/sheets/profiles.tsx
+msgid "New profile"
+msgstr "New profile"
+
+#: src/screens/Settings.tsx
+msgid "New version being prepared…"
+msgstr "New version being prepared…"
+
+#: src/ui/Wizard.tsx
+msgid "Next"
+msgstr "Next"
+
+#: src/player/Player.tsx
+msgid "Next episode"
+msgstr "Next episode"
+
+#: src/sheets/devices.tsx
+msgid "No"
+msgstr "No"
+
+#: src/screens/Setup.tsx
+msgid "No answer after 8 seconds. Is it running?"
+msgstr "No answer after 8 seconds. Is it running?"
+
+#: src/screens/Settings.tsx
+msgid "No automatic updates: the server wasn’t started with run.mjs."
+msgstr "No automatic updates: the server wasn’t started with run.mjs."
+
+#: src/sheets/devices.tsx
+msgid "No other device is connected."
+msgstr "No other device is connected."
+
+#: src/sheets/send.tsx
+msgid "No other device is connected. Open Player1 on the TV or projector and it will show up here."
+msgstr "No other device is connected. Open Player1 on the TV or projector and it will show up here."
+
+#: src/sheets/quality.tsx
+msgid "No source for this title."
+msgstr "No source for this title."
+
+#: src/player/engine.ts
+msgid "No source found"
+msgstr "No source found"
+
+#: src/player/Player.tsx
+#: src/sheets/tracks.tsx
+msgid "No subtitles"
+msgstr "No subtitles"
+
+#: src/screens/Search.tsx
+msgid "No title found. Try the original or English title."
+msgstr "No title found. Try the original or English title."
+
+#: src/sheets/download.tsx
+msgid "No version of this title can be downloaded right now."
+msgstr "No version of this title can be downloaded right now."
+
+#: src/screens/Setup.tsx
+msgid "Not a Torznab address. Copy it from the site’s settings."
+msgstr "Not a Torznab address. Copy it from the site’s settings."
+
+#: src/screens/Settings.tsx
+msgid "Not built yet"
+msgstr "Not built yet"
+
+#: src/screens/Settings.tsx
+msgid "Not checked yet."
+msgstr "Not checked yet."
+
+#: src/screens/Settings.tsx
+msgid "Not connected: {list}."
+msgstr "Not connected: {list}."
+
+#: src/screens/Settings.tsx
+msgid "Not saved yet. Saving restarts the server."
+msgstr "Not saved yet. Saving restarts the server."
+
+#: src/screens/Settings.tsx
+msgid "Not set up"
+msgstr "Not set up"
+
+#: src/sheets/devices.tsx
+msgid "Not tested yet"
+msgstr "Not tested yet"
+
+#: src/screens/Discover.tsx
+msgid "Nothing more to suggest for now. Change the filter or come back later."
+msgstr "Nothing more to suggest for now. Change the filter or come back later."
+
+#: src/sheets/quality.tsx
+msgid "Now playing"
+msgstr "Now playing"
+
+#: src/screens/Welcome.tsx
+msgid "Now, about you."
+msgstr "Now, about you."
+
+#: src/screens/Settings.tsx
+msgid "Off"
+msgstr "Off"
+
+#: src/screens/Setup.tsx
+msgid "OK"
+msgstr "OK"
+
+#: src/screens/Settings.tsx
+msgid "On the TV, open the Developer Mode app, turn on Dev Mode Status and Key Server, then type here the TV’s address and the passphrase the app shows."
+msgstr "On the TV, open the Developer Mode app, turn on Dev Mode Status and Key Server, then type here the TV’s address and the passphrase the app shows."
+
+#: src/screens/Settings.tsx
+msgid "On the TV, open this address in its browser and install the file it downloads. The app updates itself afterwards."
+msgstr "On the TV, open this address in its browser and install the file it downloads. The app updates itself afterwards."
+
+#: src/screens/Pair.tsx
+msgid "On your phone or PC, open Player1, go to Devices and type this code."
+msgstr "On your phone or PC, open Player1, go to Devices and type this code."
+
+#: src/screens/Setup.tsx
+msgid "optional"
+msgstr "optional"
+
+#: src/sheets/devices.tsx
+msgid "Original files"
+msgstr "Original files"
+
+#: src/screens/Welcome.tsx
+msgid "Original version"
+msgstr "Original version"
+
+#: src/lib/tiers.ts
+msgid "Original version, {lang} subtitles"
+msgstr "Original version, {lang} subtitles"
+
+#: src/lib/tiers.ts
+msgid "Original version, no subtitles"
+msgstr "Original version, no subtitles"
+
+#: src/lib/tiers.ts
+msgid "Original version, subtitles in its own language"
+msgstr "Original version, subtitles in its own language"
+
+#: src/sheets/indexer.tsx
+msgid "Other versions"
+msgstr "Other versions"
+
+#: src/screens/Settings.tsx
+msgid "Passphrase"
+msgstr "Passphrase"
+
+#: src/screens/Setup.tsx
+msgid "Password"
+msgstr "Password"
+
+#: src/screens/Setup.tsx
+msgid "Paste your key here"
+msgstr "Paste your key here"
+
+#: src/player/Player.tsx
+msgid "Pause"
+msgstr "Pause"
+
+#: src/lib/device.ts
+msgid "PC"
+msgstr "PC"
+
+#: src/sheets/profiles.tsx
+msgid "People"
+msgstr "People"
+
+#: src/lib/device.ts
+msgid "Phone"
+msgstr "Phone"
+
+#: src/screens/Categories.tsx
+msgid "Picks"
+msgstr "Picks"
+
+#: src/screens/Welcome.tsx
+#: src/sheets/profiles.tsx
+msgid "Picture"
+msgstr "Picture"
+
+#: src/sheets/profiles.tsx
+msgid "Pixels"
+msgstr "Pixels"
+
+#: src/player/Player.tsx
+#: src/screens/Title.tsx
+#: src/sheets/indexer.tsx
+msgid "Play"
+msgstr "Play"
+
+#: src/screens/Title.tsx
+msgid "Play S{s} E{e}"
+msgstr "Play S{s} E{e}"
+
+#: src/sheets/devices.tsx
+msgid "Playback on this device"
+msgstr "Playback on this device"
+
+#: src/screens/Setup.tsx
+msgid "Player1 answers at this address"
+msgstr "Player1 answers at this address"
+
+#: src/player/Player.tsx
+msgid "Playing in {n} s"
+msgstr "Playing in {n} s"
+
+#: src/sheets/devices.tsx
+msgid "Plays {n} of {total} video formats smoothly. Connection: {net} Mbit/s"
+msgstr "Plays {n} of {total} video formats smoothly. Connection: {net} Mbit/s"
+
+#: src/player/engine.ts
+msgid "Portuguese"
+msgstr "Portuguese"
+
+#: src/player/engine.ts
+msgid "Preparing the source"
+msgstr "Preparing the source"
+
+#: src/screens/Welcome.tsx
+#: src/sheets/presets.tsx
+msgid "Preset name"
+msgstr "Preset name"
+
+#: src/sheets/titleLanguage.tsx
+msgid "Preset: {name}"
+msgstr "Preset: {name}"
+
+#: src/sheets/presets.tsx
+msgid "Presets"
+msgstr "Presets"
+
+#: src/sheets/presets.tsx
+msgid "Presets saved"
+msgstr "Presets saved"
+
+#: src/player/engine.ts
+msgid "Press play to start"
+msgstr "Press play to start"
+
+#: src/sheets/profiles.tsx
+msgid "Profile name"
+msgstr "Profile name"
+
+#: src/screens/Who.tsx
+msgid "Profile: {name}"
+msgstr "Profile: {name}"
+
+#: src/sheets/profiles.tsx
+msgid "Profiles"
+msgstr "Profiles"
+
+#: src/lib/device.ts
+msgid "Projector"
+msgstr "Projector"
+
+#: src/screens/Setup.tsx
+msgid "qBittorrent"
+msgstr "qBittorrent"
+
+#: src/screens/Setup.tsx
+msgid "qBittorrent’s address"
+msgstr "qBittorrent’s address"
+
+#: src/player/Player.tsx
+#: src/sheets/quality.tsx
+msgid "Quality"
+msgstr "Quality"
+
+#: src/player/engine.ts
+msgid "Ready"
+msgstr "Ready"
+
+#: src/screens/Setup.tsx
+msgid "Real-Debrid"
+msgstr "Real-Debrid"
+
+#: src/screens/Settings.tsx
+msgid "Real-Debrid has to work before anything can be saved."
+msgstr "Real-Debrid has to work before anything can be saved."
+
+#: src/sheets/devices.tsx
+msgid "Real-Debrid, torrent site, qBittorrent, Jellyfin"
+msgstr "Real-Debrid, torrent site, qBittorrent, Jellyfin"
+
+#: src/screens/Settings.tsx
+msgid "Rebuild the TV app"
+msgstr "Rebuild the TV app"
+
+#: src/app/events.ts
+msgid "Received: {title}"
+msgstr "Received: {title}"
+
+#: src/sheets/quality.tsx
+msgid "Recommended"
+msgstr "Recommended"
+
+#: src/screens/Setup.tsx
+msgid "Refused. Check the key or the password."
+msgstr "Refused. Check the key or the password."
+
+#: src/sheets/presets.tsx
+msgid "Remove"
+msgstr "Remove"
+
+#: src/sheets/lists.tsx
+msgid "Removed from favorites"
+msgstr "Removed from favorites"
+
+#: src/sheets/devices.tsx
+msgid "Rename"
+msgstr "Rename"
+
+#: src/ui/Card.tsx
+msgid "Resume"
+msgstr "Resume"
+
+#: src/screens/Title.tsx
+msgid "Resume at {time}"
+msgstr "Resume at {time}"
+
+#: src/screens/Title.tsx
+msgid "Resume S{s} E{e}"
+msgstr "Resume S{s} E{e}"
+
+#: src/player/engine.ts
+msgid "Resuming at {time}"
+msgstr "Resuming at {time}"
+
+#: src/sheets/profiles.tsx
+msgid "Robots"
+msgstr "Robots"
+
+#: src/sheets/devices.tsx
+msgid "Run the test again"
+msgstr "Run the test again"
+
+#: src/player/engine.ts
+msgid "Russian"
+msgstr "Russian"
+
+#: src/screens/Settings.tsx
+#: src/screens/Welcome.tsx
+#: src/sheets/presets.tsx
+#: src/sheets/profiles.tsx
+msgid "Save"
+msgstr "Save"
+
+#: src/screens/Setup.tsx
+msgid "Saved"
+msgstr "Saved"
+
+#: src/screens/Setup.tsx
+msgid "Saved, ends with {hint}"
+msgstr "Saved, ends with {hint}"
+
+#: src/screens/Setup.tsx
+msgid "Saving, then restarting the server…"
+msgstr "Saving, then restarting the server…"
+
+#: src/app/Header.tsx
+msgid "Search"
+msgstr "Search"
+
+#: src/screens/Search.tsx
+msgid "Searching for “{q}”…"
+msgstr "Searching for “{q}”…"
+
+#: src/lib/format.ts
+msgid "Season {s}, episode {e}"
+msgstr "Season {s}, episode {e}"
+
+#: src/ui/Card.tsx
+msgid "See all"
+msgstr "See all"
+
+#: src/screens/Discover.tsx
+#: src/screens/Home.tsx
+msgid "See details"
+msgstr "See details"
+
+#: src/screens/Discover.tsx
+msgid "See details: {title}"
+msgstr "See details: {title}"
+
+#: src/screens/Title.tsx
+msgid "Seen"
+msgstr "Seen"
+
+#: src/screens/Discover.tsx
+msgid "Seen it"
+msgstr "Seen it"
+
+#: src/screens/Title.tsx
+msgid "Seen: episode {e}"
+msgstr "Seen: episode {e}"
+
+#: src/screens/Title.tsx
+msgid "Send"
+msgstr "Send"
+
+#: src/screens/Title.tsx
+msgid "Send episode {e}"
+msgstr "Send episode {e}"
+
+#: src/sheets/send.tsx
+msgid "Send to"
+msgstr "Send to"
+
+#: src/player/Player.tsx
+msgid "Send to another device"
+msgstr "Send to another device"
+
+#: src/sheets/send.tsx
+msgid "Sent to {name}"
+msgstr "Sent to {name}"
+
+#: src/screens/Categories.tsx
+#: src/screens/Discover.tsx
+msgid "Series"
+msgstr "Series"
+
+#: src/sheets/devices.tsx
+msgid "Server settings"
+msgstr "Server settings"
+
+#: src/screens/Setup.tsx
+msgid "Set in the .env file"
+msgstr "Set in the .env file"
+
+#: src/screens/Settings.tsx
+msgid "Settings"
+msgstr "Settings"
+
+#: src/screens/Setup.tsx
+msgid "Setup needed"
+msgstr "Setup needed"
+
+#: src/sheets/tracks.tsx
+msgid "Shift by {n}"
+msgstr "Shift by {n}"
+
+#: src/screens/Discover.tsx
+msgid "Show"
+msgstr "Show"
+
+#: src/screens/Browse.tsx
+msgid "Show more"
+msgstr "Show more"
+
+#: src/sheets/quality.tsx
+msgid "Shown in 1080p, when Real-Debrid can convert it"
+msgstr "Shown in 1080p, when Real-Debrid can convert it"
+
+#: src/ui/Wizard.tsx
+msgid "Skip"
+msgstr "Skip"
+
+#: src/sheets/indexer.tsx
+msgid "slow"
+msgstr "slow"
+
+#: src/sheets/devices.tsx
+msgid "Smooth"
+msgstr "Smooth"
+
+#: src/screens/Setup.tsx
+msgid "Something else answers at this address, not Player1."
+msgstr "Something else answers at this address, not Player1."
+
+#: src/player/engine.ts
+msgid "Sound muted by the browser: press any key to turn it on"
+msgstr "Sound muted by the browser: press any key to turn it on"
+
+#: src/screens/Setup.tsx
+#: src/screens/Title.tsx
+msgid "Sources"
+msgstr "Sources"
+
+#: src/player/engine.ts
+msgid "Spanish"
+msgstr "Spanish"
+
+#: src/sheets/presets.tsx
+msgid "Spoken"
+msgstr "Spoken"
+
+#: src/player/Player.tsx
+msgid "Start over"
+msgstr "Start over"
+
+#: src/player/engine.ts
+msgid "Starting"
+msgstr "Starting"
+
+#: src/sheets/devices.tsx
+msgid "Stuttered during a film: avoided"
+msgstr "Stuttered during a film: avoided"
+
+#: src/player/Player.tsx
+#: src/sheets/tracks.tsx
+msgid "Subtitles"
+msgstr "Subtitles"
+
+#: src/sheets/presets.tsx
+msgid "Subtitles only"
+msgstr "Subtitles only"
+
+#: src/screens/Discover.tsx
+msgid "Swipe right to add it to your watchlist, left to hide it."
+msgstr "Swipe right to add it to your watchlist, left to hide it."
+
+#: src/lib/format.ts
+msgid "TB"
+msgstr "TB"
+
+#: src/player/bench.ts
+#: src/sheets/devices.tsx
+msgid "Test {n} of {total}:"
+msgstr "Test {n} of {total}:"
+
+#: src/sheets/devices.tsx
+msgid "Test this device"
+msgstr "Test this device"
+
+#: src/sheets/devices.tsx
+msgid "Tested on {when}, {net} Mbit/s connection."
+msgstr "Tested on {when}, {net} Mbit/s connection."
+
+#: src/player/engine.ts
+msgid "Testing this device"
+msgstr "Testing this device"
+
+#: src/sheets/devices.tsx
+msgid "Testing…"
+msgstr "Testing…"
+
+#: src/screens/Setup.tsx
+msgid "The address you type to open Player1 from your devices. The TV app connects to it."
+msgstr "The address you type to open Player1 from your devices. The TV app connects to it."
+
+#: src/sheets/quality.tsx
+msgid "The best available in your language"
+msgstr "The best available in your language"
+
+#: src/sheets/quality.tsx
+msgid "The best source in your language at this quality"
+msgstr "The best source in your language at this quality"
+
+#: src/sheets/download.tsx
+msgid "The copy stopped before the end"
+msgstr "The copy stopped before the end"
+
+#: src/sheets/presets.tsx
+msgid "The languages you speak or read, in order"
+msgstr "The languages you speak or read, in order"
+
+#: src/screens/Settings.tsx
+msgid "The last build failed. {error}"
+msgstr "The last build failed. {error}"
+
+#: src/screens/Settings.tsx
+msgid "The new version didn’t pass its tests, so nothing changed. {error}"
+msgstr "The new version didn’t pass its tests, so nothing changed. {error}"
+
+#: src/screens/Settings.tsx
+msgid "The new version didn’t start, so the previous one is back. The next version will be tried when it comes out."
+msgstr "The new version didn’t start, so the previous one is back. The next version will be tried when it comes out."
+
+#: src/screens/Settings.tsx
+msgid "The new version is running."
+msgstr "The new version is running."
+
+#: src/screens/Settings.tsx
+msgid "The new version is running. If it fails in its first 2 minutes, the previous one comes back."
+msgstr "The new version is running. If it fails in its first 2 minutes, the previous one comes back."
+
+#: src/screens/Setup.tsx
+msgid "The one you log in to qBittorrent with"
+msgstr "The one you log in to qBittorrent with"
+
+#: src/player/movi.ts
+msgid "The player for original files couldn’t load"
+msgstr "The player for original files couldn’t load"
+
+#: src/lib/api.ts
+msgid "The server isn’t answering right now. Try again in a moment."
+msgstr "The server isn’t answering right now. Try again in a moment."
+
+#: src/screens/Setup.tsx
+msgid "The site’s Torznab address"
+msgstr "The site’s Torznab address"
+
+#: src/sheets/devices.tsx
+msgid "The test clip didn’t play"
+msgstr "The test clip didn’t play"
+
+#: src/sheets/devices.tsx
+msgid "The test couldn’t run"
+msgstr "The test couldn’t run"
+
+#: src/sheets/devices.tsx
+msgid "The test plays a few seconds of each format to find which ones this device shows smoothly."
+msgstr "The test plays a few seconds of each format to find which ones this device shows smoothly."
+
+#: src/screens/Settings.tsx
+msgid "The TV’s address"
+msgstr "The TV’s address"
+
+#: src/sheets/profiles.tsx
+msgid "Their lists and what they’ve watched are deleted too"
+msgstr "Their lists and what they’ve watched are deleted too"
+
+#: src/player/engine.ts
+msgid "These subtitles couldn’t be loaded"
+msgstr "These subtitles couldn’t be loaded"
+
+#: src/screens/Setup.tsx
+msgid "This addon can’t list sources. Use another one."
+msgstr "This addon can’t list sources. Use another one."
+
+#: src/player/bench.ts
+msgid "This browser can’t play original files by itself"
+msgstr "This browser can’t play original files by itself"
+
+#: src/sheets/devices.tsx
+msgid "This device"
+msgstr "This device"
+
+#: src/screens/Setup.tsx
+msgid "This device can’t open this address."
+msgstr "This device can’t open this address."
+
+#: src/sheets/devices.tsx
+msgid "This device can’t play it"
+msgstr "This device can’t play it"
+
+#: src/sheets/devices.tsx
+msgid "This device plays the film as it is, without waiting for Real-Debrid to convert it"
+msgstr "This device plays the film as it is, without waiting for Real-Debrid to convert it"
+
+#: src/player/engine.ts
+msgid "This device struggles with this version: switching to another"
+msgstr "This device struggles with this version: switching to another"
+
+#: src/sheets/devices.tsx
+msgid "This device’s name"
+msgstr "This device’s name"
+
+#: src/screens/Setup.tsx
+msgid "This folder doesn’t exist on this server"
+msgstr "This folder doesn’t exist on this server"
+
+#: src/player/engine.ts
+msgid "This happens once. It takes a few seconds to learn which versions this device plays well."
+msgstr "This happens once. It takes a few seconds to learn which versions this device plays well."
+
+#: src/screens/Settings.tsx
+#: src/screens/Setup.tsx
+#: src/sheets/devices.tsx
+msgid "This server"
+msgstr "This server"
+
+#: src/screens/Settings.tsx
+msgid "This server can’t reach the place updates come from ({error}). If it’s a private git repository, the server needs its own access key."
+msgstr "This server can’t reach the place updates come from ({error}). If it’s a private git repository, the server needs its own access key."
+
+#: src/screens/Setup.tsx
+msgid "This server’s address"
+msgstr "This server’s address"
+
+#: src/screens/Title.tsx
+msgid "This title can’t be played: it isn’t listed on IMDb, which Player1 needs to find sources."
+msgstr "This title can’t be played: it isn’t listed on IMDb, which Player1 needs to find sources."
+
+#: src/player/Player.tsx
+msgid "This version is already in Jellyfin"
+msgstr "This version is already in Jellyfin"
+
+#: src/sheets/download.tsx
+msgid "This version is gone from qBittorrent and from the torrent site. Search again."
+msgstr "This version is gone from qBittorrent and from the torrent site. Search again."
+
+#: src/screens/Setup.tsx
+msgid "TMDB"
+msgstr "TMDB"
+
+#: src/screens/Setup.tsx
+msgid "To set up Player1, open the link the installer showed at the end. It’s also in the server’s log, on the line that starts with “setup”."
+msgstr "To set up Player1, open the link the installer showed at the end. It’s also in the server’s log, on the line that starts with “setup”."
+
+#: src/sheets/devices.tsx
+msgid "Too slow: can’t keep up with the video"
+msgstr "Too slow: can’t keep up with the video"
+
+#: src/screens/Setup.tsx
+msgid "Torrent site"
+msgstr "Torrent site"
+
+#: src/screens/Discover.tsx
+msgid "Trailer"
+msgstr "Trailer"
+
+#: src/player/engine.ts
+msgid "Try another source in Quality."
+msgstr "Try another source in Quality."
+
+#: src/screens/Settings.tsx
+msgid "TV apps"
+msgstr "TV apps"
+
+#: src/player/engine.ts
+msgid "Unknown language"
+msgstr "Unknown language"
+
+#: src/screens/Settings.tsx
+msgid "Up to date, checked on {when}."
+msgstr "Up to date, checked on {when}."
+
+#: src/screens/Settings.tsx
+msgid "Updates"
+msgstr "Updates"
+
+#: src/screens/Settings.tsx
+msgid "Updates are paused: Player1’s files were changed by hand on this server."
+msgstr "Updates are paused: Player1’s files were changed by hand on this server."
+
+#: src/screens/Settings.tsx
+msgid "Updates are paused: this installation has changes of its own that the official version doesn’t have."
+msgstr "Updates are paused: this installation has changes of its own that the official version doesn’t have."
+
+#: src/screens/Settings.tsx
+msgid "Updates aren’t set up: this installation isn’t linked to a git repository."
+msgstr "Updates aren’t set up: this installation isn’t linked to a git repository."
+
+#: src/screens/Setup.tsx
+msgid "Use C411"
+msgstr "Use C411"
+
+#: src/screens/Setup.tsx
+msgid "Username"
+msgstr "Username"
+
+#: src/screens/Settings.tsx
+msgid "Version {commit} from {date}."
+msgstr "Version {commit} from {date}."
+
+#: src/screens/Settings.tsx
+msgid "Version {commit}."
+msgstr "Version {commit}."
+
+#: src/screens/Settings.tsx
+msgid "Version {version}"
+msgstr "Version {version}"
+
+#: src/sheets/devices.tsx
+#: src/sheets/download.tsx
+msgid "Waiting"
+msgstr "Waiting"
+
+#: src/screens/Title.tsx
+msgid "Watch again from the start"
+msgstr "Watch again from the start"
+
+#: src/app/state.ts
+#: src/screens/Discover.tsx
+msgid "Watchlist"
+msgstr "Watchlist"
+
+#: src/screens/Setup.tsx
+#: src/screens/Welcome.tsx
+msgid "Welcome"
+msgstr "Welcome"
+
+#: src/sheets/presets.tsx
+msgid "What Player1 will look for, in this order"
+msgstr "What Player1 will look for, in this order"
+
+#: src/screens/Settings.tsx
+msgid "What this server is set up with, for the whole household."
+msgstr "What this server is set up with, for the whole household."
+
+#: src/screens/Welcome.tsx
+msgid "What you just set up is a preset. You can keep several and switch from the top of the screen: one for you, one for watching with the kids, one to practise a language."
+msgstr "What you just set up is a preset. You can keep several and switch from the top of the screen: one for you, one for watching with the kids, one to practise a language."
+
+#: src/screens/Setup.tsx
+msgid "Where Player1 finds what Real-Debrid can play. Leave empty for Torrentio, or paste the address of another Stremio addon."
+msgstr "Where Player1 finds what Real-Debrid can play. Leave empty for Torrentio, or paste the address of another Stremio addon."
+
+#: src/screens/Setup.tsx
+msgid "Where to look when Real-Debrid doesn’t have a title, French versions for example. Paste its Torznab address (C411, Prowlarr and Jackett give you one)."
+msgstr "Where to look when Real-Debrid doesn’t have a title, French versions for example. Paste its Torznab address (C411, Prowlarr and Jackett give you one)."
+
+#: src/screens/Who.tsx
+msgid "Who’s watching?"
+msgstr "Who’s watching?"
+
+#: src/sheets/devices.tsx
+msgid "Yes"
+msgstr "Yes"
+
+#: src/screens/Welcome.tsx
+msgid "Your languages"
+msgstr "Your languages"
+
+#: src/screens/Setup.tsx
+msgid "Your own film library. What’s already in it plays first, and you can download any film into it to keep."
+msgstr "Your own film library. What’s already in it plays first, and you can download any film into it to keep."
+
+#: src/screens/Welcome.tsx
+msgid "Your profile"
+msgstr "Your profile"

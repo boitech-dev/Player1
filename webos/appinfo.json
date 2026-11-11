@@ -1,0 +1,14 @@
+{
+	"id": "dev.adriweb.player1",
+	"version": "1.2.0",
+	"vendor": "Player1",
+	"type": "web",
+	"main": "index.html",
+	"title": "Player1",
+	"icon": "icon.png",
+	"largeIcon": "largeIcon.png",
+	"iconColor": "#17121f",
+	"bgColor": "#17121f",
+	"resolution": "1920x1080",
+	"requiredACG": ["network.query"]
+}

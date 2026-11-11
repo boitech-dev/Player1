@@ -1,0 +1,18 @@
+# TV app libraries: exact files and their sha256. Regenerate after editing deps.pom.xml (Maven resolves it: mvn dependency:list -DincludeScope=runtime).
+https://dl.google.com/android/maven2/androidx/media3/media3-exoplayer/1.11.1/media3-exoplayer-1.11.1.aar 588592baec110837c33ce0c82bb76464203e6b0621177bbe5d88779001a6f1ed
+https://dl.google.com/android/maven2/androidx/media3/media3-common/1.11.1/media3-common-1.11.1.aar 50813cf219c7c93ed8a32a750891ca6d1280729ecf7a90c49567adacd67ef31b
+https://repo1.maven.org/maven2/com/google/guava/guava/33.3.1-android/guava-33.3.1-android.jar 2c3e41d1b380f2044d257947a3aa82dabf3ae4b978622745254aa18b6cf89ab0
+https://repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.2/failureaccess-1.0.2.jar 8a8f81cf9b359e3f6dfa691a1e776985c061ef2f223c9b2c80753e1b458e8064
+https://repo1.maven.org/maven2/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar b372a037d4230aa57fbeffdef30fd6123f9c0c2db85d0aced00c91b974f33f99
+https://dl.google.com/android/maven2/androidx/annotation/annotation-experimental/1.3.1/annotation-experimental-1.3.1.aar e4d49dc3880b7b7437ea54ce71461e02897faa4e1ecc53e63ecadb1a14c20c9c
+https://dl.google.com/android/maven2/androidx/media3/media3-container/1.11.1/media3-container-1.11.1.aar 930fca2f018f06f1d08c12599f8c97f31eddbd728edee5de06eb53a882f8fc54
+https://dl.google.com/android/maven2/androidx/media3/media3-datasource/1.11.1/media3-datasource-1.11.1.aar 490fd23c7562a6a1183d63bf854b291ae3a77dce5a151450aa1937148c80c60b
+https://dl.google.com/android/maven2/androidx/media3/media3-decoder/1.11.1/media3-decoder-1.11.1.aar c3bcd704959026e0d644b0260f9e682a2e26e7357c2cf82d990bcb323f800d49
+https://dl.google.com/android/maven2/androidx/media3/media3-extractor/1.11.1/media3-extractor-1.11.1.aar 6b2d58d23a0c53425249d8b7c945600019d61a8b404c8fb8cd9ca860c5738508
+https://dl.google.com/android/maven2/androidx/media3/media3-database/1.11.1/media3-database-1.11.1.aar 520e6f814e42a7d428db187ac073b453c0fcba0f4f5f4edd1cf33fafd2cfb740
+https://dl.google.com/android/maven2/androidx/annotation/annotation/1.6.0/annotation-1.6.0.jar fbc64f5c44a7added8b6eab517cf7d70555e25153bf5d44a6ed9b0e5312f7de9
+https://dl.google.com/android/maven2/androidx/exifinterface/exifinterface/1.3.6/exifinterface-1.3.6.aar 1804105e9e05fdd8f760413bad5de498c381aa329f4f9d94c851bc891ac654c6
+https://repo1.maven.org/maven2/io/github/anilbeesetti/nextlib-media3ext/1.11.1-0.18.0/nextlib-media3ext-1.11.1-0.18.0.aar 5895b62ddef43653894a16f8a705a5781c868443423ef02f7d226484da8c61a4
+https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.2.10/kotlin-stdlib-2.2.10.jar 9c67cc79efd6b9215b49d2a4308f5f3433537376c7c88e89bdd6729bd096e61a
+https://repo1.maven.org/maven2/org/jetbrains/annotations/13.0/annotations-13.0.jar ace2a10dc8e2d5fd34925ecac03e4988b2c0f851650c94b8cef49ba1bd111478
+https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.51.0/error_prone_annotations-2.51.0.jar 51a6d8348c7e307e47183859c07597dc8a2899c5d1b6f18a471bccaa3203d5cf

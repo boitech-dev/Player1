@@ -1,0 +1,247 @@
+@use "../styles/media" as *;
+
+// the play page: full screen over everything, shown while the engine is open
+.player {
+	position: fixed;
+	inset: 0;
+	z-index: 10;
+	background: #000;
+	display: none;
+
+	video,
+	:global(movi-player) {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	// TV app: the native video is drawn under the page, which clears its background while it plays
+	:global(html[data-native]) & {
+		background: transparent;
+	}
+}
+
+.open {
+	display: block;
+}
+
+.spacer {
+	flex: 1;
+}
+
+.chrome {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	transition: opacity 0.25s;
+
+	.idle & {
+		opacity: 0;
+		cursor: none;
+	}
+}
+
+.top,
+.bottom {
+	padding: 20px var(--gutter);
+}
+
+.top {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	background: linear-gradient(#000c, #0000);
+
+	h3 {
+		margin: 0;
+		font: 800 32px/1 var(--display);
+	}
+
+	small {
+		display: block;
+		color: #cfc6d8;
+		font-size: 14px;
+		margin-top: 4px;
+	}
+}
+
+.bottom {
+	background: linear-gradient(#0000, #000d 40%);
+	padding-top: 60px;
+}
+
+.bar {
+	position: relative;
+	height: 28px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+
+	&::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 5px;
+		border-radius: 3px;
+		background: #ffffff33;
+	}
+
+	i {
+		position: absolute;
+		left: 0;
+		height: 5px;
+		border-radius: 3px;
+		background: var(--lampe);
+	}
+}
+
+.times {
+	display: flex;
+	justify-content: space-between;
+	color: #ddd;
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+	margin: 0 0 12px;
+}
+
+.ctrls {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	flex-wrap: wrap;
+
+	> button {
+		background: #ffffff1f;
+
+		&:hover {
+			background: #ffffff33;
+		}
+	}
+
+	// after the hover rule: play/pause stays lit when hovered
+	> button.pp {
+		width: 64px;
+		height: 64px;
+		background: var(--ecran);
+		color: #000;
+	}
+
+	@include phone {
+		> button span {
+			display: none;
+		}
+
+		> .track {
+			width: 48px;
+			padding: 0;
+			justify-content: center;
+		}
+	}
+}
+
+.nextUp {
+	position: absolute;
+	right: clamp(16px, 4vw, 48px);
+	bottom: clamp(140px, 28vh, 240px);
+	z-index: 5;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	max-width: 340px;
+	padding: 16px 18px;
+	border-radius: 18px;
+	background: color-mix(in srgb, var(--velours) 88%, transparent);
+	box-shadow: 0 10px 40px #0008;
+
+	small {
+		color: var(--brume);
+		font-size: 13px;
+	}
+
+	b {
+		font: 800 22px/1.1 var(--display);
+	}
+
+	> button {
+		margin-top: 6px;
+		justify-content: center;
+		font-weight: 700;
+	}
+}
+
+.cue {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 8%;
+	padding: 0 8%;
+	text-align: center;
+	pointer-events: none;
+	transition: bottom 0.25s;
+	font: 600 clamp(20px, 2.8vw, 46px)/1.3 var(--body);
+	color: #fff;
+	text-shadow:
+		0 0 3px #000,
+		0 0 3px #000,
+		0 2px 4px #000;
+
+	// above the controls while they show
+	.player:not(.idle) & {
+		bottom: max(8%, 190px);
+	}
+}
+
+// subtitles drawn as pictures, placed by the engine
+.ncue {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+
+	img {
+		position: absolute;
+		transform: translate(-50%, -100%);
+	}
+}
+
+// the loading message, over a dimmed picture of the title
+.wait {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-content: center;
+	text-align: center;
+	gap: 16px;
+	padding: 0 var(--gutter);
+	pointer-events: none;
+	background: radial-gradient(closest-side, #17121fd9, #17121f8c) center/cover;
+
+	p {
+		margin: 0;
+		font: 800 clamp(30px, 4vw, 52px)/1 var(--display);
+	}
+
+	small {
+		color: var(--brume);
+		font-size: 16px;
+	}
+}
+
+// the one motion moment: a lamp beam sweeping while a source is being found
+.beam {
+	width: min(420px, 70vw);
+	height: 4px;
+	border-radius: 2px;
+	margin: 0 auto 8px;
+	background: linear-gradient(90deg, #f5c46b00, var(--lampe), #f5c46b00) 0
+		0/40% 100% no-repeat #ffffff14;
+	animation: sweep 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes sweep {
+	to {
+		background-position: 100% 0;
+	}
+}
