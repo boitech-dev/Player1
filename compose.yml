@@ -2,7 +2,13 @@
 # compose.override.yml (folders to mount); every other setting lives in data/config.json, edited from the app.
 services:
   player1:
-    build: .
+    build:
+      context: .
+      # Debian (glibc), not Alpine: the Node runtimes run.mjs downloads and the Android build tools are glibc binaries.
+      # ffprobe reads the tracks of library files (nothing here converts video); git fetches updates; xz unpacks Node runtimes.
+      dockerfile_inline: |
+        FROM node:26-trixie-slim
+        RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg git ca-certificates xz-utils && rm -rf /var/lib/apt/lists/*
     working_dir: /app
     command: node run.mjs # keeps the server up, installs updates from master (see run.mjs)
     user: "${PUID:-1000}:${PGID:-1000}" # the checkout's owner: git and data/ stay theirs

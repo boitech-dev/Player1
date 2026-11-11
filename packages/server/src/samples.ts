@@ -1,12 +1,15 @@
 // The device test's clips: 8 seconds of Sol Levante (© Netflix, CC BY 4.0) in each format a device is
-// tested on. samples/make.mjs encoded them once; they are published as release files, and each
-// server fetches them into samples/ when it starts. Nothing here reads or converts video.
+// tested on. packages/server/make-samples.mjs encoded them once; they are published as release files, and each
+// server fetches them into data/samples/ when it starts. Nothing here reads or converts video.
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
 import type { TestClip } from '@player1/shared/release';
 
+import { DATA } from './config.ts';
+
+export const SAMPLES = path.join(DATA, 'samples');
 const FROM = 'https://github.com/boitech-dev/Player1/releases/download/samples-1/';
 
 export interface Clip extends TestClip {
@@ -14,7 +17,7 @@ export interface Clip extends TestClip {
 	sha256: string;
 }
 
-/** as samples/make.mjs printed them */
+/** as make-samples.mjs printed them */
 export const CLIPS: Clip[] = [
 	{
 		key: 'h264',
@@ -64,7 +67,7 @@ const has = async (dir: string, c: Clip) =>
 	(await fs.promises.stat(fileOf(dir, c)).catch(() => null))?.size === c.bytes;
 
 /** whether every clip is here: the test runs on all of them or not at all */
-export const clipsReady = async (dir = 'samples', clips = CLIPS) =>
+export const clipsReady = async (dir = SAMPLES, clips = CLIPS) =>
 	(await Promise.all(clips.map(c => has(dir, c)))).every(Boolean);
 
 async function fetchClip(dir: string, c: Clip, from: string) {
@@ -80,7 +83,7 @@ async function fetchClip(dir: string, c: Clip, from: string) {
 
 let fetching: Promise<void> | null = null;
 /** fetches the clips that are missing, once at a time; a failure is logged and tried again at the next call */
-export function fetchClips(dir = 'samples', clips = CLIPS, from = FROM) {
+export function fetchClips(dir = SAMPLES, clips = CLIPS, from = FROM) {
 	fetching ??= (async () => {
 		await fs.promises.mkdir(dir, { recursive: true });
 		for (const c of clips) if (!await has(dir, c)) await fetchClip(dir, c, from);

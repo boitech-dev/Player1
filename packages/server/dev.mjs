@@ -1,5 +1,5 @@
-// Development: runs the server bundle the way run.mjs does (from the repo root, where icons/ and
-// samples/ are), again after every rebuild of dist/server.mjs, and again after it exits (saving the
+// Development: runs the server bundle the way run.mjs does (from the repo root, where packages/web/icons/
+// is), again after every rebuild of dist/server.mjs, and again after it exits (saving the
 // settings restarts the server on purpose).
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';

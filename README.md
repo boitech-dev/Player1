@@ -236,7 +236,7 @@ Jellyfin library.
 <br>
 
 If you'd rather write the site yourself, answer "at home only" and start from
-[apache.conf.example](apache.conf.example) or [nginx.conf.example](nginx.conf.example). The proxy has to pass
+[apache.conf.example](docs/apache.conf.example) or [nginx.conf.example](docs/nginx.conf.example). The proxy has to pass
 `X-Forwarded-Proto`, and must not cut or buffer `/api/events`, which stays open. Then set the address in Server
 settings.
 

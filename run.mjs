@@ -6,7 +6,7 @@
 // An update is built and tried aside before it replaces anything:
 //  1. fetch master; stop if nothing is new, the checkout has local changes, or this commit was
 //     already rolled back
-//  2. check out the new code in data/stage, fetch the Node version it asks for (.node-version)
+//  2. check out the new code in data/stage, fetch the Node version it asks for (package.json engines.node)
 //  3. install its packages and run every check: types, lint, tests, then the build (data/app.next)
 //  4. try it: a real start on a copy of the settings and household data
 //  5. switch: git moves to the new commit, data/app.next becomes data/app (the previous build kept
@@ -80,7 +80,7 @@ function swapBack(dir) {
 	fs.renameSync(`${dir}.prev`, dir);
 }
 
-// --- Node runtime: the one the code asks for in .node-version; the one running this file when
+// --- Node runtime: the one the code asks for in package.json (engines.node); the one running this file when
 // it is that or newer ---
 const newer = (a, b) => {
 	const x = a.split('.').map(Number);
@@ -88,8 +88,7 @@ const newer = (a, b) => {
 	return x[0] === y[0] && (x[1] - y[1] || x[2] - y[2]) >= 0;
 };
 async function nodeFor(dir) {
-	const file = `${dir}/.node-version`;
-	const want = fs.existsSync(file) && fs.readFileSync(file, 'utf8').trim();
+	const want = JSON.parse(fs.readFileSync(`${dir}/package.json`, 'utf8')).engines?.node;
 	if (!want || newer(process.version.slice(1), want)) return process.execPath;
 	const arch = {
 		x64: 'x64',

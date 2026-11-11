@@ -11,9 +11,5 @@ tv/*.keystore
 tv/version
 tv/out/
 webos/out/
-# the device test's clips: fetched by the server (packages/server/src/samples.ts)
-samples/*.mkv
-samples/*.part
-samples/work/
 compose.override.yml
 .claude/worktrees/

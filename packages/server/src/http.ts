@@ -46,6 +46,7 @@ import {
 	CLIPS,
 	clipsReady,
 	fetchClips,
+	SAMPLES,
 } from './samples.ts';
 import {
 	requestUpdate,
@@ -280,7 +281,9 @@ function icon(res: ServerResponse, [, name = '', ext]: string[]) {
 		'content-type': ext === 'svg' ? 'image/svg+xml' : 'image/png',
 		'cache-control': 'public, max-age=86400',
 	});
-	fs.createReadStream(path.resolve('icons', name)).on('error', () => res.end()).pipe(res);
+	fs.createReadStream(path.resolve('packages/web/icons', name))
+		.on('error', () => res.end())
+		.pipe(res);
 }
 // the device test's clips (samples.ts): their list, then each one; ranged: the player reads the .mkv in pieces
 async function sample(req: Req, res: Res, [, name = '']: string[]) {
@@ -289,7 +292,7 @@ async function sample(req: Req, res: Res, [, name = '']: string[]) {
 		return res.writeHead(404).end();
 	}
 	if (name === 'index.json') return json(res, 200, CLIPS);
-	return sendRange(req, res, path.resolve('samples', name), 'video/x-matroska');
+	return sendRange(req, res, path.join(SAMPLES, name), 'video/x-matroska');
 }
 const MANIFEST = JSON.stringify({
 	name: 'Player1',

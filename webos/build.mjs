@@ -19,7 +19,7 @@ const SITE = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
 const info = JSON.parse(fs.readFileSync(`${WEBOS}/appinfo.json`, 'utf8'));
 const { id, version } = info;
 const page = fs.readFileSync(`${WEBOS}/index.html`, 'utf8');
-// the sizes webOS asks for (80 and 130 px), drawn from icons/icon-512.png
+// the sizes webOS asks for (80 and 130 px), drawn from packages/web/icons/icon-512.png
 const icon = fs.readFileSync(`${WEBOS}/icon.png`);
 const largeIcon = fs.readFileSync(`${WEBOS}/largeIcon.png`);
 const app = `usr/palm/applications/${id}`, pkg = `usr/palm/packages/${id}`;

@@ -4,6 +4,9 @@
 	"license": "AGPL-3.0-only",
 	"type": "module",
 	"description": "Player1: a household streaming app over Real-Debrid, a Torznab indexer, qBittorrent and Jellyfin",
+	"engines": {
+		"node": "26.13.0"
+	},
 	"workspaces": [
 		"packages/shared",
 		"packages/server",
@@ -19,8 +22,8 @@
 		"lint:fix": "eslint . --fix && npm run lint:css:fix",
 		"lint:css": "prettier --check \"packages/**/*.{css,scss}\"",
 		"lint:css:fix": "prettier --write \"packages/**/*.{css,scss}\"",
-		"test": "vitest run",
-		"test:watch": "vitest",
+		"test": "vitest run -c packages/vitest.config.ts",
+		"test:watch": "vitest -c packages/vitest.config.ts",
 		"i18n:extract": "npm run extract --workspaces --if-present",
 		"check": "npm run typecheck && npm run lint && npm test && npm run build"
 	},
@@ -41,5 +44,10 @@
 	},
 	"allowScripts": {
 		"@parcel/watcher": false
+	},
+	"prettier": {
+		"printWidth": 80,
+		"tabWidth": 4,
+		"useTabs": true
 	}
 }

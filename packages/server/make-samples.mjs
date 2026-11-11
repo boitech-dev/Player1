@@ -6,12 +6,12 @@
 // files, which each server fetches at its first start (packages/server/src/samples.ts). To change the clips: run
 // it where encoding is fine (ffmpeg with libx264, libx265, libsvtav1), publish the files under a new release
 // name, and paste what it prints into samples.ts.
-//   node samples/make.mjs [work folder]     the masters' 8 seconds (1.6 GB) are kept there between runs
+//   node packages/server/make-samples.mjs [work folder]     clips to data/samples/; the masters' 8 seconds (1.6 GB) stay in the work folder between runs
 import { execFileSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 
-const out = new URL('.', import.meta.url).pathname, work = process.argv[2] || out + 'work/';
+const out = 'data/samples/', work = process.argv[2] || out + 'work/';
 const MASTERS = 'http://download.opencontent.netflix.com.s3.amazonaws.com/SolLevante/';
 const AT = 46, SECS = 8; // the forest: fine detail everywhere, which is what costs a decoder
 const THREADS = 6;

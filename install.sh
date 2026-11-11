@@ -159,14 +159,14 @@ cert() { # cert <apache|nginx>: HTTPS for the site just written, from Let's Encr
   $SUDO certbot "--$1" --redirect --keep-until-expiring -d "$DOMAIN" < /dev/tty || true
 }
 front_apache() {
-  if [ -d /etc/apache2/sites-available ]; then site apache.conf.example /etc/apache2/sites-available/player1.conf; $SUDO a2enmod -q proxy proxy_http headers; $SUDO a2ensite -q player1
-  else site apache.conf.example /etc/httpd/conf.d/player1.conf; fi
+  if [ -d /etc/apache2/sites-available ]; then site docs/apache.conf.example /etc/apache2/sites-available/player1.conf; $SUDO a2enmod -q proxy proxy_http headers; $SUDO a2ensite -q player1
+  else site docs/apache.conf.example /etc/httpd/conf.d/player1.conf; fi
   $SUDO apachectl configtest 2>/dev/null; $SUDO systemctl reload apache2 2>/dev/null || $SUDO systemctl reload httpd
   ok "Site $DOMAIN ajouté à Apache" "Site $DOMAIN added to Apache"; cert apache
 }
 front_nginx() {
-  if [ -d /etc/nginx/sites-enabled ]; then site nginx.conf.example /etc/nginx/sites-available/player1; $SUDO ln -sf ../sites-available/player1 /etc/nginx/sites-enabled/player1
-  else site nginx.conf.example /etc/nginx/conf.d/player1.conf; fi
+  if [ -d /etc/nginx/sites-enabled ]; then site docs/nginx.conf.example /etc/nginx/sites-available/player1; $SUDO ln -sf ../sites-available/player1 /etc/nginx/sites-enabled/player1
+  else site docs/nginx.conf.example /etc/nginx/conf.d/player1.conf; fi
   $SUDO nginx -t 2>/dev/null; $SUDO systemctl reload nginx
   ok "Site $DOMAIN ajouté à Nginx" "Site $DOMAIN added to Nginx"; cert nginx
 }
@@ -474,7 +474,7 @@ else
   NODE=$(command -v node || true)
   if [ -z "$NODE" ] || [ "$("$NODE" -p 'process.versions.node.split(".")[0]')" -lt "$NODE_MAJOR" ]; then
     have curl || die "curl est nécessaire" "curl is required"; have xz || die "xz est nécessaire (apt install xz-utils)" "xz is required (apt install xz-utils)"
-    NV="v$(cat .node-version)"; NN="node-$NV-linux-$(uname -m | sed 's/x86_64/x64/; s/aarch64/arm64/')"; NODE="$DIR/data/runtime/$NN/bin/node"
+    NV="v$(sed -n 's/^[[:space:]]*"node": "\([0-9.]*\)".*/\1/p' package.json)"; NN="node-$NV-linux-$(uname -m | sed 's/x86_64/x64/; s/aarch64/arm64/')"; NODE="$DIR/data/runtime/$NN/bin/node"
     get_node() {
       mkdir -p data/runtime && cd data/runtime
       curl -fsSLO "https://nodejs.org/dist/$NV/$NN.tar.xz" && curl -fsSL "https://nodejs.org/dist/$NV/SHASUMS256.txt" | grep " $NN.tar.xz\$" | sha256sum -c - >/dev/null
