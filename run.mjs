@@ -186,7 +186,7 @@ const restart = () => {
 };
 setInterval(() => {
 	const t = state().trial;
-	if (t && child && Date.now() - startedAt > TRIAL) {
+	if (t && child && !restarting && Date.now() - startedAt > TRIAL) { // not the old server's uptime
 		save({
 			trial: null,
 			status: 'updated',
