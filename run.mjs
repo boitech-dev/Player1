@@ -331,8 +331,32 @@ function ensureWebos() {
 
 // --- updates ---
 let busy = false;
-/** where master stands: null when there's nothing to install (the reason saved) */
-function whatsNew() {
+const isAncestor = (a, b) => {
+	try {
+		git('merge-base', '--is-ancestor', a, b);
+		return true;
+	} catch {
+		return false;
+	}
+};
+
+/** why the commit asked for isn't installed, or null to install it */
+function waitFor({ want, s, head, latest, next, testing }) {
+	// a test commit stays until master moves on, another test comes, or want.public
+	if (testing && !want.test && !want.public && s.test.base === latest) return 'testing';
+	if (head === next) return testing ? 'testing' : 'latest';
+	if (git('status', '--porcelain', '--untracked-files=no')) return 'local-changes';
+	if (want.test) return null;
+	if (s.bad === next) return 'rolled-back'; // waits for a newer commit
+	if (!testing && !isAncestor(head, next)) return 'diverged'; // leaving a test commit needs no fast-forward
+	return null;
+}
+
+/**
+ * where master stands: null when there's nothing to install (the reason saved). want.test: a commit of
+ * this repository to try (pushed here by its developer); want.public: back to master from one
+ */
+function whatsNew(want = {}) {
 	try {
 		git('remote', 'get-url', 'origin');
 	} catch {
@@ -350,28 +374,35 @@ function whatsNew() {
 		}) && null;
 	}
 	const head = git('rev-parse', 'HEAD');
-	const next = git('rev-parse', 'origin/master');
+	const latest = git('rev-parse', 'origin/master');
 	const s = save({
 		checked: Date.now(),
 		head,
-		latest: next,
+		latest,
 	});
-	if (head === next) return save({
-		status: 'latest',
+	const testing = s.test?.sha === head;
+	const next = want.test ? git('rev-parse', '--verify', `${want.test}^{commit}`) : latest;
+	const status = waitFor({
+		want,
+		s,
+		head,
+		latest,
+		next,
+		testing,
+	});
+	if (status) return save({
+		status,
 		error: null,
 	}) && null;
-	const changed = git('status', '--porcelain', '--untracked-files=no');
-	if (changed) return save({ status: 'local-changes' }) && null;
-	try {
-		git('merge-base', '--is-ancestor', head, next);
-	} catch {
-		return save({ status: 'diverged' }) && null;
-	}
-	if (s.bad === next) return save({ status: 'rolled-back' }) && null; // waits for a newer commit
 	return {
 		head,
 		next,
 		s,
+		jump: !!want.test || testing,
+		test: want.test ? {
+			sha: next,
+			base: latest,
+		} : null,
 	};
 }
 
@@ -390,7 +421,7 @@ function dropStage(stage) {
 }
 
 /** the staged commit: built, checked, tried, then switched to */
-async function install({ head, next, s }, stage) {
+async function install({ head, next, s, jump, test }, stage) {
 	log('trying', next.slice(0, 7));
 	save({ status: 'building' });
 	dropStage(stage);
@@ -429,8 +460,10 @@ async function install({ head, next, s }, stage) {
 			tvError: null,
 		});
 	}
-	git('merge', '--ff-only', '--quiet', next);
+	if (jump) git('reset', '--hard', '--quiet', next);
+	else git('merge', '--ff-only', '--quiet', next);
 	save({
+		test,
 		node: node === process.execPath ? null : node,
 		trial: {
 			sha: next,
@@ -448,12 +481,12 @@ async function install({ head, next, s }, stage) {
 	restart();
 }
 
-async function update() {
+async function update(want) {
 	if (busy || cfg().UPDATES === 'off' || !fs.existsSync('.git')) return;
 	busy = true;
 	const stage = `${DATA}/stage`;
 	try {
-		const n = whatsNew();
+		const n = whatsNew(want);
 		if (n) await install(n, stage);
 	} catch (err) {
 		log('failed:', err.message);
@@ -511,12 +544,13 @@ ensureWebos();
 setTimeout(update, 60e3);
 setInterval(update, EVERY);
 // the settings screen asks through a file: data/update.request = "update" (check now) or "tv"
-// (rebuild the TV app)
+// (rebuild the TV app); a developer's "test <commit>" (try that commit) or "public" (back to master)
 setInterval(() => {
 	const f = `${DATA}/update.request`;
 	if (!fs.existsSync(f)) return;
 	const what = fs.readFileSync(f, 'utf8').trim();
 	rm(f);
 	if (what === 'tv') ensureTv(true);
-	else update();
+	else if (what.startsWith('test ')) update({ test: what.slice(5) });
+	else update({ public: what === 'public' });
 }, 5000);

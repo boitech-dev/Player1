@@ -131,6 +131,10 @@ msgid "{user} isn’t a premium account. Real-Debrid needs one."
 msgstr "{user} isn’t a premium account. Real-Debrid needs one."
 
 #: src/screens/Settings.tsx
+msgid "A test version is running. The next release replaces it."
+msgstr "A test version is running. The next release replaces it."
+
+#: src/screens/Settings.tsx
 msgid "A TV with Homebrew Channel installs it by itself: in Homebrew Channel’s settings, add this repository, then pick Player1 in the list."
 msgstr "A TV with Homebrew Channel installs it by itself: in Homebrew Channel’s settings, add this repository, then pick Player1 in the list."
 

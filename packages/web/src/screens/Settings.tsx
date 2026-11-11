@@ -150,6 +150,7 @@ function updateSays(u: UpdateInfo): [Lamp, string] {
 			'bad',
 			t`Updates are paused: this installation has changes of its own that the official version doesn’t have.`,
 		];
+		case 'testing': return ['wait', t`A test version is running. The next release replaces it.`];
 		default: return ['', t`Not checked yet.`];
 	}
 }

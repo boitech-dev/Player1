@@ -401,7 +401,7 @@ export interface SettingView {
 }
 
 export type UpdateStatus = 'latest' | 'building' | 'trial' | 'updated' | 'failed' | 'rolled-back'
-	| 'unreachable' | 'no-remote' | 'local-changes' | 'diverged';
+	| 'unreachable' | 'no-remote' | 'local-changes' | 'diverged' | 'testing';
 
 export interface UpdateInfo {
 	commit?: string;
