@@ -115,6 +115,8 @@ export interface ProgressInfo {
 	lang?: string | null;
 	s?: number;
 	e?: number;
+	/** the episode after this one: what "Resume" offers once this one is finished */
+	next?: { s: number; e: number; art?: string };
 }
 
 export interface Progress extends ProgressInfo {
@@ -230,6 +232,13 @@ export interface MediaTrack extends Track {
 	url?: string;
 }
 
+/** where an episode's end credits run, in seconds: the next episode is offered meanwhile */
+export interface Outro {
+	from: number;
+	to: number;
+}
+
+/** the episode before or after the one playing */
 export interface NextEpisode {
 	s: number;
 	e: number;
@@ -265,6 +274,9 @@ export interface Playing {
 		pick: TrackPick | null;
 	};
 	next?: NextEpisode | null;
+	prev?: NextEpisode | null;
+	/** known from the file's chapter marks or from TheIntroDB; absent = not known */
+	outro?: Outro;
 }
 
 export interface PendingInfo {

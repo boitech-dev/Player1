@@ -7,7 +7,6 @@ import type {
 import type {
 	Item,
 	ListEntry,
-	Progress,
 } from '@player1/shared/api';
 
 import {
@@ -22,6 +21,10 @@ import {
 	episodeName,
 	hms,
 } from '../lib/format.ts';
+import {
+	type Standing,
+	standing,
+} from '../lib/resume.ts';
 import s from './Card.module.scss';
 import { cx } from './cx.ts';
 
@@ -67,7 +70,7 @@ export function Shelf({
 	);
 }
 
-const resumeCard = (p: Progress & { id: string }, tier?: string) => {
+const resumeCard = (p: Standing, tier?: string) => {
 	const time = hms(p.dur - p.pos);
 	const year = p.e ? `S${p.s} E${p.e}` : t`${time} left`;
 	const href = playHash({
@@ -99,15 +102,11 @@ const resumeCard = (p: Progress & { id: string }, tier?: string) => {
 	);
 };
 
-/** films and episodes started but not finished, latest first, one card per title */
+/** what's in progress, latest first, one card per title: a film or episode to finish, or a
+ *  series' next episode */
 export function ResumeShelf() {
 	const { progress, titleModes } = useApp();
-	const seen = new Set<string>();
-	const items = Object.values(progress)
-		.filter((p): p is Progress & { id: string } => !p.watched && p.pos > 30 && !!p.id)
-		.sort((a, b) => b.at - a.at)
-		.filter(p => !seen.has(p.id) && !!seen.add(p.id))
-		.slice(0, 20);
+	const items = standing(progress).slice(0, 20);
 	if (!items.length) return null;
 	return (
 		<Shelf title={t`Resume`}>

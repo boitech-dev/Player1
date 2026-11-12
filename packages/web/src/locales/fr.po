@@ -1084,6 +1084,10 @@ msgstr "Préréglages enregistrés"
 msgid "Press play to start"
 msgstr "Appuie sur Lecture pour démarrer"
 
+#: src/player/Player.tsx
+msgid "Previous episode"
+msgstr "Épisode précédent"
+
 #: src/sheets/profiles.tsx
 msgid "Profile name"
 msgstr "Nom du profil"

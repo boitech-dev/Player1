@@ -14,6 +14,7 @@ import type {
 	Playing,
 	PlayReply,
 	PlayRequest,
+	ProgressInfo,
 } from '@player1/shared/api';
 import { tierTag } from '@player1/shared/langs';
 import {
@@ -110,6 +111,9 @@ export interface PlayerView {
 	live: Live | null;
 	sel: { audio: string; sub: string };
 	next: { name: string; countdown: number | null } | null;
+	/** a series: there is an episode before / after this one to go to */
+	hasPrev: boolean;
+	hasNext: boolean;
 	cue: string;
 	imgCues: NativeCue[];
 	/** the TV app's player is on: the page clears its backgrounds */
@@ -155,8 +159,11 @@ let loadAt = 0;
 let seekAt = 0;
 let lastSave = 0;
 
-// next episode: resolved by the server when this one started. The card shows in the last 30 s; at
-// the end it starts by itself after a short countdown. Back hides it and cancels.
+// the episodes around this one: named by the server when this one started, a button each in the
+// controls. The next one also gets a card as the end credits start (the last 30 s when their place
+// isn't known); at the end it starts by itself after a short countdown. Back hides the card and
+// cancels.
+let prevUp: PlayRequest | null = null;
 let nextUp: PlayRequest | null = null;
 let nextName = '';
 let nextOff = false;
@@ -194,6 +201,8 @@ function snapshot(): PlayerView {
 			name: `S${nextUp.s} E${nextUp.e}${nextName ? ' : ' + nextName : ''}`,
 			countdown: nextCount,
 		} : null,
+		hasPrev: !!prevUp,
+		hasNext: !!nextUp,
 		cue,
 		imgCues,
 		native: !!nv && v === nv,
@@ -445,6 +454,7 @@ async function start(p: PlayRequest) {
 	open = true;
 	info = p.ep ?? '';
 	restart = false;
+	prevUp = null;
 	nextUp = null;
 	hideNext();
 	wake();
@@ -471,14 +481,16 @@ function begin(p: PlayRequest, r: Playing) {
 		audio: named(r.audio),
 		subs: named(r.subs),
 	};
-	nextUp = r.next ? {
+	const other = (x: Playing['next']): PlayRequest | null => x ? {
 		...p,
-		s: r.next.s,
-		e: r.next.e,
-		ep: episodeName(r.next.s, r.next.e),
+		s: x.s,
+		e: x.e,
+		ep: episodeName(x.s, x.e),
 		url: undefined,
-		art: r.next.still?.replace(/\/w\d+\//, '/original/') ?? p.art,
+		art: x.still?.replace(/\/w\d+\//, '/original/') ?? p.art,
 	} : null;
+	prevUp = other(r.prev);
+	nextUp = other(r.next);
 	nextName = r.next?.name ?? '';
 	sel = {
 		audio: r.pick?.audio ?? live.audio[0]?.id ?? '',
@@ -764,12 +776,35 @@ function lagCheck() {
 	});
 }
 
-// --- progress: saved every 15 s while playing and when leaving; past 90% counts as watched ---
+// --- progress: saved every 15 s while playing and when leaving; past 90% counts as watched, and
+// so does an episode left for the next one (seen) ---
 
-function saveProgress(force = false) {
-	// duration is unknown (NaN) while a stream (re)loads: saving then would look like "past 90%"
+/** what an entry keeps of its title, and the episode "Resume" offers once this one is finished */
+const entryInfo = (r: PlayRequest): ProgressInfo => ({
+	id: r.id,
+	type: r.type,
+	title: r.title,
+	poster: r.poster,
+	art: r.art,
+	imdb: r.imdb,
+	lang: r.lang,
+	s: r.s,
+	e: r.e,
+	...nextUp && {
+		next: {
+			s: nextUp.s!,
+			e: nextUp.e!,
+			art: nextUp.art,
+		},
+	},
+});
+
+// duration is unknown (NaN) while a stream (re)loads: saving then would look like "past 90%"
+const playhead = (seen: boolean) => !!v && v.duration > 0 && (seen || !v.seeking) && now() >= 5;
+
+function saveProgress(force = false, seen = false) {
 	const r = req;
-	if (!live || !r?.imdb || !v || !(v.duration > 0) || v.seeking || now() < 5) return;
+	if (!live || !r?.imdb || !playhead(seen)) return;
 	if (!force && Date.now() - lastSave < 15000) return;
 	// never overwrite a resume point with a failed resume
 	if (startAt > 60 && now() < startAt - 30 && Date.now() - loadAt < 30000) {
@@ -779,18 +814,8 @@ function saveProgress(force = false) {
 	const key = progressKey(r);
 	const at = now();
 	const dur = total();
-	const infoOf = {
-		id: r.id,
-		type: r.type,
-		title: r.title,
-		poster: r.poster,
-		art: r.art,
-		imdb: r.imdb,
-		lang: r.lang,
-		s: r.s,
-		e: r.e,
-	};
-	const watched = at / dur > 0.9;
+	const infoOf = entryInfo(r);
+	const watched = seen || at / dur > 0.9;
 	setApp({
 		progress: {
 			...app().progress,
@@ -923,24 +948,38 @@ function countdown() {
 	}, 1000);
 }
 
-export function goNext() {
-	const n = nextUp;
-	if (!n) return;
+/** to another episode; one left for the next counts as seen */
+function hop(to: PlayRequest | null, seen = false) {
+	if (!to) return;
 	hideNext();
-	saveProgress(true);
+	saveProgress(true, seen);
+	live = null; // nothing more to save for the one being left: its pause would undo "seen"
+	v?.pause(); // or it plays on behind the search for the other one
 	nextOff = false;
-	location.replace('#/play/' + encodeURIComponent(JSON.stringify(n)));
+	location.replace('#/play/' + encodeURIComponent(JSON.stringify(to)));
 }
 
+export function goNext() {
+	hop(nextUp, true);
+}
+
+export function goPrev() {
+	hop(prevUp);
+}
+
+// the card shows while the end credits run when their place is known (live.outro), else in the
+// last 30 s. A scene after the credits plays without it; the countdown always waits for the end.
 function nearEnd() {
-	const left = total() - now();
-	if (total() > 60 && left < 30) {
-		if (!nextShown && nextUp && !nextOff) nextShown = true;
-		if (left < 1.5) countdown();
-	} else if (!nextTimer) {
-		nextShown = false;
-		nextOff = false;
+	const at = now(), end = total(), outro = live?.outro;
+	if (!(end > 60) || at < (outro ? outro.from : end - 30)) {
+		if (!nextTimer) {
+			nextShown = false;
+			nextOff = false;
+		}
+		return;
 	}
+	if (end - at < 1.5) return countdown();
+	if (nextUp && !nextOff && !nextTimer) nextShown = !outro || at < outro.to;
 }
 
 // --- the media element's events ---
@@ -1041,6 +1080,8 @@ const MEDIA_KEYS: Record<string, () => void> = {
 	MediaPause: () => v?.pause(),
 	MediaRewind: () => seekBy(-10),
 	MediaFastForward: () => seekBy(30),
+	MediaTrackPrevious: goPrev,
+	MediaTrackNext: goNext,
 };
 
 function nextKeys(e: KeyboardEvent) {

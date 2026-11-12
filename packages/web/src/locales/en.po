@@ -1084,6 +1084,10 @@ msgstr "Presets saved"
 msgid "Press play to start"
 msgstr "Press play to start"
 
+#: src/player/Player.tsx
+msgid "Previous episode"
+msgstr "Previous episode"
+
 #: src/sheets/profiles.tsx
 msgid "Profile name"
 msgstr "Profile name"

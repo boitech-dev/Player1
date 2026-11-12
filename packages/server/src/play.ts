@@ -35,6 +35,10 @@ import {
 	UserError,
 } from './i18n.ts';
 import {
+	outroFrom,
+	type Tidb,
+} from './outro.ts';
+import {
 	type Media,
 	type QbGot,
 	qbit,
@@ -54,7 +58,12 @@ import {
 	tzTorrent,
 	wbInfo,
 } from './sources.ts';
-import { IMG } from './titles.ts';
+import {
+	IMG,
+	nextEp,
+	prevEp,
+	type TmdbShow,
+} from './titles.ts';
 import {
 	errMsg,
 	fresh,
@@ -381,6 +390,7 @@ async function device(r: PlayReply, b: PlayBody): Promise<PlayReply> {
 		wb: m.wb,
 		video: m.video,
 		duration: m.duration || r.duration,
+		outro: m.outro,
 		audio: m.audio,
 		subs: [...m.subs, ...ext],
 		pick,
@@ -393,9 +403,8 @@ async function device(r: PlayReply, b: PlayBody): Promise<PlayReply> {
 	};
 }
 
-// --- series: the episode after this one (next in the season, else E1 of the next season),
-// resolved ahead of time ---
-interface TmdbShow { seasons: { season_number: number; episode_count: number }[] }
+// --- series: the episodes around this one. The one after (next in the season, else E1 of the
+// next season) is resolved ahead of time ---
 interface TmdbSeason {
 	episodes?: { episode_number: number; name?: string; still_path?: string | null }[];
 }
@@ -410,23 +419,11 @@ const aheadKey = (b: PlayBody) => JSON.stringify([
 	b.quality || 0,
 	b.lang || '',
 ]);
-function nextEp(show: TmdbShow, s: number, e: number) {
-	const seasons = show.seasons.filter(x => x.season_number > 0 && x.episode_count > 0);
-	const here = seasons.find(x => x.season_number === s);
-	const later = seasons.find(x => x.season_number > s);
-	if (here && e < here.episode_count) return {
-		s,
-		e: e + 1,
-	};
-	return later && {
-		s: later.season_number,
-		e: 1,
-	};
-}
-async function nextOf(id: string | undefined, s = 0, e = 0) {
+/** the episode before or after this one, with its name and picture */
+async function beside(of: typeof nextEp, id: string | undefined, s = 0, e = 0) {
 	if (!hasTmdb || !id?.startsWith('tmdb:')) return null;
 	const show = await memo(`tv:${id}`, () => tmdb<TmdbShow>(`/tv/${id.slice(5)}`));
-	const n = nextEp(show, Number(s), Number(e));
+	const n = of(show, Number(s), Number(e));
 	if (!n) return null;
 	const where = `/tv/${id.slice(5)}/season/${n.s}`;
 	const season = await memo(`season:${id}:${n.s}:${lang()}`, () => tmdb<TmdbSeason>(where))
@@ -454,6 +451,22 @@ function preload(b: PlayBody, next: { s: number; e: number }) {
 	setTimeout(() => ahead.delete(aheadKey(nb)), 3 * 3600e3);
 }
 
+// --- an episode whose file doesn't mark its end credits: TheIntroDB's crowd-sourced times, asked
+// by the title's own ids (it maps TMDB's or IMDb's episode numbers itself) and the file's length.
+// Its terms allow a self-hosted, non-commercial server asking for its own household. Never waited
+// on for long: without an answer the next episode is offered in the last 30 s, as before ---
+const TIDB = 'https://api.theintrodb.org/v4/media';
+function credits(b: PlayBody, dur = 0) {
+	if (!dur) return undefined;
+	const id = b.id?.startsWith('tmdb:')
+		? `tmdb_id=${Number(b.id.slice(5))}`
+		: `imdb_id=${encodeURIComponent(b.imdb)}`;
+	const ms = Math.round(dur * 1000);
+	const q = `${id}&season=${Number(b.s)}&episode=${Number(b.e)}&duration_ms=${ms}&details=true`;
+	const ask = () => getJSON<Tidb>(`${TIDB}?${q}`, { signal: AbortSignal.timeout(1500) });
+	return memo(`tidb:${q}`, ask).then(m => outroFrom(m, dur), () => undefined);
+}
+
 export const playPosts: PostHandlers = {
 	play: async b => {
 		// an episode pre-resolved while the previous one played starts at once
@@ -461,8 +474,12 @@ export const playPosts: PostHandlers = {
 		ahead.delete(aheadKey(b));
 		const r = await device(pre ? await pre.catch(() => play(b)) : await play(b), b);
 		if (b.type === 'series' && 'audio' in r) {
-			r.next = await nextOf(b.id, b.s, b.e).catch(() => null);
-			if (r.next) preload(b, r.next);
+			r.next = await beside(nextEp, b.id, b.s, b.e).catch(() => null);
+			r.prev = await beside(prevEp, b.id, b.s, b.e).catch(() => null);
+			if (r.next) {
+				preload(b, r.next);
+				r.outro ??= await credits(b, r.duration);
+			}
 		}
 		return r;
 	},

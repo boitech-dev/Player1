@@ -98,12 +98,27 @@ interface Next {
 	again?: boolean;
 }
 
+/** the episode after this one, if there is one */
+function after(m: Meta, s: number, e: number) {
+	const seasons = m.seasons ?? [];
+	const season = seasons.find(x => x.n === s);
+	const count = season?.count ?? season?.episodes?.length ?? 0;
+	if (e < count) return {
+		s,
+		e: e + 1,
+	};
+	const later = seasons.find(x => x.n > s);
+	return later && {
+		s: later.n,
+		e: 1,
+	};
+}
+
 /** where a series stands: the episode in progress, else the one after the last finished, else
  *  the first */
 function nextEp(m: Meta, progress: Record<string, Progress>): Next {
-	const seasons = m.seasons ?? [];
 	const first = {
-		s: seasons[0]?.n ?? 1,
+		s: m.seasons?.[0]?.n ?? 1,
 		e: 1,
 	};
 	const last = Object.entries(progress)
@@ -120,17 +135,7 @@ function nextEp(m: Meta, progress: Record<string, Progress>): Next {
 		e: last.e,
 		resume: last.pos,
 	};
-	const season = seasons.find(x => x.n === last.s);
-	const count = season?.count ?? season?.episodes?.length ?? 0;
-	if (last.e < count) return {
-		s: last.s,
-		e: last.e + 1,
-	};
-	const after = seasons.find(x => x.n > last.s);
-	return after ? {
-		s: after.n,
-		e: 1,
-	} : {
+	return after(m, last.s, last.e) ?? {
 		...first,
 		again: true,
 	};
@@ -148,6 +153,8 @@ async function markSeen(m: Meta, key: string, on: boolean, ep: Ep = {}) {
 			imdb: m.imdb,
 			lang: m.lang,
 			...ep,
+			// "Resume" goes on from an episode marked by hand too
+			next: ep.e ? after(m, ep.s ?? 1, ep.e) : undefined,
 		},
 	});
 	setApp({

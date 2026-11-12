@@ -16,12 +16,17 @@ import { msg } from '@lingui/core/macro';
 
 import type {
 	MediaTrack,
+	Outro,
 	PendingInfo,
 	StreamsQuery,
 } from '@player1/shared/api';
 import type { VideoInfo } from '@player1/shared/release';
 
 import { UserError } from './i18n.ts';
+import {
+	type Chapter,
+	outroIn,
+} from './outro.ts';
 import { videoFile } from './torznab.ts';
 
 const { QBIT_URL = '', QBIT_USER = '', QBIT_PASS = '', QBIT_FILES = '' } = process.env;
@@ -241,7 +246,11 @@ interface ProbeStream {
 	disposition?: { forced?: number };
 	tags?: { language?: string; title?: string };
 }
-interface ProbeInfo { streams: ProbeStream[]; format: { duration: string; bit_rate?: string } }
+interface ProbeInfo {
+	streams: ProbeStream[];
+	format: { duration: string; bit_rate?: string };
+	chapters?: Chapter[];
+}
 
 /** a file's tracks and the ways to play it: Real-Debrid's media infos, or ffprobe's */
 export interface Media {
@@ -260,6 +269,8 @@ export interface Media {
 	video?: VideoInfo;
 	bitrate?: number;
 	res?: number;
+	/** the end credits, when the file's chapters mark them */
+	outro?: Outro;
 }
 
 const label = (s: ProbeStream) => {
@@ -291,7 +302,8 @@ export async function probe(path: string, local: Local): Promise<Media> {
 		'-v',
 		'error',
 		'-show_entries',
-		'stream=index,codec_type,codec_name,height,pix_fmt,disposition:stream_tags=language,title:format=duration,bit_rate',
+		'stream=index,codec_type,codec_name,height,pix_fmt,disposition:stream_tags=language,title:format=duration,bit_rate'
+		+ ':chapter=start_time,end_time:chapter_tags=title',
 		'-of',
 		'json',
 		...input,
@@ -324,6 +336,7 @@ export async function probe(path: string, local: Local): Promise<Media> {
 		video: videoOf(v),
 		bitrate: +(info.format.bit_rate ?? 0) || 0,
 		res: resOfHeight(v?.height),
+		outro: outroIn(info.chapters, +info.format.duration),
 	};
 }
 

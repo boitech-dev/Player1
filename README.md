@@ -56,7 +56,9 @@ VOST: the original voices, subtitles in the film's own language.</sub>
 <img src="docs/readme/send.webp" width="880" alt="A phone sends a film to the living room TV, where it plays with Player1's own controls: quality, subtitles, download, send, full screen.">
 
 Start a film from the sofa and send it to the TV, or to any device that has Player1 open. The player has real
-menus for quality, audio and subtitles, resumes where you stopped and lines up the next episode.
+menus for quality, audio and subtitles, resumes where you stopped and steps to the previous or next episode.
+It offers the next one as the end credits start, when it knows where they are: from the file's own chapter
+marks, else from [TheIntroDB](https://theintrodb.org).
 
 Each device is tested once, in a few seconds, to learn which video formats it shows smoothly. What it can play
 as it is starts at once; the rest goes through Real-Debrid's converter.

@@ -141,3 +141,33 @@ export function catSpec(key = ''): CatSpec | undefined {
 		genre: +g[2]!,
 	};
 }
+
+/** a show's seasons as TMDB lists them, the specials as season 0 */
+export interface TmdbShow { seasons: { season_number: number; episode_count: number }[] }
+const aired = (show: TmdbShow) => show.seasons
+	.filter(x => x.season_number > 0 && x.episode_count > 0);
+/** the episode after this one: the next in its season, else the first of the season after */
+export function nextEp(show: TmdbShow, s: number, e: number) {
+	const here = aired(show).find(x => x.season_number === s);
+	const later = aired(show).find(x => x.season_number > s);
+	if (here && e < here.episode_count) return {
+		s,
+		e: e + 1,
+	};
+	return later && {
+		s: later.season_number,
+		e: 1,
+	};
+}
+/** the episode before this one: the previous in its season, else the last of the season before */
+export function prevEp(show: TmdbShow, s: number, e: number) {
+	if (e > 1) return {
+		s,
+		e: e - 1,
+	};
+	const before = aired(show).findLast(x => x.season_number < s);
+	return before && {
+		s: before.season_number,
+		e: before.episode_count,
+	};
+}

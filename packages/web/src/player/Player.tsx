@@ -22,6 +22,7 @@ import {
 	currentRequest,
 	getView,
 	goNext,
+	goPrev,
 	type PlayerView,
 	seekBy,
 	seekTo,
@@ -152,6 +153,11 @@ function Controls({ view }: { view: PlayerView }) {
 			<div className={s.bottom}>
 				<Bar view={view} />
 				<div className={s.ctrls}>
+					{view.hasPrev && (
+						<Button icon aria-label={t`Previous episode`} onClick={goPrev}>
+							<Icon name="prev" />
+						</Button>
+					)}
 					<Button icon aria-label={t`Back 10 seconds`} onClick={() => seekBy(-10)}>
 						<Icon name="rew" />
 					</Button>
@@ -167,6 +173,11 @@ function Controls({ view }: { view: PlayerView }) {
 					<Button icon aria-label={t`Forward 30 seconds`} onClick={() => seekBy(30)}>
 						<Icon name="fwd" />
 					</Button>
+					{view.hasNext && (
+						<Button icon aria-label={t`Next episode`} onClick={goNext}>
+							<Icon name="next" />
+						</Button>
+					)}
 					<span className={s.spacer} />
 					<TrackButtons view={view} />
 					<Button

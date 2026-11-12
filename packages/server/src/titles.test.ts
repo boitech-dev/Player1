@@ -8,6 +8,8 @@ import {
 	catSpec,
 	fromTmdb,
 	names,
+	nextEp,
+	prevEp,
 } from './titles.ts';
 
 describe('names', () => {
@@ -79,5 +81,26 @@ describe('category keys', () => {
 		expect(catSpec('genre-anime-28')).toBeUndefined();
 		expect(catSpec('toString')).toBeUndefined();
 		expect(catSpec()).toBeUndefined();
+	});
+});
+
+describe('the episodes around one', () => {
+	// specials, two seasons, and one announced with no episode yet
+	const show = {
+		seasons: ([[0, 3], [1, 12], [2, 10], [3, 0]] as const).map(([season_number, episode_count]) => ({
+			season_number,
+			episode_count,
+		})),
+	};
+	const at = (x?: { s: number; e: number }) => x && `${x.s}x${x.e}`;
+	it('stay in the season, then cross to the one beside it', () => {
+		expect(at(nextEp(show, 1, 4))).toBe('1x5');
+		expect(at(nextEp(show, 1, 12))).toBe('2x1');
+		expect(at(prevEp(show, 1, 5))).toBe('1x4');
+		expect(at(prevEp(show, 2, 1))).toBe('1x12');
+	});
+	it('stop at both ends, the specials and empty seasons left out', () => {
+		expect(prevEp(show, 1, 1)).toBeUndefined();
+		expect(nextEp(show, 2, 10)).toBeUndefined();
 	});
 });
