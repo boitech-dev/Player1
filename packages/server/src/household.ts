@@ -36,12 +36,16 @@ import {
 	t,
 	UserError,
 } from './i18n.ts';
+import { follow } from './play.ts';
 import { SEEDBOX } from './qbit.ts';
 import {
 	INDEXER,
 	MEDIA,
 } from './sources.ts';
-import { hasTmdb } from './upstream.ts';
+import {
+	hasTmdb,
+	warn,
+} from './upstream.ts';
 
 // a brand-new install's first profile takes the language of the first device that opens it
 function firstRun() {
@@ -166,6 +170,8 @@ function progress({ key, pos, dur, watched, info }: PostRoutes['progress']['body
 	};
 	p[key] = entry;
 	save();
+	// finished, and it came without the episode after it: looked up behind the answer
+	void follow(p, key).catch(warn('resume'));
 	return entry;
 }
 

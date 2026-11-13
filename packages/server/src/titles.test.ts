@@ -6,6 +6,7 @@ import {
 
 import {
 	catSpec,
+	deadEnds,
 	fromTmdb,
 	names,
 	nextEp,
@@ -102,5 +103,48 @@ describe('the episodes around one', () => {
 	it('stop at both ends, the specials and empty seasons left out', () => {
 		expect(prevEp(show, 1, 1)).toBeUndefined();
 		expect(nextEp(show, 2, 10)).toBeUndefined();
+	});
+});
+
+describe('where "Resume" cannot go on', () => {
+	const ep = (e: number, at: number, more = {}) => ({
+		id: 'tmdb:1',
+		s: 1,
+		e,
+		pos: 1380,
+		dur: 1470,
+		watched: true,
+		at,
+		...more,
+	});
+	it('is the episode a series was left on, finished, with nothing noted after it', () => {
+		expect(deadEnds({
+			'tt1:1:2': ep(2, 20),
+			'tt1:1:1': ep(1, 10),
+		})).toEqual(['tt1:1:2']);
+	});
+	it('is not one still being watched, one that names the next, or a film', () => {
+		expect(deadEnds({
+			'tt1:1:1': ep(1, 10),
+			'tt1:1:2': ep(2, 20, { watched: false }),
+		})).toEqual([]);
+		expect(deadEnds({
+			'tt1:1:1': ep(1, 10, {
+				next: {
+					s: 1,
+					e: 2,
+				},
+			}),
+		})).toEqual([]);
+		expect(deadEnds({
+			tt2: {
+				id: 'tmdb:2',
+				pos: 6000,
+				dur: 6200,
+				watched: true,
+				at: 5,
+			},
+		})).toEqual([]);
+		expect(deadEnds()).toEqual([]);
 	});
 });

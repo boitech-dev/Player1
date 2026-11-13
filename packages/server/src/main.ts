@@ -24,7 +24,10 @@ import {
 	householdPosts,
 } from './household.ts';
 import { handler } from './http.ts';
-import { playPosts } from './play.ts';
+import {
+	followAll,
+	playPosts,
+} from './play.ts';
 import { fetchClips } from './samples.ts';
 import { sourceGets } from './sources.ts';
 
@@ -36,6 +39,7 @@ process.umask(0);
 if (!process.env.P1_TRIAL) {
 	startDownloads();
 	void fetchClips(); // the device test's clips, the first time
+	void followAll(); // episodes finished on a version that didn't note the one after
 }
 setInterval(ping, 25e3); // keep proxies from closing idle SSE
 

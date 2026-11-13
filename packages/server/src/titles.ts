@@ -3,6 +3,7 @@
 import type {
 	Item,
 	MediaType,
+	Progress,
 } from '@player1/shared/api';
 
 export const IMG = 'https://image.tmdb.org/t/p/';
@@ -170,4 +171,18 @@ export function prevEp(show: TmdbShow, s: number, e: number) {
 		s: before.season_number,
 		e: before.episode_count,
 	};
+}
+
+/**
+ * Where "Resume" cannot go on: the entry each series was played last (its key), when that episode
+ * is finished and nothing says which one comes after. The web app's standing() reads the same
+ * entry.
+ */
+export function deadEnds(progress: Record<string, Progress> = {}) {
+	const last = new Map<string, [string, Progress]>();
+	for (const x of Object.entries(progress)) {
+		const id = x[1].id;
+		if (id && x[1].at >= (last.get(id)?.[1].at ?? 0)) last.set(id, x);
+	}
+	return [...last.values()].filter(([, p]) => p.e && p.watched && !p.next).map(([key]) => key);
 }

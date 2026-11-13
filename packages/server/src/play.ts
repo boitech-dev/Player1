@@ -11,6 +11,7 @@ import type {
 	PlayBody,
 	Playing,
 	PlayReply,
+	Progress,
 	Release,
 	Stream,
 	StreamsQuery,
@@ -28,7 +29,11 @@ import {
 	hwDecodes,
 } from '@player1/shared/release';
 
-import { activePreset } from './db.ts';
+import {
+	activePreset,
+	db,
+	save,
+} from './db.ts';
 import type { PostHandlers } from './http.ts';
 import {
 	lang,
@@ -59,6 +64,7 @@ import {
 	wbInfo,
 } from './sources.ts';
 import {
+	deadEnds,
 	IMG,
 	nextEp,
 	prevEp,
@@ -434,6 +440,27 @@ async function beside(of: typeof nextEp, id: string | undefined, s = 0, e = 0) {
 		name: ep?.name,
 		still: ep?.still_path ? IMG + 'original' + ep.still_path : undefined,
 	};
+}
+// "Resume" goes on from a finished episode to the one noted on it. An episode saved without it (by
+// a version before 0.1.4, a device still running one, or after a look-up that failed) gets it here
+export async function follow(list: Record<string, Progress>, key: string) {
+	const x = list[key];
+	if (!x?.e || !x.watched || x.next) return;
+	const n = await beside(nextEp, x.id, x.s, x.e).catch(() => null);
+	const now = list[key]; // it may have been saved again meanwhile
+	if (!n || !now || now.next) return;
+	now.next = {
+		s: n.s,
+		e: n.e,
+		art: n.still,
+	};
+	save();
+}
+/** at start: what older versions left behind. One at a time: memo() doesn't share a request under way */
+export async function followAll() {
+	for (const { progress = {} } of db.profiles) {
+		for (const key of deadEnds(progress)) await follow(progress, key).catch(warn('resume'));
+	}
 }
 // pre-load the next one: sources, RD link, tracks. Never starts an indexer download.
 function preload(b: PlayBody, next: { s: number; e: number }) {
