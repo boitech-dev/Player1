@@ -29,6 +29,7 @@ import {
 	hwDecodes,
 } from '@player1/shared/release';
 
+import { allowed } from './catalog.ts';
 import {
 	activePreset,
 	db,
@@ -496,6 +497,7 @@ function credits(b: PlayBody, dur = 0) {
 
 export const playPosts: PostHandlers = {
 	play: async b => {
+		if (!(await allowed([b])).length) throw new UserError(msg`This title is above this profile’s age limit`);
 		// an episode pre-resolved while the previous one played starts at once
 		const pre = !b.url && !b.confirm && ahead.get(aheadKey(b));
 		ahead.delete(aheadKey(b));

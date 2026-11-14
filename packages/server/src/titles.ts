@@ -186,3 +186,35 @@ export function deadEnds(progress: Record<string, Progress> = {}) {
 	}
 	return [...last.values()].filter(([, p]) => p.e && p.watched && !p.next).map(([key]) => key);
 }
+
+// --- age ratings: TMDB's per country, [country, rating] ---
+export type Certs = [string, string][];
+const NAMED: Record<string, number> = {
+	G: 0,
+	U: 0,
+	TP: 0,
+	'TV-Y': 0,
+	'TV-G': 0,
+	PG: 10,
+	'TV-PG': 10,
+	R: 17,
+	'TV-MA': 17,
+};
+const ageIn = (r: string) =>
+	/\d/.test(r) ? parseInt(r.replace(/^\D+/, '')) : NAMED[r.toUpperCase()];
+/** the age a title is rated for: where the profile lives (FR, US), else in the US, else anywhere;
+ *  the number a rating carries (12, PG-13, TV-14), or a known name's (PG, R). Its rating's own name
+ *  only when it's from where the profile lives: elsewhere's (TV-PG for a French profile) means
+ *  nothing there */
+export function ratingOf(certs: Certs, home: string) {
+	const known = certs.filter(([, r]) => ageIn(r) !== undefined);
+	const at = (c: string) => known.find(([x]) => x === c);
+	const [country, rating] = at(home) ?? at('US') ?? known[0] ?? [];
+	return rating === undefined ? undefined : {
+		rating: country === home ? rating : undefined,
+		age: ageIn(rating)!,
+	};
+}
+/** under a profile's max age, or unrated where it lets those through */
+export const suits = (age: number | undefined, p: { maxAge?: number; unrated?: boolean }) =>
+	p.maxAge == null || (age == null ? !!p.unrated : age <= p.maxAge);

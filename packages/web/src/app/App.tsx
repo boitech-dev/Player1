@@ -15,7 +15,9 @@ import {
 import { activate } from '../lib/i18n.ts';
 import {
 	keep,
+	keepPin,
 	load,
+	pinDue,
 } from '../lib/store.ts';
 import {
 	backFromControls,
@@ -54,7 +56,10 @@ import {
 } from '../ui/Trailer.tsx';
 import s from './App.module.scss';
 import { Curtain } from './Curtain.tsx';
-import { connect } from './events.ts';
+import {
+	connect,
+	whenGone,
+} from './events.ts';
 import { Header } from './Header.tsx';
 import {
 	type Route,
@@ -72,8 +77,20 @@ import {
 
 type Phase =
 	| { is: 'loading' }
-	| { is: 'setup' | 'locked' | 'pair' | 'who' | 'ready' }
+	| { is: 'setup' | 'locked' | 'pair' | 'ready' }
+	/** ask: the profile this device uses, whose PIN is asked first */
+	| { is: 'who'; ask?: string }
 	| { is: 'error'; msg: string };
+
+/** this device's profile has a PIN it wasn't given: the profiles, its PIN asked first */
+async function lockedOut(): Promise<Phase> {
+	const profiles = await get('who');
+	setApp({ profiles });
+	return {
+		is: 'who',
+		ask: profiles.find(p => p.id === load('profile'))?.id,
+	};
+}
 
 async function boot(): Promise<Phase> {
 	try {
@@ -83,6 +100,14 @@ async function boot(): Promise<Phase> {
 			if (s.profiles.length > 1) return { is: 'who' };
 			keep('profile', s.profile);
 		}
+		// its PIN is asked each time Player1 opens: a token kept from before doesn't do
+		if (myProfile()?.lock === 'open' && pinDue()) {
+			keepPin(null);
+			return {
+				is: 'who',
+				ask: s.profile,
+			};
+		}
 		const lang = myProfile()?.lang;
 		keep('lang', await activate(lang ?? load('lang')));
 		connect();
@@ -91,6 +116,7 @@ async function boot(): Promise<Phase> {
 		const status = err instanceof ApiError ? err.status : 0;
 		if (status === 503) return { is: (await get('setup')).ok ? 'setup' : 'locked' };
 		if (status === 401) return { is: 'pair' };
+		if (status === 403) return lockedOut();
 		return {
 			is: 'error',
 			msg: (err as Error).message,
@@ -114,6 +140,8 @@ function Page({ route }: { route: Route }) {
 /** the pages, the player over them */
 function Pages({ onPick }: { onPick: PickProfile }) {
 	const { hash, route } = useRoute();
+	// a new age limit: the page fetches again what it shows, at once (the sheet that set it stays)
+	const me = myProfile(useApp()), limit = `:${me?.maxAge}:${me?.unrated}`;
 	const under = useRef<Route>({ page: 'home' });
 	if (route.page !== 'play') under.current = route;
 	useEffect(() => {
@@ -129,7 +157,7 @@ function Pages({ onPick }: { onPick: PickProfile }) {
 			<PagePreview />
 			<Header route={under.current} onPick={onPick} />
 			<main id="view" className={s.view}>
-				<Page key={hash.startsWith('#/play') ? 'under' : hash} route={under.current} />
+				<Page key={(hash.startsWith('#/play') ? 'under' : hash) + limit} route={under.current} />
 			</main>
 		</>
 	);
@@ -160,6 +188,12 @@ export function App() {
 		// the old page stays under the curtain as it comes down
 		setTimeout(start, 300);
 	}, [start]);
+	// this profile deleted from another device: who's watching now
+	useEffect(() => whenGone(() => {
+		stop(); // its last save is refused: the profile is gone
+		location.hash = '';
+		pick(null);
+	}), [pick]);
 	// lifts once the first page has fetched what it shows (a moment's grace: a page asks on mount)
 	const pending = usePending();
 	const [settled, setSettled] = useState<Phase | null>(null);
@@ -179,7 +213,7 @@ export function App() {
 	if (at.is === 'setup') screen = view(<SetupWizard />, true);
 	else if (at.is === 'locked') screen = view(<SetupLocked />);
 	else if (at.is === 'pair') screen = view(<PairScreen />);
-	else if (at.is === 'who') screen = view(<WhoScreen onPick={pick} />);
+	else if (at.is === 'who') screen = view(<WhoScreen onPick={pick} ask={at.ask} />);
 	else if (at.is === 'error') screen = view(<p className={s.message}>{at.msg}</p>);
 	// a new profile's pages start afresh
 	else if (at.is === 'ready') screen = <Ready key={app().profile} onPick={pick} />;

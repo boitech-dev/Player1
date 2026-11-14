@@ -109,3 +109,100 @@
 	font: 900 34px/1 var(--display);
 	color: var(--ecran);
 }
+
+// a group of rows on its own panel
+.group {
+	margin-top: 14px;
+
+	h5 {
+		margin: 0 14px 8px;
+	}
+}
+
+.panel {
+	margin: 0 2px;
+	border-radius: 16px;
+	background: var(--velours);
+	overflow: hidden;
+
+	// rows and settings inside it, a hairline between them
+	> * + * {
+		border-top: 1px solid #ffffff0d;
+	}
+}
+
+// a row that opens something
+.row {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 14px;
+	min-height: 60px;
+	padding: 10px 14px 10px 16px;
+	border: 0;
+	background: none;
+	color: var(--ecran);
+	text-align: left;
+	cursor: pointer;
+	transition: background 0.15s;
+
+	&:hover {
+		background: var(--rideau-2);
+	}
+
+	&:focus-visible {
+		outline-offset: -3px;
+	}
+
+	> div {
+		flex: 1;
+		min-width: 0;
+
+		> strong {
+			display: block;
+			font-weight: 600;
+		}
+
+		> span {
+			display: block;
+			font-size: 14px;
+			color: var(--brume);
+		}
+	}
+}
+
+// its icon on a round of its own
+.ico {
+	display: grid;
+	place-items: center;
+	flex: none;
+	width: 38px;
+	height: 38px;
+	border-radius: 12px;
+	background: var(--rideau-2);
+	color: var(--lampe);
+}
+
+.value {
+	flex: none;
+	max-width: 45%;
+	font-size: 14px;
+	color: var(--brume);
+	text-align: right;
+}
+
+.chev {
+	flex: none;
+	display: grid;
+	color: var(--brume);
+	opacity: 0.7;
+}
+
+// a row that removes something
+.bad {
+	color: var(--bad);
+
+	.ico {
+		color: var(--bad);
+	}
+}

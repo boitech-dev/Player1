@@ -34,6 +34,7 @@ import {
 import {
 	CATS,
 	catSpec,
+	type Certs,
 	CM,
 	type CmMeta,
 	fromCm,
@@ -41,6 +42,8 @@ import {
 	IMG,
 	latin,
 	norm,
+	ratingOf,
+	suits,
 	type TmdbKind,
 	type TmdbTitle,
 	yearOf,
@@ -79,6 +82,76 @@ const tmdbEn = async (path: string, params: Params = {}) => {
 	};
 };
 
+// --- age ratings: a profile held to a max age sees only the titles rated for it ---
+interface TmdbRatings {
+	release_dates?: { results: { iso_3166_1: string; release_dates: { certification: string }[] }[] };
+	content_ratings?: { results: { iso_3166_1: string; rating: string }[] };
+}
+const certsOf = (m: TmdbRatings): Certs => [
+	...(m.release_dates?.results ?? []).flatMap(r => r.release_dates
+		.map((d): [string, string] => [r.iso_3166_1, d.certification])),
+	...(m.content_ratings?.results ?? []).map((r): [string, string] => [r.iso_3166_1, r.rating]),
+];
+/** where the profile's interface language is spoken, for its ratings: the US for English */
+const home = () => ({ en: 'US' } as Record<string, string>)[lang()] ?? lang().toUpperCase();
+/** a title's age; undefined when no one rates it (Cinemeta titles: never) */
+async function ageOf({ type, id }: Pick<Item, 'type' | 'id'>) {
+	if (!id.startsWith('tmdb:')) return undefined;
+	const what = type === 'series' ? 'content_ratings' : 'release_dates';
+	const where = `/${type === 'series' ? 'tv' : 'movie'}/${id.slice(5)}/${what}`;
+	// once more after a moment: a lookup refused in a burst would read as unrated
+	const ask = () => tmdb<object>(where);
+	const again = () => new Promise(ok => setTimeout(ok, 1500)).then(ask);
+	const look = async () => certsOf({ [what]: await ask().catch(again) });
+	const certs = await memo(`certs:${where}`, look).catch(() => []);
+	return ratingOf(certs, home())?.age;
+}
+/** the ones the profile may see */
+export async function allowed<T extends Pick<Item, 'type' | 'id'>>(items: T[]) {
+	const p = me();
+	if (p.maxAge == null) return items;
+	// a few at a time: a burst of hundreds would hit TMDB's rate limit, and a failed lookup reads
+	// as unrated
+	const ages: (number | undefined)[] = [];
+	for (let i = 0; i < items.length; i += 25) {
+		ages.push(...await Promise.all(items.slice(i, i + 25).map(ageOf)));
+	}
+	return items.filter((_, i) => suits(ages[i], p));
+}
+/** a profile's own titles (its lists, progress, "seen" marks) as it may see them: held to an age
+ *  limit, without those above it */
+export async function visible(p = me()) {
+	const lists = p.lists, progress = p.progress || {}, marked = p.marked || {};
+	if (p.maxAge == null) return {
+		lists,
+		progress,
+		marked,
+	};
+	const titles = new Map<string, Pick<Item, 'type' | 'id'>>();
+	const all = [...Object.values(lists).flat(), ...Object.values(progress), ...Object.values(marked)];
+	for (const x of all) {
+		if (x.id && x.type) titles.set(x.type + x.id, {
+			type: x.type,
+			id: x.id,
+		});
+	}
+	const ok = new Set((await allowed([...titles.values()])).map(x => x.type + x.id));
+	const keep = (x: { type?: string; id?: string }) => ok.has(`${x.type}${x.id}`);
+	const only = <T extends { type?: string; id?: string }>(o: Record<string, T>) =>
+		Object.fromEntries(Object.entries(o).filter(([, x]) => keep(x)));
+	return {
+		lists: Object.fromEntries(Object.entries(lists).map(([n, l]) => [n, l.filter(keep)])),
+		progress: only(progress),
+		marked: only(marked),
+	};
+}
+
+/** what the profile may see decides the shelves: cached per limit */
+const limit = () => {
+	const p = me();
+	return p.maxAge == null ? '' : `:${p.maxAge}${p.unrated ? 'u' : ''}`;
+};
+
 const TITLES: Record<string, MessageDescriptor> = {
 	'trending-movie': msg`Trending movies`,
 	'trending-tv': msg`Trending series`,
@@ -103,20 +176,30 @@ async function category(key: string, page = 1): Promise<Row> {
 	const spec = catSpec(key);
 	if (!spec) throw new UserError(msg`Unknown category`);
 	const title = spec.genre ? await genreTitle(spec.t, spec.genre) : titleOf(key);
-	const r = await tmdbEn(spec.path, {
-		...spec.params,
-		page,
-	});
+	// a profile held to an age limit loses many titles to it: each page of the row looks through
+	// several of TMDB's, so the row stays full
+	const span = me().maxAge == null ? 1 : SPAN, first = (page - 1) * span + 1;
+	const pages = await Promise.all(Array.from({ length: span }, (_, i) => {
+		const get = tmdbEn(spec.path, {
+			...spec.params,
+			page: first + i,
+		});
+		return i ? get.catch(() => null) : get; // past the last page: nothing more
+	}));
+	const got = pages.filter(x => x !== null), last = got.at(-1)!;
+	const byId = new Map(got.flatMap(r => r.results).map(x => [x.id, fromTmdb(x, spec.t)]));
+	const items = [...byId.values()];
 	return {
 		key,
 		title,
-		items: r.results.map(x => fromTmdb(x, spec.t)),
-		more: r.page < Math.min(r.total_pages, 500),
+		items: await allowed(items),
+		more: got.length === span && last.page < Math.min(last.total_pages, 500),
 	};
 }
+const SPAN = 5;
 
 // artwork per tile: its 3 most popular titles, never reusing a title another tile already shows
-const artOf = (keys: string[]) => memo(`catart:${lang()}`, async () => {
+const artOf = (keys: string[]) => memo(`catart:${lang()}${limit()}`, async () => {
 	const rows = await Promise.all(keys.map(k => category(k).catch(() => null)));
 	const used = new Set<string>();
 	return Object.fromEntries(keys.map((k, i) => {
@@ -172,7 +255,7 @@ async function discover(kind = 'all') {
 	for (const i of found.flat()) {
 		if (i.backdrop && i.poster && fits(kind, i) && fresh(i.type + i.id)) out.set(i.type + i.id, i);
 	}
-	return shuffle([...out.values()]).slice(0, 20);
+	return (await allowed(shuffle([...out.values()]).slice(0, 40))).slice(0, 20);
 }
 
 // --- search ---
@@ -219,11 +302,11 @@ async function search(q = '') {
 	const seen = new Set(fr.flatMap(r => allNames(r, enOf(r)).map(x => norm(x) + yearOf(r))));
 	const fresh = (m: CmMeta) => !seen.has(norm(m.name) + (m.releaseInfo || '').slice(0, 4));
 	for (const m of cms.flat()) if (norm(m.name).includes(norm(q)) && fresh(m)) out.push(fromCm(m));
-	return out;
+	return allowed(out);
 }
 
 // --- title pages ---
-interface TmdbDetails extends TmdbTitle {
+interface TmdbDetails extends TmdbTitle, TmdbRatings {
 	external_ids?: { imdb_id?: string };
 	translations?: {
 		translations: {
@@ -252,11 +335,13 @@ const romaji = (m: TmdbDetails) => {
 };
 async function tmdbMeta(type: string, id: string): Promise<Meta> {
 	const k = type === 'series' ? 'tv' : 'movie';
-	const more = 'external_ids,translations,alternative_titles';
+	const ratings = k === 'tv' ? 'content_ratings' : 'release_dates';
+	const more = `external_ids,translations,alternative_titles,${ratings}`;
 	const m = await tmdb<TmdbDetails>(`/${k}/${id.slice(5)}`, { append_to_response: more });
 	m.en = englishTitle(m);
 	m.romaji = romaji(m);
 	return {
+		...ratingOf(certsOf(m), home()),
 		...fromTmdb(m, k),
 		overview: m.overview,
 		backdrop: m.backdrop_path ? IMG + 'w1280' + m.backdrop_path : undefined,
@@ -397,11 +482,11 @@ export const catalogGets: GetHandlers = {
 			return [
 				{
 					title: t(msg`Popular movies`),
-					items: m.metas.map(fromCm),
+					items: await allowed(m.metas.map(fromCm)),
 				},
 				{
 					title: t(msg`Popular series`),
-					items: s.metas.map(fromCm),
+					items: await allowed(s.metas.map(fromCm)),
 				},
 			];
 		}

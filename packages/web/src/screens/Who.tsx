@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { useEffect } from 'react';
 
 import type { ProfileSummary } from '@player1/shared/api';
 
@@ -7,6 +8,7 @@ import {
 	useApp,
 } from '../app/state.ts';
 import {
+	choose,
 	type PickProfile,
 	profileEdit,
 	profilesSheet,
@@ -17,6 +19,8 @@ import s from './Who.module.scss';
 // Profiles: each person keeps their own language, lists, progress and discoveries; a device
 // remembers who uses it.
 
+// a profile keeps its color by its place here: new ones go at the end; each light enough for the
+// dark initial on it
 export const COLORS = [
 	'#f5c46b',
 	'#e8798f',
@@ -26,13 +30,30 @@ export const COLORS = [
 	'#f2936b',
 	'#b9cf7a',
 	'#d9c3a5',
+	'#ef6f6c',
+	'#f4a6c8',
+	'#f3e08a',
+	'#8fcf8f',
+	'#5cc6c9',
+	'#9aa7f5',
+	'#d6a6f0',
+	'#a9b8c9',
+	'#f7b58c',
+	'#c49a6c',
+	'#8fd8f5',
+	'#e88fd8',
+	'#c8e86b',
+	'#ffb3a7',
+	'#b0e0d0',
+	'#e0b0ff',
 ];
 
 /** the pictures a profile can wear (src/avatars, credited in its README): name (people-3) → url */
 export const AVATARS = Object.fromEntries(
 	Object.entries(import.meta.glob<string>('../avatars/*.svg', {
 		eager: true,
-		query: '?url',
+		// files of their own, not inlined into the app's script: only the picker shows most of them
+		query: '?no-inline',
 		import: 'default',
 	}))
 		.map(([file, url]) => [file.slice('../avatars/'.length, -'.svg'.length), url])
@@ -66,19 +87,27 @@ export function ProfileButton({ onPick }: { onPick: PickProfile }) {
 }
 
 /** "Who's watching?": a device that doesn't know its profile yet, in a household of several */
-export function WhoScreen({ onPick }: { onPick: PickProfile }) {
+export function WhoScreen({
+	onPick,
+	ask,
+}: { onPick: PickProfile; ask?: string }) {
 	const { profiles } = useApp();
+	// this device's profile wants its PIN: asked at once
+	useEffect(() => {
+		const p = profiles.find(x => x.id === ask);
+		if (p) void choose(p, onPick);
+	}, [ask]); // eslint-disable-line react-hooks/exhaustive-deps
 	return (
 		<section className={s.who}>
 			<h1>{t`Who’s watching?`}</h1>
 			<div className={s.people}>
 				{profiles.map((p, i) => (
-					<button key={p.id} autoFocus={i === 0} onClick={() => onPick(p.id)}>
+					<button key={p.id} autoFocus={i === 0} onClick={() => void choose(p, onPick)}>
 						<Avatar p={p} />
 						{p.name}
 					</button>
 				))}
-				<button className={s.add} onClick={() => profileEdit(null, onPick)}>
+				<button className={s.add} onClick={() => void profileEdit(null, onPick)}>
 					<Avatar p={{
 						name: '+',
 						color: 0,

@@ -11,6 +11,8 @@ import {
 	names,
 	nextEp,
 	prevEp,
+	ratingOf,
+	suits,
 } from './titles.ts';
 
 describe('names', () => {
@@ -146,5 +148,32 @@ describe('where "Resume" cannot go on', () => {
 			},
 		})).toEqual([]);
 		expect(deadEnds()).toEqual([]);
+	});
+});
+
+describe('ratingOf', () => {
+	it('takes the home country, then the US, then any, and reads the age', () => {
+		expect(ratingOf([['US', 'PG-13'], ['FR', '12']], 'FR')).toEqual({
+			rating: '12',
+			age: 12,
+		});
+		// another country's: its age, not its name
+		expect(ratingOf([['FR', ''], ['US', 'TV-MA']], 'FR')).toEqual({
+			rating: undefined,
+			age: 17,
+		});
+		expect(ratingOf([['US', 'TV-MA']], 'US')?.rating).toBe('TV-MA');
+		expect(ratingOf([['DE', '6']], 'US')?.age).toBe(6);
+		expect(ratingOf([['US', 'NR'], ['GB', '']], 'US')).toBeUndefined();
+	});
+	it('holds a profile to its max age, unrated only when allowed', () => {
+		expect(suits(17, {})).toBe(true);
+		expect(suits(12, { maxAge: 12 })).toBe(true);
+		expect(suits(13, { maxAge: 12 })).toBe(false);
+		expect(suits(undefined, { maxAge: 12 })).toBe(false);
+		expect(suits(undefined, {
+			maxAge: 12,
+			unrated: true,
+		})).toBe(true);
 	});
 });

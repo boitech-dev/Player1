@@ -10,9 +10,11 @@ import { msg } from '@lingui/core/macro';
 
 import type { DeviceMessage } from '@player1/shared/api';
 
+import { visible } from './catalog.ts';
 import { cookie } from './cookie.ts';
 import {
 	activePreset,
+	locked,
 	profileOf,
 } from './db.ts';
 import type {
@@ -23,7 +25,6 @@ import { UserError } from './i18n.ts';
 
 interface Online {
 	name: string;
-	ua?: string;
 	res: ServerResponse;
 	profile: string;
 }
@@ -39,21 +40,25 @@ export const ping = () => {
 };
 
 export function events(req: IncomingMessage, res: ServerResponse, q: Record<string, string>) {
+	const P = profileOf(q.profile), id = q.id ?? 'undefined';
+	// a profile deleted while this device was away: it picks another
+	const gone = !!q.profile && P.id !== q.profile;
+	if (!gone && locked(P, q.pin)) return res.writeHead(403).end();
 	res.writeHead(200, {
 		'content-type': 'text/event-stream',
 		'cache-control': 'no-cache, no-transform',
 		'x-accel-buffering': 'no',
 	});
-	const P = profileOf(q.profile), id = q.id ?? 'undefined';
-	sse(res, { preset: activePreset(P).id });
+	if (gone) return sse(res, { gone: true });
+	// what the profile's other devices changed while this one wasn't listening (as its age limit
+	// lets it see)
+	void visible(P).then(({ progress }) => sse(res, {
+		preset: activePreset(P).id,
+		progress,
+	}));
 	const name = q.name || 'Appareil', ua = req.headers['user-agent'];
-	for (const [other, d] of devices) if (other !== id && d.name === name && d.ua === ua) { // same device, new id: keep one entry
-		d.res.end();
-		devices.delete(other);
-	}
 	devices.set(id, {
 		name,
-		ua,
 		res,
 		profile: P.id,
 	});

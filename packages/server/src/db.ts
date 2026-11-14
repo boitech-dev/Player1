@@ -18,6 +18,10 @@ import type { Tier } from '@player1/shared/langs';
 import { DATA } from './config.ts';
 
 export interface Profile extends ProfileSummary {
+	/** its PIN's hash (pinHash), also the token that opens it */
+	pin?: string;
+	/** its settings' own PIN (guard 'own') */
+	guardPin?: string;
 	presets: Preset[];
 	preset: string;
 	lists: Record<string, ListEntry[]>;
@@ -152,4 +156,18 @@ export const summaries = (): ProfileSummary[] => db.profiles.map(p => ({
 	color: p.color,
 	avatar: p.avatar,
 	lang: p.lang,
+	lock: p.pin ? p.lock ?? 'switch' : undefined,
+	guard: settingsHash(p) ? p.guard : undefined,
+	maxAge: p.maxAge,
+	unrated: p.maxAge == null ? undefined : p.unrated,
 }));
+
+export const pinHash = (id: string, pin: string) =>
+	crypto.createHash('sha256').update(`${id}:${pin}`).digest('hex');
+/** a profile with a PIN asked to open it, and a request without its token */
+export const locked = (p: Profile, token?: string) => !!p.pin && token !== p.pin;
+/** the PIN its settings ask (its hash, the token that changes them) */
+export function settingsHash(p: Profile) {
+	if (p.guard === 'same') return p.pin;
+	return p.guard === 'own' ? p.guardPin : undefined;
+}

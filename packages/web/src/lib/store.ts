@@ -1,7 +1,7 @@
 // This device's own memory (localStorage): which profile uses it, its name, its preferences.
 // A private window or blocked storage just forgets them.
 
-type Key = 'profile' | 'lang' | 'dev' | 'devname' | 'quality' | 'caps' | 'hwover' | 'dkind'
+type Key = 'profile' | 'pin' | 'lang' | 'dev' | 'devname' | 'quality' | 'caps' | 'hwover' | 'dkind'
 	| 'searches'
 	| `subdelay:${string}`;
 
@@ -49,3 +49,15 @@ export function setSetupToken(v: string | null) {
 		// storage blocked: the link has to be opened again
 	}
 }
+
+// the profile's PIN token: on the device, or for this page only when its PIN is asked each time
+// Player1 opens
+let pinNow: string | null = null;
+export const pinToken = () => pinNow ?? load('pin') ?? '';
+/** this page opened the profile with its PIN; open: not kept for the next time */
+export function keepPin(token: string | null, open = false) {
+	pinNow = token;
+	keep('pin', open ? null : token);
+}
+/** the profile asks its PIN each time Player1 opens, and this page hasn't been given it yet */
+export const pinDue = () => pinNow === null;

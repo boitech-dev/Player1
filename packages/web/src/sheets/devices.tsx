@@ -41,12 +41,12 @@ import {
 import { Setting } from '../ui/Setting.tsx';
 import {
 	closeSheet,
+	Group,
 	openSheet,
-	Opt,
+	Row,
 	Sheet,
 } from '../ui/sheet.tsx';
 import { Stack } from '../ui/Stack.tsx';
-import tx from '../ui/text.module.scss';
 import { toast } from '../ui/toast.tsx';
 import s from './devices.module.scss';
 
@@ -114,23 +114,36 @@ const capsSummary = () => {
 function Devices({ others }: { others: Device[] }) {
 	return (
 		<Sheet title={t`Devices`}>
-			<h5>{t`Add a device`}</h5>
-			<Pairing />
-			<h5>{t`This device`}</h5>
-			<Opt title={t`Playback on this device`} sub={capsSummary()} onClick={playbackSheet} />
-			<Rename />
-			<h5>{t`This server`}</h5>
-			<Opt
-				title={t`Server settings`}
-				sub={t`Real-Debrid, torrent site, qBittorrent, Jellyfin`}
-				onClick={() => {
-					closeSheet();
-					go('#/settings');
-				}}
-			/>
-			<h5>{t`Connected right now`}</h5>
-			{others.map(d => <p key={d.id} className={tx.empty}>{d.name}</p>)}
-			{!others.length && <p className={tx.empty}>{t`No other device is connected.`}</p>}
+			<Group title={t`Add a device`}>
+				<p className={s.lead}>{t`Open Player1 on the new device: it shows a code to type here.`}</p>
+				<Pairing />
+			</Group>
+			<Group title={t`This device`}>
+				<Row icon="hd" title={t`Playback on this device`} sub={capsSummary()} onClick={playbackSheet} />
+				<Setting title={t`Its name`} says={t`How the other devices list it`}>
+					<Rename />
+				</Setting>
+			</Group>
+			<Group title={t`This server`}>
+				<Row
+					icon="disk"
+					title={t`Server settings`}
+					sub={t`Real-Debrid, torrent site, qBittorrent, Jellyfin`}
+					onClick={() => {
+						closeSheet();
+						go('#/settings');
+					}}
+				/>
+			</Group>
+			<Group title={t`Connected right now`}>
+				{others.map(d => (
+					<div key={d.id} className={s.online}>
+						<span><Icon name="screen" /></span>
+						{d.name}
+					</div>
+				))}
+				{!others.length && <p className={s.lead}>{t`No other device is connected.`}</p>}
+			</Group>
 		</Sheet>
 	);
 }

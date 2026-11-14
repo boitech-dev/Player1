@@ -8,6 +8,8 @@ import type {
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { msg } from '@lingui/core/macro';
+
 import type {
 	GetPath,
 	GetRoutes,
@@ -29,6 +31,8 @@ import {
 	isHttps,
 } from './cookie.ts';
 import {
+	db,
+	locked,
 	profileOf,
 	request,
 } from './db.ts';
@@ -77,6 +81,8 @@ export interface Routes {
 }
 // no auth needed: a new device asks for a pairing code and waits for it to be approved
 const PUBLIC: PostPath[] = ['pair', 'pair/poll'];
+// answered while the device's profile is locked: the profiles to pick from, and its PIN
+const UNLOCKED: string[] = ['who', 'unlock', 'pair', 'pair/poll', 'log'];
 
 const json = (res: ServerResponse, code: number, v: unknown) => {
 	res.writeHead(code, { 'content-type': 'application/json' });
@@ -186,9 +192,14 @@ const handlerOf = (
 	return map && Object.hasOwn(map, name) ? map[name] : undefined;
 };
 
-async function run(fn: Handler, req: Req, res: Res, q: Record<string, string>) {
+async function run(fn: Handler, req: Req, res: Res, q: Record<string, string>, name: string) {
 	const profile = profileOf(header(req, 'x-profile')), lang = header(req, 'x-lang');
+	if (locked(profile, header(req, 'x-pin')) && !UNLOCKED.includes(name)) {
+		const error = errorFor(req, new UserError(msg`This profile is locked with a PIN`));
+		return json(res, 403, { error });
+	}
 	try {
+		if (gone(req, name)) throw new UserError(msg`This profile was deleted`);
 		// the query or body as the route declares it: a paired device, or the pairing screen
 		const input = (req.method === 'POST' ? await body(req) : q) as never;
 		const reply = await request.run({
@@ -203,6 +214,15 @@ async function run(fn: Handler, req: Req, res: Res, q: Record<string, string>) {
 		console.error(req.url, errMsg(err));
 		json(res, 500, { error: errorFor(req, err) });
 	}
+}
+
+// a profile deleted on another device: what that device still saves would land on the first one
+// (pairing, the profiles themselves and their PINs, from the "who's watching" screen, still go
+// through)
+function gone(req: IncomingMessage, name: string) {
+	const asked = header(req, 'x-profile');
+	const own = !['profiles', 'unlock', ...PUBLIC].includes(name);
+	return req.method === 'POST' && own && !!asked && !db.profiles.some(p => p.id === asked);
 }
 
 async function api(
@@ -232,7 +252,7 @@ async function api(
 	});
 	const fn = handlerOf(routes.gets, routes.posts, req.method, name);
 	if (!fn) return json(res, 404, { error: 'not found' });
-	return run(fn, req, res, q);
+	return run(fn, req, res, q, name);
 }
 
 // --- files ---

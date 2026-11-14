@@ -7,6 +7,7 @@ import {
 	isUiLang,
 	type Item,
 	type ListEntry,
+	MAX_AGES,
 	type PostRoutes,
 	type Preset,
 	type Progress,
@@ -15,14 +16,17 @@ import {
 } from '@player1/shared/api';
 import { LANGS as SPOKEN } from '@player1/shared/langs';
 
+import { visible } from './catalog.ts';
 import {
 	activePreset,
 	db,
 	me,
 	newProfile,
+	pinHash,
 	presetFor,
 	type Profile,
 	save,
+	settingsHash,
 	summaries,
 	uid,
 } from './db.ts';
@@ -64,16 +68,16 @@ function firstRun() {
 	save();
 }
 
-function state(): State {
+async function state(): Promise<State> {
 	firstRun();
 	const p = me();
 	return {
+		...await visible(p),
 		profile: p.id,
 		welcome: p.welcome,
 		profiles: summaries(),
 		presets: p.presets,
 		preset: activePreset().id,
-		lists: p.lists,
 		tmdb: hasTmdb,
 		names: {
 			indexer: INDEXER,
@@ -81,8 +85,6 @@ function state(): State {
 		},
 		library: !!MEDIA,
 		titleModes: p.titleModes || {},
-		progress: p.progress || {},
-		marked: p.marked || {},
 	};
 }
 
@@ -112,7 +114,7 @@ const VERDICTS: Record<string, number> = {
 	keep: 1,
 	seen: 2,
 };
-function swipe(item: Item, verdict: string) {
+async function swipe(item: Item, verdict: string) {
 	const p = me(), k = item.type + item.id;
 	if (verdict === 'later') (p.snooze ||= {})[k] = Date.now() + 20 * 3600e3;
 	else (p.seen ||= {})[k] = VERDICTS[verdict] ?? 0;
@@ -123,14 +125,18 @@ function swipe(item: Item, verdict: string) {
 	else delete p.marked?.[k];
 	if (verdict === 'keep') toggle(WATCHLIST, item, true);
 	else save();
+	const { lists, marked } = await visible(p);
 	return {
-		lists: p.lists,
-		marked: p.marked || {},
+		lists,
+		marked,
 	};
 }
 
 // profiles: add ({ name, color, avatar }), edit ({ id, name, color, avatar }), delete ({ id, remove });
-// the last one stays. An avatar is a picture's name ('' goes back to the initial)
+// the last one stays. An avatar is a picture's name ('' goes back to the initial). A profile held to
+// a max age changes only itself, its limit included: its settings PIN is what keeps it. A profile
+// whose settings ask a PIN is changed with its settings token (auth), one with a PIN to open it
+// with that token, unless it's the one acting (opened with it)
 function edit(p: Profile, b: PostRoutes['profiles']['body'], name: string, l?: string) {
 	if (name) p.name = name;
 	if (b.color != null) p.color = +b.color || 0;
@@ -138,12 +144,74 @@ function edit(p: Profile, b: PostRoutes['profiles']['body'], name: string, l?: s
 		p.avatar = /^[a-z]+-\d{1,2}$/.test(b.avatar) ? b.avatar : undefined;
 	}
 	if (l) p.lang = l;
+	protect(p, b);
+	limit(p, b);
+}
+const hashOf = (p: Profile, pin: string) => {
+	if ([...pin].length !== 4) throw new UserError(msg`A PIN is 4 characters`);
+	return pinHash(p.id, pin);
+};
+// its PINs: the one that opens it, and what its settings ask
+function protect(p: Profile, b: PostRoutes['profiles']['body']) {
+	if (b.pin === '') {
+		// its settings keep the PIN they shared with it
+		if (p.guard === 'same') Object.assign(p, {
+			guard: 'own',
+			guardPin: p.pin,
+		});
+		delete p.pin;
+		delete p.lock;
+	} else if (typeof b.pin === 'string') p.pin = hashOf(p, b.pin);
+	if (b.lock === 'switch' || b.lock === 'open') p.lock = b.lock;
+	if (typeof b.guardPin === 'string') p.guardPin = hashOf(p, b.guardPin);
+	if (b.guard === '') {
+		delete p.guard;
+		delete p.guardPin;
+	} else if (b.guard === 'same') {
+		if (!p.pin) throw new UserError(msg`Set this profile’s PIN code first`);
+		p.guard = 'same';
+		delete p.guardPin;
+	} else if (b.guard === 'own') {
+		if (!p.guardPin) throw new UserError(msg`Type a PIN for its settings`);
+		p.guard = 'own';
+	}
+}
+// its age limit: only from itself (else any profile, a new unprotected one too, could change it),
+// never on the last profile without one; its settings PIN is what keeps it
+function limit(p: Profile, b: PostRoutes['profiles']['body']) {
+	if (b.maxAge === undefined && b.unrated === undefined) return;
+	if (p !== me()) throw new UserError(msg`Only the profile itself can change its age limit`);
+	if (b.maxAge !== undefined) {
+		const max = MAX_AGES.find(x => x === b.maxAge);
+		if (max === undefined) delete p.maxAge;
+		else if (db.profiles.every(x => x === p || x.maxAge != null)) {
+			throw new UserError(msg`Keep at least one profile without an age limit`);
+		} else p.maxAge = max;
+	}
+	if (typeof b.unrated === 'boolean') p.unrated = b.unrated;
+}
+function mayChange(p: Profile, b: PostRoutes['profiles']['body']) {
+	const self = me();
+	if (self.maxAge != null && (p !== self || b.remove)) {
+		throw new UserError(msg`A profile with an age limit can’t change the other profiles`);
+	}
+	const settings = settingsHash(p);
+	const needed = settings ?? (p !== self ? p.pin : undefined); // its own token came with the request
+	if (needed && b.auth !== needed) throw new UserError(msg`This profile’s PIN is needed to change it`);
 }
 function profiles(b: PostRoutes['profiles']['body']) {
 	const n = String(b.name || '').trim().slice(0, 24), p = db.profiles.find(x => x.id === b.id);
 	const l = isUiLang(b.lang) ? b.lang : undefined;
+	if (p) mayChange(p, b);
+	else if (me().maxAge != null && settingsHash(me()) && b.auth !== settingsHash(me())) {
+		// held to an age limit: a new profile would be a way out, its settings PIN first
+		throw new UserError(msg`This profile’s settings PIN is needed to add a profile`);
+	}
 	if (b.remove) {
-		if (db.profiles.length > 1) db.profiles = db.profiles.filter(x => x !== p);
+		if (p && db.profiles.length > 1) {
+			db.profiles = db.profiles.filter(x => x !== p);
+			broadcast({ gone: true }, p.id);
+		}
 	} else if (p) edit(p, b, n, l);
 	else if (n) {
 		if (db.profiles.length >= 12) throw new UserError(msg`12 profiles at most`);
@@ -157,6 +225,28 @@ function profiles(b: PostRoutes['profiles']['body']) {
 	}
 	save();
 	return summaries();
+}
+
+// a PIN's token; five wrong tries in a row wait a minute
+const tries = new Map<string, { n: number; at: number }>();
+function unlock({ id, pin, settings }: PostRoutes['unlock']['body']) {
+	const p = db.profiles.find(x => x.id === id);
+	const want = p && (settings ? settingsHash(p) : p.pin);
+	if (!p || !want) throw new UserError(msg`This profile has no PIN`);
+	const t = tries.get(p.id) ?? {
+		n: 0,
+		at: 0,
+	};
+	if (t.n >= 5 && Date.now() - t.at < 60e3) throw new UserError(msg`Too many wrong PINs. Try again in a minute.`);
+	if (pinHash(p.id, String(pin)) !== want) {
+		tries.set(p.id, {
+			n: t.n + 1,
+			at: Date.now(),
+		});
+		throw new UserError(msg`Wrong PIN`);
+	}
+	tries.delete(p.id);
+	return { token: want };
 }
 
 // watch progress per film / episode (key = imdb or imdb:s:e); watched once past 90% or marked by
@@ -181,8 +271,11 @@ function progress({ key, pos, dur, watched, info }: PostRoutes['progress']['body
 	};
 	p[key] = entry;
 	save();
-	// finished, and it came without the episode after it: looked up behind the answer
-	void follow(p, key).catch(warn('resume'));
+	// finished, and it came without the episode after it: looked up behind the answer; then the
+	// profile's other devices hear of it (their Resume goes on from here)
+	const who = me().id;
+	void follow(p, key).catch(warn('resume'))
+		.then(() => broadcast({ progress: { [key]: p[key]! } }, who));
 	return entry;
 }
 
@@ -210,10 +303,14 @@ function presets(given: PostRoutes['presets']['body']['presets'] = []) {
 	};
 }
 
-export const householdGets: GetHandlers = { state };
+export const householdGets: GetHandlers = {
+	state,
+	who: summaries,
+};
 
 export const householdPosts: PostHandlers = {
 	profiles,
+	unlock,
 	// a part of the first visit is done
 	welcome: ({ done }) => {
 		const p = me();
@@ -246,6 +343,9 @@ export const householdPosts: PostHandlers = {
 		return { preset: id };
 	},
 	presets: ({ presets: given }) => presets(given),
-	lists: ({ name, item, on }) => toggle(name, item, on),
+	lists: async ({ name, item, on }) => {
+		toggle(name, item, on);
+		return (await visible()).lists;
+	},
 	swipe: ({ item, verdict }) => swipe(item, verdict),
 };

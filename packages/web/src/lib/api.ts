@@ -11,6 +11,7 @@ import {
 import { uiLang } from './i18n.ts';
 import {
 	load,
+	pinToken,
 	setupToken,
 } from './store.ts';
 
@@ -27,6 +28,7 @@ const wait = (ms: number) => new Promise(ok => setTimeout(ok, ms));
 async function call<T>(path: string, init: RequestInit, tries = 4): Promise<T> {
 	const headers: Record<string, string> = {
 		[HEADERS.profile]: load('profile') ?? '',
+		[HEADERS.pin]: pinToken(),
 		[HEADERS.setup]: setupToken(),
 		[HEADERS.lang]: uiLang(),
 		...init.headers as Record<string, string>,

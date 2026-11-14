@@ -3,6 +3,7 @@ import { t } from '@lingui/core/macro';
 import {
 	dec,
 	locale,
+	uiLang,
 } from './i18n.ts';
 
 /** 1:02:03, 4:05 */
@@ -57,3 +58,18 @@ export const langName = (code: string) => {
 		return code;
 	}
 };
+
+/** an age as read here: 12+, or in French France's way, -12; 0 is all ages */
+export const ageSays = (age: number) => {
+	if (!age) return t`All ages`;
+	return uiLang() === 'fr' ? `-${age}` : `${age}+`;
+};
+
+/** a title's age rating as read here: in French, France's categories (any rating goes up to the
+ *  next: TV-14 is -16); elsewhere the name of its rating where the profile lives (PG-13), else its
+ *  age (14+) */
+export function ratingSays(age: number, rating?: string) {
+	if (!age) return t`All ages`;
+	if (uiLang() === 'fr') return ageSays([10, 12, 16].find(a => age <= a) ?? 18);
+	return rating && !/^\d+$/.test(rating) ? rating : ageSays(age);
+}

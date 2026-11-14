@@ -1,0 +1,66 @@
+// four boxes over one invisible field: a dot per character typed, the next box lit while it has
+// focus
+.pin {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	gap: 12px;
+	padding: 10px 0;
+
+	input {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		opacity: 0;
+		cursor: pointer;
+	}
+
+	span {
+		display: grid;
+		place-items: center;
+		width: 56px;
+		height: 68px;
+		border-radius: 14px;
+		border: 2px solid var(--rideau-2);
+		background: var(--velours);
+		transition:
+			border-color 0.15s,
+			transform 0.15s;
+
+		&::after {
+			content: "";
+			width: 14px;
+			height: 14px;
+			border-radius: 50%;
+			background: var(--ecran);
+			transform: scale(0);
+			transition: transform 0.15s;
+		}
+	}
+
+	.full::after {
+		transform: scale(1);
+	}
+
+	&:focus-within .at {
+		border-color: var(--lampe);
+		transform: translateY(-2px);
+	}
+}
+
+// a refused PIN
+.shake {
+	animation: shake 0.4s;
+}
+
+@keyframes shake {
+	20%,
+	60% {
+		transform: translateX(-8px);
+	}
+
+	40%,
+	80% {
+		transform: translateX(8px);
+	}
+}

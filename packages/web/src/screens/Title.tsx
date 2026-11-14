@@ -23,6 +23,7 @@ import {
 import {
 	app,
 	currentPreset,
+	myProfile,
 	presetSays,
 	setApp,
 	useApp,
@@ -34,6 +35,7 @@ import {
 import {
 	episodeName,
 	hms,
+	ratingSays,
 } from '../lib/format.ts';
 import { tierSays } from '../lib/tiers.ts';
 import { downloadSheet } from '../sheets/download.tsx';
@@ -56,6 +58,7 @@ import {
 	useLoad,
 } from '../ui/load.ts';
 import { Loading } from '../ui/Loading.tsx';
+import { Badge } from '../ui/Tag.tsx';
 import tx from '../ui/text.module.scss';
 import { toast } from '../ui/toast.tsx';
 import pg from './page.module.scss';
@@ -180,21 +183,40 @@ function playLabel(m: Meta, progress: Record<string, Progress>) {
 	return nx.resume ? t`Resume S${s} E${e}` : t`Play S${s} E${e}`;
 }
 
+/** above the profile's age limit (or unrated, where it hides those) */
+function tooOld(m: Meta) {
+	const p = myProfile();
+	if (p?.maxAge == null) return false;
+	return m.age == null ? !p.unrated : m.age > p.maxAge;
+}
+
 function Facts({ m }: { m: Meta }) {
 	const n = m.seasons?.length ?? 0;
 	const runtime = m.runtime;
+	const rating = m.age != null && ratingSays(m.age, m.rating);
 	const bits = [
+		rating && <Badge key="rating">{rating}</Badge>,
 		m.year,
 		...(m.genres ?? []).slice(0, 3),
 		runtime && `${runtime} min`,
 		m.seasons && (n > 1 ? t`${n} seasons` : t`${n} season`),
 	].filter(Boolean);
-	return <div className={pg.facts}>{bits.map(x => <span key={String(x)}>{x}</span>)}</div>;
+	const shown = bits.map(x => typeof x === 'string' ? <span key={x}>{x}</span> : x);
+	return <div className={pg.facts}>{shown}</div>;
 }
 
 function Hint({ m }: { m: Meta }) {
 	const s = useApp();
 	const own = s.titleModes[titleKey(m)];
+	if (tooOld(m)) {
+		return (
+			<p className={tx.hint}>
+				{m.age != null
+					? t`Above this profile’s age limit.`
+					: t`This title has no age rating, and this profile hides those.`}
+			</p>
+		);
+	}
 	if (!m.imdb) {
 		return (
 			<p className={tx.hint}>
@@ -410,11 +432,11 @@ export function Title({
 					{m.sub && <p className={pg.aka}>{m.sub}</p>}
 					<Facts m={m} />
 					<p className={pg.overview}>{m.overview}</p>
-					<Actions m={m} />
+					{!tooOld(m) && <Actions m={m} />}
 					<Hint m={m} />
 				</div>
 			</section>
-			{type === 'series' && <Seasons m={m} />}
+			{type === 'series' && !tooOld(m) && <Seasons m={m} />}
 		</div>
 	);
 }

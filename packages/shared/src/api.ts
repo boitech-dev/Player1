@@ -75,6 +75,10 @@ export interface Meta extends Item {
 	genres?: string[];
 	runtime?: number | null;
 	seasons?: Season[];
+	/** the age it's rated for, and its rating's name where the profile lives (PG-13, 12) when it's
+	 *  rated there */
+	rating?: string;
+	age?: number;
 }
 
 // --- the household ---
@@ -87,7 +91,20 @@ export interface ProfileSummary {
 	avatar?: string;
 	/** interface language */
 	lang?: string;
+	/** it has a PIN to open it, asked when switching to it or each time Player1 opens on it */
+	lock?: PinMode;
+	/** a PIN is needed to change its settings: the one that opens it, or one of their own */
+	guard?: Guard;
+	/** titles rated above this age are hidden and can't be played */
+	maxAge?: number;
+	/** with a max age: titles without any rating show too */
+	unrated?: boolean;
 }
+
+export type PinMode = 'switch' | 'open';
+export type Guard = 'same' | 'own';
+/** the max ages a profile can be held to */
+export const MAX_AGES = [0, 10, 12, 16] as const;
 
 export interface Preset {
 	id: string;
@@ -386,6 +403,10 @@ export interface Device {
 export interface DeviceMessage {
 	preset?: string;
 	play?: PlayRequest;
+	/** watch progress saved by another of the profile's devices (all of it when the stream opens) */
+	progress?: Record<string, Progress>;
+	/** this device's profile was deleted */
+	gone?: boolean;
 }
 
 // --- server settings ---
@@ -483,6 +504,8 @@ export interface CheckResult {
 
 export interface GetRoutes {
 	state: { query: void; reply: State };
+	/** the profiles, for "Who's watching?" while this device's profile is locked */
+	who: { query: void; reply: ProfileSummary[] };
 	home: { query: void; reply: Row[] };
 	browse: { query: { key: string; page: number }; reply: Row };
 	genres: { query: void; reply: Genres };
@@ -512,9 +535,24 @@ export interface PostRoutes {
 			avatar?: string;
 			lang?: string;
 			remove?: boolean;
+			/** the PIN that opens it, 4 characters; '' removes it */
+			pin?: string;
+			lock?: PinMode;
+			/** what its settings ask: '' nothing, the opening PIN, or guardPin */
+			guard?: Guard | '';
+			guardPin?: string;
+			/** null: no limit */
+			maxAge?: number | null;
+			unrated?: boolean;
+			/** the edited profile's settings token (its opening one when its settings ask nothing);
+			 *  adding one from a profile held to an age limit, that profile's settings token */
+			auth?: string;
 		};
 		reply: ProfileSummary[];
 	};
+	/** a profile's PIN: the token that opens it (sent as x-pin), or with settings the one that
+	 *  changes it (sent as auth) */
+	'unlock': { body: { id: string; pin: string; settings?: boolean }; reply: { token: string } };
 	'titlemode': { body: { key: string; tier: Tier | null }; reply: Record<string, Tier> };
 	'log': { body: { dev: string; msg: string }; reply: object };
 	'progress': {
@@ -563,6 +601,8 @@ export type PostPath = keyof PostRoutes;
 export const HEADERS = {
 	/** the profile acting */
 	profile: 'x-profile',
+	/** its unlock token, when it has a PIN asked to open it */
+	pin: 'x-pin',
 	/** the one-time setup link's token, on a fresh install */
 	setup: 'x-setup',
 	/** the device's interface language, for messages before a profile is known */

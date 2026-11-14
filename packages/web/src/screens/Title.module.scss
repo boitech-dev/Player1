@@ -1,13 +1,13 @@
 @use "../styles/media" as *;
 
-// a series: its seasons, then the season's episodes
+// a series: its seasons (every one in view: a long series wraps onto more lines), then the
+// season's episodes
 .seasons {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 8px;
-	overflow-x: auto;
 	padding: 6px var(--gutter) 10px;
 	margin-top: 28px;
-	scrollbar-width: none;
 
 	> button[aria-pressed="true"] {
 		background: var(--ecran);

@@ -58,7 +58,9 @@ export function Browse({ cat }: { cat: string }) {
 		}, { rootMargin: '800px' });
 		if (btn.current && more) io.observe(btn.current);
 		return () => io.disconnect();
-	}, [more, next]);
+		// watched again after each page: a short one (a profile's age limit) leaves the button in
+		// view, and the grid fills on
+	}, [more, next, items.length]);
 	useLanding(grid, items.length > 0);
 	if (!title) return <Loading />;
 	return (

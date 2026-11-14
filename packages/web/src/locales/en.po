@@ -85,6 +85,10 @@ msgstr "{name} will remember this choice and pick the closest quality next time.
 msgid "{name}, download first"
 msgstr "{name}, download first"
 
+#: src/sheets/profiles.tsx
+msgid "{name}’s settings"
+msgstr "{name}’s settings"
+
 #: src/player/engine.ts
 #: src/sheets/download.tsx
 msgid "{seedbox} is downloading it: {n}%"
@@ -142,7 +146,12 @@ msgstr "A test version is running. The next release replaces it."
 msgid "A TV with Homebrew Channel installs it by itself: in Homebrew Channel’s settings, add this repository, then pick Player1 in the list."
 msgstr "A TV with Homebrew Channel installs it by itself: in Homebrew Channel’s settings, add this repository, then pick Player1 in the list."
 
+#: src/screens/Title.tsx
+msgid "Above this profile’s age limit."
+msgstr "Above this profile’s age limit."
+
 #: src/screens/Who.tsx
+#: src/sheets/profiles.tsx
 msgid "Add"
 msgstr "Add"
 
@@ -156,8 +165,12 @@ msgid "Add a language"
 msgstr "Add a language"
 
 #: src/sheets/profiles.tsx
-msgid "Add a profile"
-msgstr "Add a profile"
+msgid "Add a PIN code for settings"
+msgstr "Add a PIN code for settings"
+
+#: src/sheets/profiles.tsx
+msgid "Add a PIN code for settings so only you can change it."
+msgstr "Add a PIN code for settings so only you can change it."
 
 #: src/screens/Welcome.tsx
 #: src/sheets/presets.tsx
@@ -192,9 +205,25 @@ msgstr "Address"
 msgid "Adds posters, summaries, categories and trailers. Without it, the catalog only shows popular titles."
 msgstr "Adds posters, summaries, categories and trailers. Without it, the catalog only shows popular titles."
 
+#: src/sheets/profiles.tsx
+msgid "Adventurers"
+msgstr "Adventurers"
+
+#: src/sheets/profiles.tsx
+msgid "Age limit"
+msgstr "Age limit"
+
 #: src/screens/Discover.tsx
 msgid "All"
 msgstr "All"
+
+#: src/lib/format.ts
+msgid "All ages"
+msgstr "All ages"
+
+#: src/sheets/profiles.tsx
+msgid "All ages only"
+msgstr "All ages only"
 
 #: src/sheets/download.tsx
 msgid "Already in Jellyfin"
@@ -231,6 +260,18 @@ msgstr "API key or read access token"
 #: src/player/engine.ts
 msgid "Arabic"
 msgstr "Arabic"
+
+#: src/sheets/profiles.tsx
+msgid "Ask for the code…"
+msgstr "Ask for the code…"
+
+#: src/sheets/profiles.tsx
+msgid "Asked before this profile can be changed."
+msgstr "Asked before this profile can be changed."
+
+#: src/sheets/profiles.tsx
+msgid "Asked before this profile can be used."
+msgstr "Asked before this profile can be used."
 
 #: src/player/Player.tsx
 #: src/sheets/tracks.tsx
@@ -280,6 +321,10 @@ msgstr "Back"
 msgid "Back 10 seconds"
 msgstr "Back 10 seconds"
 
+#: src/sheets/profiles.tsx
+msgid "Blobs"
+msgstr "Blobs"
+
 #: src/screens/Settings.tsx
 msgid "Building the TV app…"
 msgstr "Building the TV app…"
@@ -316,6 +361,14 @@ msgstr "Captioned"
 msgid "Categories"
 msgstr "Categories"
 
+#: src/sheets/profiles.tsx
+msgid "Change"
+msgstr "Change"
+
+#: src/sheets/profiles.tsx
+msgid "Change the PIN code"
+msgstr "Change the PIN code"
+
 #: src/screens/Settings.tsx
 msgid "Check for updates"
 msgstr "Check for updates"
@@ -332,6 +385,14 @@ msgstr "Checking…"
 #: src/player/engine.ts
 msgid "Chinese"
 msgstr "Chinese"
+
+#: src/sheets/profiles.tsx
+msgid "Choose a PIN"
+msgstr "Choose a PIN"
+
+#: src/sheets/profiles.tsx
+msgid "Choose a PIN for its settings"
+msgstr "Choose a PIN for its settings"
 
 #: src/screens/Welcome.tsx
 msgid "Choose its languages yourself"
@@ -408,16 +469,12 @@ msgid "Create"
 msgstr "Create"
 
 #: src/sheets/profiles.tsx
-msgid "Delete"
-msgstr "Delete"
-
-#: src/sheets/profiles.tsx
 msgid "Delete {name}"
 msgstr "Delete {name}"
 
 #: src/sheets/profiles.tsx
-msgid "Delete the profile {name}?"
-msgstr "Delete the profile {name}?"
+msgid "Delete the profile {name}? Their lists and what they’ve watched go with it."
+msgstr "Delete the profile {name}? Their lists and what they’ve watched go with it."
 
 #: src/sheets/presets.tsx
 msgid "Delete this preset"
@@ -500,17 +557,14 @@ msgstr "Each new version is tested before it replaces this one. If it doesn’t 
 msgid "Each person at home has their own lists, languages and progress. This one is yours."
 msgstr "Each person at home has their own lists, languages and progress. This one is yours."
 
+#. placeholder {0}: mine.name
+#: src/sheets/profiles.tsx
+msgid "Edit {0}’s profile"
+msgstr "Edit {0}’s profile"
+
 #: src/sheets/presets.tsx
 msgid "Edit presets"
 msgstr "Edit presets"
-
-#: src/sheets/profiles.tsx
-msgid "Edit profile"
-msgstr "Edit profile"
-
-#: src/sheets/profiles.tsx
-msgid "Edit this profile"
-msgstr "Edit this profile"
 
 #: src/player/engine.ts
 msgid "English"
@@ -519,6 +573,10 @@ msgstr "English"
 #: src/app/Curtain.tsx
 msgid "Enter"
 msgstr "Enter"
+
+#: src/sheets/profiles.tsx
+msgid "Even on a device that was already on this profile"
+msgstr "Even on a device that was already on this profile"
 
 #: src/screens/Settings.tsx
 msgid "Everything is connected."
@@ -630,6 +688,10 @@ msgstr "HEVC 10-bit 4K HDR"
 msgid "Hide"
 msgstr "Hide"
 
+#: src/sheets/profiles.tsx
+msgid "Hide them"
+msgstr "Hide them"
+
 #: src/screens/Discover.tsx
 msgid "Hide: never suggest again"
 msgstr "Hide: never suggest again"
@@ -637,6 +699,10 @@ msgstr "Hide: never suggest again"
 #: src/screens/Settings.tsx
 msgid "Household data"
 msgstr "Household data"
+
+#: src/sheets/devices.tsx
+msgid "How the other devices list it"
+msgstr "How the other devices list it"
 
 #: src/sheets/download.tsx
 #: src/sheets/quality.tsx
@@ -707,6 +773,10 @@ msgstr "Italian"
 #: src/screens/Setup.tsx
 msgid "Its download folder, as seen from this server (empty with Whatbox)"
 msgstr "Its download folder, as seen from this server (empty with Whatbox)"
+
+#: src/sheets/devices.tsx
+msgid "Its name"
+msgstr "Its name"
 
 #: src/player/engine.ts
 msgid "Japanese"
@@ -869,8 +939,8 @@ msgid "My favorites"
 msgstr "My favorites"
 
 #: src/sheets/profiles.tsx
-msgid "Name, picture, color, language"
-msgstr "Name, picture, color, language"
+msgid "Name, picture, language, PIN, age limit"
+msgstr "Name, picture, language, PIN, age limit"
 
 #: src/screens/Welcome.tsx
 msgid "Never dubbed: the original voices, with subtitles"
@@ -883,6 +953,14 @@ msgstr "New list"
 #: src/sheets/lists.tsx
 msgid "New list name"
 msgstr "New list name"
+
+#: src/sheets/profiles.tsx
+msgid "New PIN"
+msgstr "New PIN"
+
+#: src/sheets/profiles.tsx
+msgid "New PIN for its settings"
+msgstr "New PIN for its settings"
 
 #: src/sheets/presets.tsx
 msgid "New preset"
@@ -945,6 +1023,15 @@ msgstr "No title found. Try the original or English title."
 msgid "No version of this title can be downloaded right now."
 msgstr "No version of this title can be downloaded right now."
 
+#: src/sheets/profiles.tsx
+msgid "None"
+msgstr "None"
+
+#: src/sheets/profiles.tsx
+msgctxt "PIN code for settings"
+msgid "None"
+msgstr "None"
+
 #: src/screens/Setup.tsx
 msgid "Not a Torznab address. Copy it from the site’s settings."
 msgstr "Not a Torznab address. Copy it from the site’s settings."
@@ -993,6 +1080,10 @@ msgstr "Off"
 msgid "OK"
 msgstr "OK"
 
+#: src/sheets/profiles.tsx
+msgid "On every page load and when selected"
+msgstr "On every page load and when selected"
+
 #: src/screens/Settings.tsx
 msgid "On the TV, open the Developer Mode app, turn on Dev Mode Status and Key Server, then type here the TV’s address and the passphrase the app shows."
 msgstr "On the TV, open the Developer Mode app, turn on Dev Mode Status and Key Server, then type here the TV’s address and the passphrase the app shows."
@@ -1004,6 +1095,10 @@ msgstr "On the TV, open this address in its browser and install the file it down
 #: src/screens/Pair.tsx
 msgid "On your phone or PC, open Player1, go to Devices and type this code."
 msgstr "On your phone or PC, open Player1, go to Devices and type this code."
+
+#: src/sheets/devices.tsx
+msgid "Open Player1 on the new device: it shows a code to type here."
+msgstr "Open Player1 on the new device: it shows a code to type here."
 
 #: src/screens/Setup.tsx
 msgid "optional"
@@ -1075,6 +1170,30 @@ msgid "Picture"
 msgstr "Picture"
 
 #: src/sheets/profiles.tsx
+msgid "Picture and color"
+msgstr "Picture and color"
+
+#: src/sheets/profiles.tsx
+msgid "PIN"
+msgstr "PIN"
+
+#: src/sheets/profiles.tsx
+msgid "PIN code"
+msgstr "PIN code"
+
+#: src/sheets/profiles.tsx
+msgid "PIN code for settings"
+msgstr "PIN code for settings"
+
+#: src/sheets/profiles.tsx
+msgid "PIN removed"
+msgstr "PIN removed"
+
+#: src/sheets/profiles.tsx
+msgid "PIN saved"
+msgstr "PIN saved"
+
+#: src/sheets/profiles.tsx
 msgid "Pixels"
 msgstr "Pixels"
 
@@ -1103,6 +1222,10 @@ msgstr "Playing in {n} s"
 #: src/sheets/devices.tsx
 msgid "Plays {n} of {total} video formats smoothly. Connection: {net} Mbit/s"
 msgstr "Plays {n} of {total} video formats smoothly. Connection: {net} Mbit/s"
+
+#: src/sheets/profiles.tsx
+msgid "Portraits"
+msgstr "Portraits"
 
 #: src/player/engine.ts
 msgid "Portuguese"
@@ -1138,6 +1261,14 @@ msgid "Previous episode"
 msgstr "Previous episode"
 
 #: src/sheets/profiles.tsx
+msgid "Profile"
+msgstr "Profile"
+
+#: src/sheets/profiles.tsx
+msgid "Profile access"
+msgstr "Profile access"
+
+#: src/sheets/profiles.tsx
 msgid "Profile name"
 msgstr "Profile name"
 
@@ -1152,6 +1283,18 @@ msgstr "Profiles"
 #: src/lib/device.ts
 msgid "Projector"
 msgstr "Projector"
+
+#: src/sheets/profiles.tsx
+msgid "Protected"
+msgstr "Protected"
+
+#: src/sheets/profiles.tsx
+msgid "Protection"
+msgstr "Protection"
+
+#: src/sheets/profiles.tsx
+msgid "Protects the profile configuration"
+msgstr "Protects the profile configuration"
 
 #: src/screens/Setup.tsx
 msgid "qBittorrent"
@@ -1202,11 +1345,16 @@ msgstr "Refused. Check the key or the password."
 msgid "Remove"
 msgstr "Remove"
 
+#: src/sheets/profiles.tsx
+msgid "Remove the PIN code"
+msgstr "Remove the PIN code"
+
 #: src/sheets/lists.tsx
 msgid "Removed from favorites"
 msgstr "Removed from favorites"
 
 #: src/sheets/devices.tsx
+#: src/sheets/profiles.tsx
 msgid "Rename"
 msgstr "Rename"
 
@@ -1225,6 +1373,10 @@ msgstr "Resume S{s} E{e}"
 #: src/player/engine.ts
 msgid "Resuming at {time}"
 msgstr "Resuming at {time}"
+
+#: src/sheets/profiles.tsx
+msgid "Reuse the access PIN code"
+msgstr "Reuse the access PIN code"
 
 #: src/app/Header.tsx
 #: src/screens/Rewatch.tsx
@@ -1246,11 +1398,11 @@ msgstr "Russian"
 #: src/screens/Settings.tsx
 #: src/screens/Welcome.tsx
 #: src/sheets/presets.tsx
-#: src/sheets/profiles.tsx
 msgid "Save"
 msgstr "Save"
 
 #: src/screens/Setup.tsx
+#: src/sheets/profiles.tsx
 msgid "Saved"
 msgstr "Saved"
 
@@ -1333,6 +1485,10 @@ msgstr "Server settings"
 msgid "Server versions (current and previous)"
 msgstr "Server versions (current and previous)"
 
+#: src/sheets/profiles.tsx
+msgid "Set a PIN code first"
+msgstr "Set a PIN code first"
+
 #: src/screens/Setup.tsx
 msgid "Set in the .env file"
 msgstr "Set in the .env file"
@@ -1357,9 +1513,17 @@ msgstr "Show"
 msgid "Show more"
 msgstr "Show more"
 
+#: src/sheets/profiles.tsx
+msgid "Show them"
+msgstr "Show them"
+
 #: src/sheets/quality.tsx
 msgid "Shown in 1080p, when Real-Debrid can convert it"
 msgstr "Shown in 1080p, when Real-Debrid can convert it"
+
+#: src/sheets/profiles.tsx
+msgid "Sketches"
+msgstr "Sketches"
 
 #: src/ui/Wizard.tsx
 msgid "Skip"
@@ -1516,10 +1680,6 @@ msgstr "The test plays a few seconds of each format to find which ones this devi
 msgid "The TV’s address"
 msgstr "The TV’s address"
 
-#: src/sheets/profiles.tsx
-msgid "Their lists and what they’ve watched are deleted too"
-msgstr "Their lists and what they’ve watched are deleted too"
-
 #: src/player/engine.ts
 msgid "These subtitles couldn’t be loaded"
 msgstr "These subtitles couldn’t be loaded"
@@ -1564,6 +1724,10 @@ msgstr "This folder doesn’t exist on this server"
 msgid "This happens once. It takes a few seconds to learn which versions this device plays well."
 msgstr "This happens once. It takes a few seconds to learn which versions this device plays well."
 
+#: src/sheets/profiles.tsx
+msgid "This profile’s age limit isn’t protected by a PIN code"
+msgstr "This profile’s age limit isn’t protected by a PIN code"
+
 #: src/screens/Settings.tsx
 #: src/screens/Setup.tsx
 #: src/sheets/devices.tsx
@@ -1590,6 +1754,10 @@ msgstr "This server’s disk, with the library"
 msgid "This title can’t be played: it isn’t listed on IMDb, which Player1 needs to find sources."
 msgstr "This title can’t be played: it isn’t listed on IMDb, which Player1 needs to find sources."
 
+#: src/screens/Title.tsx
+msgid "This title has no age rating, and this profile hides those."
+msgstr "This title has no age rating, and this profile hides those."
+
 #: src/player/Player.tsx
 msgid "This version is already in Jellyfin"
 msgstr "This version is already in Jellyfin"
@@ -1597,6 +1765,14 @@ msgstr "This version is already in Jellyfin"
 #: src/sheets/download.tsx
 msgid "This version is gone from qBittorrent and from the torrent site. Search again."
 msgstr "This version is gone from qBittorrent and from the torrent site. Search again."
+
+#: src/sheets/profiles.tsx
+msgid "Titles rated above it are hidden from this profile, and won’t play."
+msgstr "Titles rated above it are hidden from this profile, and won’t play."
+
+#: src/sheets/profiles.tsx
+msgid "Titles without an age rating"
+msgstr "Titles without an age rating"
 
 #: src/screens/Setup.tsx
 msgid "TMDB"
@@ -1634,9 +1810,24 @@ msgstr "Try another source in Quality."
 msgid "TV apps"
 msgstr "TV apps"
 
+#: src/sheets/profiles.tsx
+msgid "Type the PIN that protects these settings"
+msgstr "Type the PIN that protects these settings"
+
+#: src/sheets/profiles.tsx
+msgid "Type this profile’s PIN"
+msgstr "Type this profile’s PIN"
+
 #: src/player/engine.ts
 msgid "Unknown language"
 msgstr "Unknown language"
+
+#. placeholder {0}: ageSays(a)
+#. placeholder {0}: ageSays(age)
+#. placeholder {0}: ageSays(limit)
+#: src/sheets/profiles.tsx
+msgid "Up to {0}"
+msgstr "Up to {0}"
 
 #: src/screens/Settings.tsx
 msgid "Up to date, checked on {when}."
@@ -1657,6 +1848,10 @@ msgstr "Updates are paused: this installation has changes of its own that the of
 #: src/screens/Settings.tsx
 msgid "Updates aren’t set up: this installation isn’t linked to a git repository."
 msgstr "Updates aren’t set up: this installation isn’t linked to a git repository."
+
+#: src/sheets/profiles.tsx
+msgid "Updating the catalog…"
+msgstr "Updating the catalog…"
 
 #: src/screens/Setup.tsx
 msgid "Use C411"
@@ -1724,6 +1919,10 @@ msgstr "What you finish watching shows up here."
 #: src/screens/Welcome.tsx
 msgid "What you just set up is a preset. You can keep several and switch from the top of the screen: one for you, one for watching with the kids, one to practise a language."
 msgstr "What you just set up is a preset. You can keep several and switch from the top of the screen: one for you, one for watching with the kids, one to practise a language."
+
+#: src/sheets/profiles.tsx
+msgid "When the profile is selected"
+msgstr "When the profile is selected"
 
 #: src/screens/Setup.tsx
 msgid "Where Player1 finds what Real-Debrid can play. Leave empty for Torrentio, or paste the address of another Stremio addon."

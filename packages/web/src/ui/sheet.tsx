@@ -8,7 +8,10 @@ import {
 
 import { Button } from './Button.tsx';
 import { cx } from './cx.ts';
-import { Icon } from './Icon.tsx';
+import {
+	Icon,
+	type IconName,
+} from './Icon.tsx';
 import s from './sheet.module.scss';
 
 // Sheets: one native <dialog> (focus trap, Esc closes it) showing one sheet at a time. A sheet
@@ -89,7 +92,8 @@ export function SheetHost() {
 			id="sheet"
 			ref={ref}
 			className={cx(s.sheet, o?.peek && s.peek)}
-			onClose={closeSheet}
+			// Esc closed it; not a close of ours whose event arrives once the next sheet is up
+			onClose={() => !ref.current?.open && closeSheet()}
 			onClick={e => e.target === e.currentTarget && closeSheet()}
 		>
 			{o && <div key={o.key}>{o.node}</div>}
@@ -163,3 +167,51 @@ export function Opt({
 export const Big = ({ children }: { children: ReactNode }) => (
 	<span className={s.big}>{children}</span>
 );
+
+/** a sheet's group of rows on its own panel, under a small title */
+export function Group({
+	title,
+	children,
+}: { title?: string; children: ReactNode }) {
+	return (
+		<section className={s.group}>
+			{title && <h5>{title}</h5>}
+			<div className={s.panel}>{children}</div>
+		</section>
+	);
+}
+
+/** a row of a Group that opens something: its icon, what it is, its current value, a chevron */
+export function Row({
+	icon,
+	lead,
+	title,
+	sub,
+	value,
+	bad,
+	first,
+	onClick,
+}: {
+	icon?: IconName;
+	/** in place of the icon: a picture of its own */
+	lead?: ReactNode;
+	title: ReactNode;
+	sub?: ReactNode;
+	value?: ReactNode;
+	bad?: boolean;
+	/** focused when the sheet opens */
+	first?: boolean;
+	onClick: () => void;
+}) {
+	return (
+		<button className={cx(s.row, bad && s.bad)} data-current={first || undefined} onClick={onClick}>
+			{lead ?? (icon && <span className={s.ico}><Icon name={icon} /></span>)}
+			<div>
+				<strong>{title}</strong>
+				{sub && <span>{sub}</span>}
+			</div>
+			{value && <span className={s.value}>{value}</span>}
+			{!bad && <span className={s.chev}><Icon name="chev" /></span>}
+		</button>
+	);
+}

@@ -19,6 +19,14 @@ msgstr "{genre}: series"
 msgid "12 profiles at most"
 msgstr "12 profiles at most"
 
+#: src/household.ts
+msgid "A PIN is 4 characters"
+msgstr "A PIN is 4 characters"
+
+#: src/household.ts
+msgid "A profile with an age limit can’t change the other profiles"
+msgstr "A profile with an age limit can’t change the other profiles"
+
 #: src/catalog.ts
 msgid "Anime"
 msgstr "Anime"
@@ -34,6 +42,14 @@ msgstr "Japanese animated films"
 #: src/household.ts
 msgid "Keep at least one preset, with at least one language in it"
 msgstr "Keep at least one preset, with at least one language in it"
+
+#: src/household.ts
+msgid "Keep at least one profile without an age limit"
+msgstr "Keep at least one profile without an age limit"
+
+#: src/household.ts
+msgid "Only the profile itself can change its age limit"
+msgstr "Only the profile itself can change its age limit"
 
 #: src/catalog.ts
 msgid "Popular movies"
@@ -58,6 +74,10 @@ msgstr "Real-Debrid has no source ready for this title."
 #: src/catalog.ts
 msgid "Season {n}"
 msgstr "Season {n}"
+
+#: src/household.ts
+msgid "Set this profile’s PIN code first"
+msgstr "Set this profile’s PIN code first"
 
 #: src/downloads.ts
 msgid "Source or title missing"
@@ -111,9 +131,33 @@ msgstr "This file is no longer in qBittorrent."
 msgid "This isn’t a TV’s address. It looks like 192.168.1.42."
 msgstr "This isn’t a TV’s address. It looks like 192.168.1.42."
 
+#: src/household.ts
+msgid "This profile has no PIN"
+msgstr "This profile has no PIN"
+
+#: src/http.ts
+msgid "This profile is locked with a PIN"
+msgstr "This profile is locked with a PIN"
+
+#: src/http.ts
+msgid "This profile was deleted"
+msgstr "This profile was deleted"
+
+#: src/household.ts
+msgid "This profile’s PIN is needed to change it"
+msgstr "This profile’s PIN is needed to change it"
+
+#: src/household.ts
+msgid "This profile’s settings PIN is needed to add a profile"
+msgstr "This profile’s settings PIN is needed to add a profile"
+
 #: src/sources.ts
 msgid "This source isn’t ready on Real-Debrid yet"
 msgstr "This source isn’t ready on Real-Debrid yet"
+
+#: src/play.ts
+msgid "This title is above this profile’s age limit"
+msgstr "This title is above this profile’s age limit"
 
 #: src/play.ts
 #: src/sources.ts
@@ -123,6 +167,10 @@ msgstr "This version is no longer listed. Search again."
 #: src/devices.ts
 msgid "Too many devices are waiting to be connected. Try again in a few minutes."
 msgstr "Too many devices are waiting to be connected. Try again in a few minutes."
+
+#: src/household.ts
+msgid "Too many wrong PINs. Try again in a minute."
+msgstr "Too many wrong PINs. Try again in a minute."
 
 #: src/catalog.ts
 msgid "Top rated movies"
@@ -140,6 +188,10 @@ msgstr "Trending movies"
 msgid "Trending series"
 msgstr "Trending series"
 
+#: src/household.ts
+msgid "Type a PIN for its settings"
+msgstr "Type a PIN for its settings"
+
 #: src/catalog.ts
 msgid "Unknown category"
 msgstr "Unknown category"
@@ -151,3 +203,7 @@ msgstr "Unknown preset"
 #: src/lgtv.ts
 msgid "Wrong passphrase. Type the 6 characters the TV’s Developer Mode app shows, capitals included."
 msgstr "Wrong passphrase. Type the 6 characters the TV’s Developer Mode app shows, capitals included."
+
+#: src/household.ts
+msgid "Wrong PIN"
+msgstr "Wrong PIN"
