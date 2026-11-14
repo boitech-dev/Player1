@@ -346,6 +346,7 @@ export async function sendRange(
 	res: ServerResponse,
 	file: string,
 	type: string,
+	cache = 'no-store',
 ) {
 	const size = (await fs.promises.stat(file)).size;
 	const r = /bytes=(\d*)-(\d*)/.exec(req.headers.range || '');
@@ -354,7 +355,7 @@ export async function sendRange(
 		'content-type': type,
 		'accept-ranges': 'bytes',
 		'content-length': end - start + 1,
-		'cache-control': 'no-store',
+		'cache-control': cache,
 		...(r && { 'content-range': `bytes ${start}-${end}/${size}` }),
 	});
 	if (req.method === 'HEAD') return res.end();

@@ -27,8 +27,10 @@ import {
 import { Button } from '../ui/Button.tsx';
 import { cx } from '../ui/cx.ts';
 import { Icon } from '../ui/Icon.tsx';
+import { Beam } from '../ui/Loading.tsx';
 import tx from '../ui/text.module.scss';
 import { toast } from '../ui/toast.tsx';
+import { Trailer } from '../ui/Trailer.tsx';
 import d from './Discover.module.scss';
 import pg from './page.module.scss';
 
@@ -61,100 +63,6 @@ const kindOf = (k?: string): Kind => k && k in KINDS
 	? k as Kind
 	: (load('dkind') as Kind | null) ?? 'all';
 const kindName = (i: Item) => i.anime ? t`Anime` : i.type === 'movie' ? t`Movie` : t`Show`;
-
-// The top card's trailer: fetched 1.5 s after it comes up (fast swiping loads nothing), shown once
-// it really plays. YouTube's iframe speaks postMessage, so no player script is needed. Sound on
-// once the page has been interacted with.
-function Trailer({ item }: { item?: Item }) {
-	const [key, setKey] = useState<string | null>(null);
-	const [on, setOn] = useState(false);
-	const frame = useRef<HTMLIFrameElement>(null);
-	useEffect(() => {
-		setOn(false);
-		const fade = setTimeout(() => setKey(null), 700);
-		if (!item) return () => clearTimeout(fade);
-		let live = true;
-		const ask = setTimeout(async () => {
-			const r = await get('trailer', {
-				type: item.type,
-				id: item.id,
-			}).catch(() => ({ key: undefined }));
-			if (live && r.key) setKey(r.key);
-		}, 1500);
-		return () => {
-			live = false;
-			clearTimeout(fade);
-			clearTimeout(ask);
-		};
-	}, [item]);
-	useEffect(() => {
-		if (!key) return;
-		let playing = false;
-		const listen = (e: MessageEvent) => {
-			if (!/youtube/.test(e.origin)) return;
-			let d: { info?: { playerState?: number } };
-			try {
-				d = JSON.parse(e.data as string);
-			} catch {
-				return;
-			}
-			// fade in once YouTube's own start-up overlay has gone
-			if (d.info?.playerState === 1 && !playing) {
-				playing = true;
-				setTimeout(() => setOn(true), 4000);
-			}
-		};
-		addEventListener('message', listen);
-		return () => removeEventListener('message', listen);
-	}, [key]);
-	const say = (o: object) => frame.current?.contentWindow?.postMessage(JSON.stringify(o), '*');
-	const loaded = () => {
-		say({
-			event: 'listening',
-			id: 1,
-		});
-		setTimeout(() => { // sound refused: play muted
-			say({
-				event: 'command',
-				func: 'mute',
-				args: [],
-			});
-			say({
-				event: 'command',
-				func: 'playVideo',
-				args: [],
-			});
-		}, 4000);
-	};
-	const sound = navigator.userActivation?.hasBeenActive ?? true;
-	const q = key && new URLSearchParams({
-		autoplay: '1',
-		mute: sound ? '0' : '1',
-		controls: '0',
-		loop: '1',
-		playlist: key,
-		playsinline: '1',
-		rel: '0',
-		iv_load_policy: '3',
-		disablekb: '1',
-		enablejsapi: '1',
-		origin: location.origin,
-	});
-	return (
-		<div className={cx(d.trailer, on && d.playing)}>
-			{key && (
-				<iframe
-					ref={frame}
-					src={`https://www.youtube-nocookie.com/embed/${key}?${q}`}
-					allow="autoplay; encrypted-media"
-					tabIndex={-1}
-					title={t`Trailer`}
-					onLoad={loaded}
-				/>
-			)}
-		</div>
-	);
-}
 
 function Facts({ i }: { i: Item }) {
 	return (
@@ -228,7 +136,10 @@ function useDeck(kind: Kind) {
 		post('swipe', {
 			item: i,
 			verdict,
-		}).then(r => setApp({ lists: r.lists }), () => {});
+		}).then(r => setApp({
+			lists: r.lists,
+			marked: r.marked,
+		}), () => {});
 		toast(VERDICT[verdict](i.title), 1600);
 		setDeck(d => d.slice(1));
 		if (deck.length < 6) refill().catch(() => {});
@@ -247,7 +158,10 @@ export function Discover({ kind: asked }: { kind?: string }) {
 	const card = useRef<HTMLDivElement>(null);
 	const drag = useRef<{ x: number; dx: number } | null>(null);
 	const keepBtn = useRef<HTMLButtonElement>(null);
+	const [leaving, setLeaving] = useState<string>(); // the top card, from the verdict on
 	const top = deck[0];
+	const next = deck[1];
+	const going = !!top && leaving === top.type + top.id;
 	useEffect(() => {
 		if (ready && !touch) keepBtn.current?.focus();
 	}, [ready]);
@@ -255,6 +169,7 @@ export function Discover({ kind: asked }: { kind?: string }) {
 		const el = card.current;
 		if (!top) return;
 		if (!el) return shift(top, verdict);
+		setLeaving(top.type + top.id);
 		const stamp = el.querySelector<HTMLElement>(`[data-stamp="${verdict}"]`);
 		if (stamp && (verdict === 'keep' || verdict === 'hide')) stamp.style.opacity = '1';
 		el.style.transition = 'transform .28s ease-in';
@@ -295,7 +210,8 @@ export function Discover({ kind: asked }: { kind?: string }) {
 	return (
 		<section className={d.wrap}>
 			<div className={d.bg} style={{ backgroundImage: top ? `url('${top.backdrop}')` : undefined }} />
-			<Trailer item={top} />
+			{next && <Trailer key={next.type + next.id} item={next} backdrop hidden={!going} />}
+			{top && <Trailer key={top.type + top.id} item={top} backdrop hidden={going} />}
 			<div className={d.kinds}>
 				{(Object.keys(KINDS) as Kind[]).map(k => (
 					<Button
@@ -309,7 +225,7 @@ export function Discover({ kind: asked }: { kind?: string }) {
 			</div>
 			<div className={d.main}>
 				<div className={d.deck}>
-					{deck[1] && <Face key={deck[1].type + deck[1].id + 'n'} i={deck[1]} next />}
+					{next && <Face key={next.type + next.id} i={next} next={!going} />}
 					{top && (
 						<Face
 							key={top.type + top.id}
@@ -320,6 +236,7 @@ export function Discover({ kind: asked }: { kind?: string }) {
 							onPointerUp={up}
 						/>
 					)}
+					{!ready && <div className={d.none}><Beam /></div>}
 					{ready && !top && (
 						<p className={d.none}>
 							{t`Nothing more to suggest for now. Change the filter or come back later.`}

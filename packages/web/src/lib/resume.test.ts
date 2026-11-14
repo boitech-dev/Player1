@@ -5,7 +5,10 @@ import {
 
 import type { Progress } from '@player1/shared/api';
 
-import { standing } from './resume.ts';
+import {
+	seen,
+	standing,
+} from './resume.ts';
 
 const film = (id: string, pos: number, at: number, watched = false): Progress => ({
 	id,
@@ -60,4 +63,30 @@ test('the episode played last wins over an older unfinished one', () => {
 test('a series only glanced at, or finished, is not in progress', () => {
 	expect(says([ep(1, 10, 1)])).toEqual([]);
 	expect(says([ep(11, 1400, 1, true), ep(12, 1400, 2, true, false)])).toEqual([]);
+});
+
+test('seen: films, finished series, Discover\'s marks, latest first; not a series going on', () => {
+	expect(seen({
+		a: film('old', 7000, 1, true),
+		b: film('half', 600, 2),
+		c: ep(1, 1500, 3, true),
+		d: {
+			...ep(8, 1500, 4, true, false),
+			id: 'done',
+		},
+		e: film('new', 7000, 5, true),
+	}, {
+		movieswiped: {
+			id: 'swiped',
+			type: 'movie',
+			title: 'Swiped',
+			at: 0,
+		},
+		movienew: {
+			id: 'new',
+			type: 'movie',
+			title: 'New',
+			at: 9,
+		},
+	}).map(p => p.id)).toEqual(['new', 'done', 'old', 'swiped']);
 });

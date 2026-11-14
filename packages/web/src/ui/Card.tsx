@@ -4,9 +4,10 @@ import type {
 	Ref,
 } from 'react';
 
-import type {
-	Item,
-	ListEntry,
+import {
+	type Item,
+	type ListEntry,
+	WATCHLIST,
 } from '@player1/shared/api';
 
 import {
@@ -22,24 +23,38 @@ import {
 	hms,
 } from '../lib/format.ts';
 import {
+	seen,
 	type Standing,
 	standing,
 } from '../lib/resume.ts';
 import s from './Card.module.scss';
 import { cx } from './cx.ts';
+import { arrived } from './load.ts';
+import { preview } from './Trailer.tsx';
 
 type CardItem = Pick<Item, 'id' | 'type' | 'title' | 'sub' | 'poster'> & { year?: string };
 
-/** a poster; pct draws how much was watched */
+/** a poster; pct draws how much was watched. Hovered or focused, its trailer plays behind the page */
 export function Card({
 	i,
 	href,
 	pct,
 }: { i: CardItem; href?: string; pct?: number }) {
 	return (
-		<a className={s.card} href={href ?? itemHash(i.type, i.id)} data-land>
+		<a
+			className={s.card}
+			href={href ?? itemHash(i.type, i.id)}
+			data-land
+			data-card={i.poster ? '' : undefined}
+			onPointerEnter={e => e.pointerType === 'mouse' && preview(i)}
+			onPointerLeave={() => preview()}
+			onFocus={() => preview(i)}
+			onBlur={() => preview()}
+		>
 			<span className={s.art}>
-				{i.poster ? <img loading="lazy" src={i.poster} alt="" /> : <span>{i.title}</span>}
+				{i.poster ? (
+					<img loading="lazy" src={i.poster} alt="" onLoad={arrived} onError={arrived} />
+				) : <span>{i.title}</span>}
 				{!!pct && <i style={{ width: pct + '%' }} />}
 			</span>
 			<p>{i.title}</p>
@@ -115,11 +130,17 @@ export function ResumeShelf() {
 	);
 }
 
-/** the profile's lists, favorites and watchlist first */
+/** the profile's lists, favorites and watchlist first; the watchlist leaves out what's been seen
+ *  (it's on Rewatch) */
 export function ListShelves() {
-	const { lists } = useApp();
+	const { lists, progress, marked } = useApp();
+	const done = new Set(seen(progress, marked).map(p => p.type + p.id));
 	return Object.entries(lists).map(([n, l]: [string, ListEntry[]]) => (
-		<Shelf key={n} title={listTitle(n)} items={l} />
+		<Shelf
+			key={n}
+			title={listTitle(n)}
+			items={n === WATCHLIST ? l.filter(x => !done.has(x.type + x.id)) : l}
+		/>
 	));
 }
 

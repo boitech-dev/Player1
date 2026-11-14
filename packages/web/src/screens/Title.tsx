@@ -51,9 +51,11 @@ import { Button } from '../ui/Button.tsx';
 import { cx } from '../ui/cx.ts';
 import { Icon } from '../ui/Icon.tsx';
 import {
+	preload,
 	useLanding,
 	useLoad,
 } from '../ui/load.ts';
+import { Loading } from '../ui/Loading.tsx';
 import tx from '../ui/text.module.scss';
 import { toast } from '../ui/toast.tsx';
 import pg from './page.module.scss';
@@ -389,13 +391,17 @@ export function Title({
 	type,
 	id,
 }: { type: MediaType; id: string }) {
-	const m = useLoad(() => get('meta', {
-		type,
-		id,
-	}), [type, id]);
+	const m = useLoad(async () => {
+		const r = await get('meta', {
+			type,
+			id,
+		});
+		await preload(r.backdrop);
+		return r;
+	}, [type, id]);
 	const ref = useRef<HTMLDivElement>(null);
 	useLanding(ref, m);
-	if (!m) return <div className={pg.pad} />;
+	if (!m) return <Loading />;
 	return (
 		<div ref={ref}>
 			<section className={pg.hero} style={{ backgroundImage: `url('${m.backdrop ?? ''}')` }}>

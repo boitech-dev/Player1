@@ -16,6 +16,7 @@ import {
 	Section,
 } from '../ui/Card.tsx';
 import { useLanding } from '../ui/load.ts';
+import { Loading } from '../ui/Loading.tsx';
 import { toast } from '../ui/toast.tsx';
 import p from './page.module.scss';
 
@@ -59,6 +60,7 @@ export function Browse({ cat }: { cat: string }) {
 		return () => io.disconnect();
 	}, [more, next]);
 	useLanding(grid, items.length > 0);
+	if (!title) return <Loading />;
 	return (
 		<>
 			<div className={p.pad} />

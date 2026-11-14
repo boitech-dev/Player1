@@ -2,6 +2,11 @@
 .view {
 	padding-bottom: 64px;
 
+	// a page fades in as it comes (opacity only: a transform would break its fixed backdrops)
+	> * {
+		animation: appear 0.35s ease-out backwards;
+	}
+
 	// the TV app's own player draws under the page
 	:global(html[data-native]) & {
 		visibility: hidden;
@@ -21,4 +26,10 @@
 	text-align: center;
 	padding: 32px var(--gutter);
 	color: #ddd5e4;
+}
+
+@keyframes appear {
+	from {
+		opacity: 0;
+	}
 }

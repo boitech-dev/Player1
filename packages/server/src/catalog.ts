@@ -12,10 +12,18 @@ import type {
 	Row,
 	Season,
 } from '@player1/shared/api';
+import {
+	type PresetLang,
+	tagStream,
+	tiersOf,
+} from '@player1/shared/langs';
 
 import {
 	activePreset,
+	db,
 	me,
+	request,
+	save,
 } from './db.ts';
 import type { GetHandlers } from './http.ts';
 import {
@@ -37,6 +45,7 @@ import {
 	type TmdbTitle,
 	yearOf,
 } from './titles.ts';
+import { trailerFile } from './trailers.ts';
 import {
 	getJSON,
 	hasTmdb,
@@ -300,23 +309,47 @@ interface TmdbVideo {
 	site: string;
 	type: string;
 	key: string;
+	name?: string;
 	iso_639_1?: string;
 	official?: boolean;
 }
-// a YouTube trailer for a TMDB title: French first when the viewer watches dubbed, else
-// English/original
+
+/** a title's YouTube trailers in the preset's order (VF, VOSTFR… as their names say, else the
+ *  language TMDB gives them), a trailer before a teaser */
+export function rankTrailers(videos: TmdbVideo[], langs: PresetLang[]) {
+	const tiers = tiersOf(langs);
+	const tierOf = (v: TmdbVideo) => {
+		const name = v.name ?? '';
+		const tag = tagStream(name);
+		const code = v.iso_639_1 ?? '';
+		if (tag.a[0]) return `dub:${tag.a[0]}`;
+		if (tag.s[0]) return `sub:${tag.s[0]}`;
+		return /\bVOST\b/i.test(name) ? `sub:${code}` : `dub:${code}`;
+	};
+	const rank = (v: TmdbVideo) => {
+		const i = tiers.indexOf(tierOf(v));
+		return (i < 0 ? tiers.length : i) * 4 - (v.type === 'Trailer' ? 2 : 0) - (v.official ? 1 : 0);
+	};
+	return videos.filter(v => v.site === 'YouTube' && /Trailer|Teaser/.test(v.type))
+		.sort((a, b) => rank(a) - rank(b))
+		.map(v => v.key);
+}
+
+// a few, as the page moves on when YouTube only has one in low definition
 async function trailer(type?: string, id = '') {
 	if (!/^tmdb:\d+$/.test(id)) return {};
-	const dub = activePreset().langs.find(l => !l.captioned)?.code || 'en'; // the first language the profile listens to
+	const { langs } = activePreset();
 	const where = `/${type === 'series' ? 'tv' : 'movie'}/${id.slice(5)}/videos`;
-	const query = { include_video_language: `${dub},en,null` };
+	const spoken = new Set([...langs.map(l => l.code), 'en', 'null']);
+	const query = { include_video_language: [...spoken].join(',') };
 	const { results = [] } = await tmdb<{ results?: TmdbVideo[] }>(where, query);
-	const spoken = (v: TmdbVideo) => v.iso_639_1 === dub ? 8 : v.iso_639_1 === 'en' ? 4 : 0;
-	const kind = (v: TmdbVideo) => v.type === 'Trailer' ? 4 : v.type === 'Teaser' ? 2 : 0;
-	const score = (v: TmdbVideo) => kind(v) + spoken(v) + (v.official ? 1 : 0);
-	const best = results.filter(v => v.site === 'YouTube' && /Trailer|Teaser/.test(v.type))
-		.sort((a, b) => score(b) - score(a))[0];
-	return best ? { key: best.key } : {};
+	const keys = rankTrailers(results, langs).slice(0, 4);
+	return keys.length
+		? {
+			key: keys[0],
+			keys,
+		}
+		: {};
 }
 
 interface TmdbSeason {
@@ -327,6 +360,31 @@ interface TmdbSeason {
 		still_path?: string | null;
 		runtime?: number;
 	}[];
+}
+
+const meta = (type = '', id = '') => id.startsWith('tmdb:') ? tmdbMeta(type, id) : cmMeta(type, id);
+
+/** at start: "seen" verdicts given before Discover kept the card, looked up for Rewatch (in each
+ *  profile's language; one that fails is tried again next start) */
+export async function markAll() {
+	for (const p of db.profiles) {
+		for (const [k, v] of Object.entries(p.seen ?? {})) {
+			if (v !== 2 || p.marked?.[k]) continue;
+			const type = k.startsWith('series') ? 'series' : 'movie', id = k.slice(type.length);
+			const m = await request.run({ profile: p }, () => meta(type, id)).catch(() => null);
+			if (!m) continue;
+			(p.marked ||= {})[k] = {
+				id,
+				type,
+				title: m.title,
+				sub: m.sub,
+				year: m.year,
+				poster: m.poster,
+				at: 0,
+			};
+			save();
+		}
+	}
 }
 
 export const catalogGets: GetHandlers = {
@@ -368,8 +426,9 @@ export const catalogGets: GetHandlers = {
 	},
 	discover: ({ kind }) => discover(kind),
 	trailer: ({ type, id }) => trailer(type, id),
+	trailerFile: async ({ key = '' }) => ({ height: await trailerFile(key) }),
 	search: ({ q }) => search(q),
-	meta: ({ type = '', id = '' }) => id.startsWith('tmdb:') ? tmdbMeta(type, id) : cmMeta(type, id),
+	meta: ({ type, id }) => meta(type, id),
 	season: async ({ id = '', n }) => (await tmdb<TmdbSeason>(`/tv/${id.slice(5)}/season/${n}`))
 		.episodes.map(x => ({
 			e: x.episode_number,

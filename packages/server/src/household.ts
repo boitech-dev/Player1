@@ -82,20 +82,23 @@ function state(): State {
 		library: !!MEDIA,
 		titleModes: p.titleModes || {},
 		progress: p.progress || {},
+		marked: p.marked || {},
 	};
 }
+
+const entry = (item: ListEntry): ListEntry => ({
+	id: item.id,
+	type: item.type,
+	title: item.title,
+	sub: item.sub,
+	year: item.year,
+	poster: item.poster,
+});
 
 // toggle item in list; empty lists vanish (except Favoris)
 function toggle(name: string, item: ListEntry, on: boolean) {
 	const lists = me().lists, l = (lists[name] ||= []).filter(x => x.id !== item.id);
-	if (on) l.unshift({
-		id: item.id,
-		type: item.type,
-		title: item.title,
-		sub: item.sub,
-		year: item.year,
-		poster: item.poster,
-	});
+	if (on) l.unshift(entry(item));
 	if (l.length || name === FAVORITES) lists[name] = l;
 	else delete lists[name];
 	save();
@@ -113,9 +116,17 @@ function swipe(item: Item, verdict: string) {
 	const p = me(), k = item.type + item.id;
 	if (verdict === 'later') (p.snooze ||= {})[k] = Date.now() + 20 * 3600e3;
 	else (p.seen ||= {})[k] = VERDICTS[verdict] ?? 0;
+	if (verdict === 'seen') (p.marked ||= {})[k] = {
+		...entry(item),
+		at: Date.now(),
+	};
+	else delete p.marked?.[k];
 	if (verdict === 'keep') toggle(WATCHLIST, item, true);
 	else save();
-	return { lists: p.lists };
+	return {
+		lists: p.lists,
+		marked: p.marked || {},
+	};
 }
 
 // profiles: add ({ name, color, avatar }), edit ({ id, name, color, avatar }), delete ({ id, remove });

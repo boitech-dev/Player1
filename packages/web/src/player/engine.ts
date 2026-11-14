@@ -40,6 +40,7 @@ import {
 	me,
 	preferredQuality,
 	setCaps,
+	webOS,
 } from '../lib/device.ts';
 import {
 	episodeName,
@@ -332,8 +333,10 @@ export function attach(el: HTMLVideoElement, host: HTMLElement) {
 
 const esc = (s: string) => s.replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
 
-/** a file the device decodes itself: Movi in a browser, Android's player in the TV app */
+/** a file the device decodes itself: Movi in a browser, Android's player in the TV app, the
+ *  page's own <video> on an LG TV (webOS plays the file on its video chip) */
 async function switchPlayer(on: boolean) {
+	if (webOS) return;
 	if (nv) {
 		if (!on && v === nv) nv.stop();
 		nativeOn(on);
@@ -546,10 +549,23 @@ const trackOrder = (): [number, number] => [
 
 /** Movi tracks: ids are the file's stream indexes (a2 = stream 2) */
 function tracks() {
-	if (nv && v === nv && live?.wb) return nv.tracks(...trackOrder());
-	if (!live?.wb || !v?.player) return;
+	if (!live?.wb) return;
+	if (nv && v === nv) return nv.tracks(...trackOrder());
+	if (webOS) return videoTracks();
+	if (!v?.player) return;
 	v.player.selectAudioTrack?.(+sel.audio.slice(1));
 	v.player.selectSubtitleTrack?.(/^s\d+$/.test(sel.sub) ? +sel.sub.slice(1) : null);
+}
+
+// webOS lists a file's audio and embedded subtitle tracks in the file's order, like the TV app
+interface TrackList<T> { length: number; [i: number]: T }
+function videoTracks() {
+	const [a, sub] = trackOrder();
+	const el = video as HTMLVideoElement & { audioTracks?: TrackList<{ enabled: boolean }> };
+	const audio = el.audioTracks;
+	if (audio && a >= 0) for (let i = 0; i < audio.length; i++) audio[i]!.enabled = i === a;
+	const text = el.textTracks;
+	for (let i = 0; i < text.length; i++) text[i]!.mode = i === sub ? 'showing' : 'disabled';
 }
 
 function loadSource(at: number) {
@@ -583,6 +599,15 @@ function loadFile(at: number) {
 		const [a, s] = trackOrder();
 		nv.addEventListener('loadeddata', () => begin2(), { once: true });
 		return nv.open(u, at, a, s);
+	}
+	if (webOS) {
+		v!.addEventListener('loadedmetadata', () => {
+			if (at) v!.currentTime = at;
+			tracks();
+		}, { once: true });
+		v!.addEventListener('loadeddata', () => begin2(), { once: true });
+		v!.src = u;
+		return;
 	}
 	// a new file starts where asked through Movi's own startat: a seek on loadeddata is ignored
 	v!.setAttribute('startat', String(at));

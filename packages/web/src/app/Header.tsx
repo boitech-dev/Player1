@@ -2,8 +2,13 @@ import { t } from '@lingui/core/macro';
 import {
 	useEffect,
 	useRef,
+	useState,
 } from 'react';
 
+import {
+	keep,
+	load,
+} from '../lib/store.ts';
 import { ProfileButton } from '../screens/Who.tsx';
 import { devicesSheet } from '../sheets/devices.tsx';
 import { presetSheet } from '../sheets/presets.tsx';
@@ -16,6 +21,14 @@ import {
 	currentPreset,
 	useApp,
 } from './state.ts';
+
+const searches = (): string[] => {
+	try {
+		return JSON.parse(load('searches') ?? '[]') as string[];
+	} catch {
+		return [];
+	}
+};
 
 /** the header's real height, for the pages under it (--head) */
 const measure = (el: HTMLElement | null) =>
@@ -41,6 +54,17 @@ export function Header({
 	useEffect(() => {
 		if (route.page === 'search' && q.current) q.current.value = route.q;
 	}, [route]);
+	const [past, setPast] = useState(searches);
+	// the last 10 searches, on this device, latest first
+	const search = (el: HTMLInputElement) => {
+		const v = el.value.trim();
+		if (!v) return;
+		const list = [v, ...past.filter(x => x !== v)].slice(0, 10);
+		setPast(list);
+		keep('searches', JSON.stringify(list));
+		location.hash = '#/search/' + encodeURIComponent(v);
+		el.blur();
+	};
 	const here = (p: Route['page']) => route.page === p ? 'page' as const : undefined;
 	return (
 		<header id="head" className={s.header} ref={ref}>
@@ -64,14 +88,26 @@ export function Header({
 					placeholder={t`Movie, series, anime`}
 					enterKeyHint="search"
 					aria-label={t`Search`}
+					list="past"
 					onKeyDown={e => {
-						const v = e.currentTarget.value.trim();
-						if (e.key !== 'Enter' || !v) return;
-						location.hash = '#/search/' + encodeURIComponent(v);
-						e.currentTarget.blur();
+						if (e.key === 'Enter') search(e.currentTarget);
+					}}
+					// a past search picked from the list goes at once
+					onInput={e => {
+						const kind = (e.nativeEvent as InputEvent).inputType;
+						if (!kind || kind === 'insertReplacementText') search(e.currentTarget);
 					}}
 				/>
+				<datalist id="past">
+					{past.map(x => <option key={x} value={x} />)}
+				</datalist>
 			</label>
+			<nav className={s.nav}>
+				<a href="#/rewatch" aria-current={here('rewatch')}>
+					<Icon name="rewatch" filled />
+					<span>{t`Rewatch`}</span>
+				</a>
+			</nav>
 			<span className={s.spacer} />
 			<Button className={s.mode} aria-label={t`Language`} onClick={presetSheet}>
 				{currentPreset(app)?.name ?? t`Language`}

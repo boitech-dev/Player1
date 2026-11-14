@@ -54,6 +54,27 @@ input {
 	outline-offset: 3px;
 }
 
+// pages cross-fade (router.ts), quickly
+::view-transition-group(root) {
+	animation-duration: 0.22s;
+}
+
+// cards wait for their pictures, then rise into place one after the other (load.ts' arrived)
+[data-card]:not([data-up]) {
+	opacity: 0;
+}
+
+[data-up] {
+	animation: card-up 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+@keyframes card-up {
+	from {
+		opacity: 0;
+		transform: translateY(24px) scale(0.94);
+	}
+}
+
 [hidden] {
 	display: none !important;
 }

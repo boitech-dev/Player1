@@ -15,6 +15,10 @@ msgstr "(forcé)"
 msgid "(OpenSubtitles)"
 msgstr "(OpenSubtitles)"
 
+#: src/screens/Settings.tsx
+msgid "{free} free of {size}, Player1 takes {mine}."
+msgstr "{free} libres sur {size}, dont {mine} pour Player1."
+
 #: src/sheets/indexer.tsx
 msgid "{indexer} doesn’t let you download right now"
 msgstr "{indexer} ne te laisse pas télécharger pour l’instant"
@@ -203,6 +207,10 @@ msgstr "Une adresse commence par http:// ou https://"
 #: src/screens/Settings.tsx
 msgid "Android TV app"
 msgstr "Application Android TV"
+
+#: src/screens/Settings.tsx
+msgid "Android TV app: version {tv}."
+msgstr "Application Android TV : version {tv}."
 
 #: src/screens/Discover.tsx
 msgid "Anime"
@@ -419,6 +427,10 @@ msgstr "Supprimer ce préréglage"
 msgid "Device renamed"
 msgstr "Appareil renommé"
 
+#: src/screens/Settings.tsx
+msgid "Device test clips"
+msgstr "Extraits pour tester les appareils"
+
 #: src/app/Header.tsx
 #: src/sheets/devices.tsx
 msgid "Devices"
@@ -427,6 +439,10 @@ msgstr "Appareils"
 #: src/app/Header.tsx
 msgid "Discover"
 msgstr "Découvrir"
+
+#: src/screens/Settings.tsx
+msgid "Disk space"
+msgstr "Espace disque"
 
 #: src/screens/Title.tsx
 msgid "Download"
@@ -468,6 +484,10 @@ msgstr "Téléchargements"
 msgid "Downloads what the torrent site finds. What it already has plays right away. On a seedbox or a computer at home."
 msgstr "Permet de leech et seed des torrents à la demande, ainsi que d'accéder aux contenus hébergés. À installer sur une seedbox ou un ordinateur à la maison par exemple."
 
+#: src/screens/Settings.tsx
+msgid "Downloads, in the library"
+msgstr "Téléchargements, dans la bibliothèque"
+
 #: src/player/engine.ts
 msgid "Dutch"
 msgstr "Néerlandais"
@@ -495,6 +515,10 @@ msgstr "Modifier ce profil"
 #: src/player/engine.ts
 msgid "English"
 msgstr "Anglais"
+
+#: src/app/Curtain.tsx
+msgid "Enter"
+msgstr "Entrer"
 
 #: src/screens/Settings.tsx
 msgid "Everything is connected."
@@ -610,6 +634,10 @@ msgstr "Masquer"
 msgid "Hide: never suggest again"
 msgstr "Masquer : ne plus jamais proposer"
 
+#: src/screens/Settings.tsx
+msgid "Household data"
+msgstr "Données du foyer"
+
 #: src/sheets/download.tsx
 #: src/sheets/quality.tsx
 msgid "In {name}"
@@ -696,6 +724,10 @@ msgstr "Adresse de Jellyfin"
 msgid "Jellyfin won’t show these files until its API key is added in the server settings."
 msgstr "Jellyfin n’affichera pas ces fichiers tant que sa clé API n’est pas ajoutée dans les réglages du serveur."
 
+#: src/lib/format.ts
+msgid "kB"
+msgstr "ko"
+
 #: src/screens/Setup.tsx
 msgid "Key accepted"
 msgstr "Clé acceptée"
@@ -744,6 +776,10 @@ msgid "LG TV app"
 msgstr "Application TV LG"
 
 #: src/screens/Settings.tsx
+msgid "Library"
+msgstr "Bibliothèque"
+
+#: src/screens/Settings.tsx
 msgid "Library and downloads"
 msgstr "Bibliothèque et téléchargements"
 
@@ -755,6 +791,10 @@ msgstr "Dossier de la bibliothèque sur ce serveur"
 #: src/sheets/lists.tsx
 msgid "Lists"
 msgstr "Listes"
+
+#: src/ui/Loading.tsx
+msgid "Loading"
+msgstr "Chargement"
 
 #: src/player/engine.ts
 msgid "Looking for a {mode} source"
@@ -798,6 +838,10 @@ msgstr "Mo"
 msgid "MB/s"
 msgstr "Mo/s"
 
+#: src/screens/Settings.tsx
+msgid "Measuring…"
+msgstr "Mesure en cours…"
+
 #: src/screens/Welcome.tsx
 msgid "More presets"
 msgstr "Autres préréglages"
@@ -816,6 +860,7 @@ msgstr "Film, série, animé"
 
 #: src/screens/Categories.tsx
 #: src/screens/Discover.tsx
+#: src/screens/Rewatch.tsx
 msgid "Movies"
 msgstr "Films"
 
@@ -983,6 +1028,10 @@ msgstr "Version originale, sans sous-titres"
 #: src/lib/tiers.ts
 msgid "Original version, subtitles in its own language"
 msgstr "Version originale, sous-titres dans sa langue"
+
+#: src/screens/Settings.tsx
+msgid "Other"
+msgstr "Autre"
 
 #: src/sheets/indexer.tsx
 msgid "Other versions"
@@ -1177,6 +1226,11 @@ msgstr "Reprendre S{s} E{e}"
 msgid "Resuming at {time}"
 msgstr "Reprise à {time}"
 
+#: src/app/Header.tsx
+#: src/screens/Rewatch.tsx
+msgid "Rewatch"
+msgstr "Revoir"
+
 #: src/sheets/profiles.tsx
 msgid "Robots"
 msgstr "Robots"
@@ -1267,12 +1321,17 @@ msgstr "Envoyé sur {name}"
 
 #: src/screens/Categories.tsx
 #: src/screens/Discover.tsx
+#: src/screens/Rewatch.tsx
 msgid "Series"
 msgstr "Séries"
 
 #: src/sheets/devices.tsx
 msgid "Server settings"
 msgstr "Réglages du serveur"
+
+#: src/screens/Settings.tsx
+msgid "Server versions (current and previous)"
+msgstr "Versions du serveur (actuelle et précédente)"
 
 #: src/screens/Setup.tsx
 msgid "Set in the .env file"
@@ -1519,6 +1578,14 @@ msgstr "Ce serveur n’arrive pas à joindre la source des mises à jour ({error
 msgid "This server’s address"
 msgstr "Adresse de ce serveur"
 
+#: src/screens/Settings.tsx
+msgid "This server’s disk"
+msgstr "Disque de ce serveur"
+
+#: src/screens/Settings.tsx
+msgid "This server’s disk, with the library"
+msgstr "Disque de ce serveur, avec la bibliothèque"
+
 #: src/screens/Title.tsx
 msgid "This title can’t be played: it isn’t listed on IMDb, which Player1 needs to find sources."
 msgstr "Ce titre ne peut pas être lu : il n’est pas référencé sur IMDb, dont Player1 a besoin pour trouver des sources."
@@ -1543,13 +1610,21 @@ msgstr "Pour configurer Player1, ouvre le lien affiché à la fin de l’install
 msgid "Too slow: can’t keep up with the video"
 msgstr "Trop lent : n’arrive pas à suivre la vidéo"
 
+#: src/screens/Settings.tsx
+msgid "Tools (Node, Android build, yt-dlp)"
+msgstr "Outils (Node, compilation Android, yt-dlp)"
+
 #: src/screens/Setup.tsx
 msgid "Torrent site"
 msgstr "Site de torrents"
 
-#: src/screens/Discover.tsx
+#: src/ui/Trailer.tsx
 msgid "Trailer"
 msgstr "Bande-annonce"
+
+#: src/screens/Settings.tsx
+msgid "Trailers"
+msgstr "Bandes-annonces"
 
 #: src/player/engine.ts
 msgid "Try another source in Quality."
@@ -1592,6 +1667,10 @@ msgid "Username"
 msgstr "Nom d’utilisateur"
 
 #: src/screens/Settings.tsx
+msgid "Version"
+msgstr "Version"
+
+#: src/screens/Settings.tsx
 msgid "Version {commit} from {date}."
 msgstr "Version {commit} du {date}."
 
@@ -1602,6 +1681,14 @@ msgstr "Version {commit}."
 #: src/screens/Settings.tsx
 msgid "Version {version}"
 msgstr "Version {version}"
+
+#: src/screens/Settings.tsx
+msgid "Version {version} and later changes ({commit}, {date})."
+msgstr "Version {version} et changements suivants ({commit}, {date})."
+
+#: src/screens/Settings.tsx
+msgid "Version {version}, from {date}."
+msgstr "Version {version}, du {date}."
 
 #: src/sheets/devices.tsx
 #: src/sheets/download.tsx
@@ -1629,6 +1716,10 @@ msgstr "Ce que Player1 cherchera, dans cet ordre"
 #: src/screens/Settings.tsx
 msgid "What this server is set up with, for the whole household."
 msgstr "La configuration de ce serveur, pour tout le foyer."
+
+#: src/screens/Rewatch.tsx
+msgid "What you finish watching shows up here."
+msgstr "Ce que tu finis de regarder arrive ici."
 
 #: src/screens/Welcome.tsx
 msgid "What you just set up is a preset. You can keep several and switch from the top of the screen: one for you, one for watching with the kids, one to practise a language."

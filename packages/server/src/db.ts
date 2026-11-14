@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import type {
 	Download,
 	ListEntry,
+	Marked,
 	Preset,
 	ProfileSummary,
 	Progress,
@@ -22,6 +23,8 @@ export interface Profile extends ProfileSummary {
 	lists: Record<string, ListEntry[]>;
 	/** discover verdicts per type+id: 0 hide, 1 keep, 2 seen */
 	seen?: Record<string, number>;
+	/** the titles behind the "seen" verdicts, for Rewatch */
+	marked?: Record<string, Marked>;
 	/** per title: a tier forced for it */
 	titleModes?: Record<string, Tier>;
 	progress?: Record<string, Progress>;

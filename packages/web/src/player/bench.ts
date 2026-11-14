@@ -16,6 +16,7 @@ import {
 	type FormatResult,
 	me,
 	setCaps,
+	webOS,
 } from '../lib/device.ts';
 import { cx } from '../ui/cx.ts';
 import s from './bench.module.scss';
@@ -78,8 +79,8 @@ function overlay(m: Sample, native: boolean) {
 	return box;
 }
 
-const verdict = (smooth: number, speed: number, stalls: number) =>
-	!stalls && smooth >= 0.9 && speed >= RATE * 0.95;
+const verdict = (smooth: number, speed: number, stalls: number, rate = RATE) =>
+	!stalls && smooth >= 0.9 && speed >= rate * 0.95;
 
 async function decodable(m: Sample) {
 	if (!('VideoDecoder' in window)) return t`This browser can’t play original files by itself`;
@@ -182,6 +183,101 @@ async function moviTest(m: Sample): Promise<FormatResult> {
 	}
 }
 
+// LG TV: the same clip in the page's own <video>, which webOS hands to the TV's video chip (MKV,
+// HEVC, AV1, HDR). At 1x: that chip decodes at the film's pace, whatever the rate asked. Some
+// webOS versions draw the video outside the browser and count no frames: then speed and stalls
+// decide alone. Timed from the clip's first second on: the start, and the TV switching its screen
+// to HDR, pause the picture a moment without saying anything about the decoder.
+interface Mark {
+	at: number;
+	pos: number;
+	q?: VideoPlaybackQuality;
+}
+
+/** frames presented and dropped between two readings */
+const framesSince = (q?: VideoPlaybackQuality, was?: VideoPlaybackQuality) => [
+	(q?.totalVideoFrames ?? 0) - (was?.totalVideoFrames ?? 0),
+	(q?.droppedVideoFrames ?? 0) - (was?.droppedVideoFrames ?? 0),
+] as const;
+
+/** the clip from mark `from` (its first second played) to `end` seconds, reached at time `endAt` */
+function score(q: VideoPlaybackQuality | undefined, from: Mark | null, end: number, endAt: number,
+	fps: number, stalls: number): FormatResult {
+	if (!from) return {
+		ok: false,
+		why: 'Playback failed',
+	};
+	const reached = end - from.pos;
+	const speed = Math.round(Math.min(reached / ((endAt - from.at) / 1000), 1) * 10) / 10;
+	const [total, dropped] = framesSince(q, from.q);
+	const shown = total - dropped;
+	const counted = !!q?.totalVideoFrames;
+	const smooth = counted ? Math.min(1, shown / (reached * fps || 1)) : 1;
+	return {
+		ok: verdict(smooth, speed, stalls, 1),
+		speed,
+		smooth: counted ? Math.round(smooth * 100) : undefined,
+		stalls,
+		dropped: q && dropped,
+		native: true,
+	};
+}
+
+async function videoTest(m: Sample): Promise<FormatResult> {
+	const el = document.createElement('video');
+	el.muted = true;
+	el.style.cssText = 'width:100%;height:100%';
+	const box = overlay(m, false);
+	box.prepend(el);
+	let stalls = 0;
+	let from: Mark | null = null;
+	let endedAt = 0;
+	el.addEventListener('timeupdate', () => {
+		if (!from && el.currentTime >= 1) from = {
+			at: performance.now(),
+			pos: el.currentTime,
+			q: el.getVideoPlaybackQuality?.(),
+		};
+	});
+	el.addEventListener('waiting', () => from && stalls++);
+	try {
+		const loaded = new Promise((ok, ko) => {
+			el.addEventListener('loadeddata', ok, { once: true });
+			el.addEventListener('error', () => ko(new Error(el.error?.message || 'load')), { once: true });
+		});
+		el.src = `/samples/${m.key}.mkv`;
+		const late = new Promise((_, ko) => setTimeout(() => ko(new Error('timeout')), 20000));
+		await Promise.race([loaded, late]);
+		const secs = el.duration || 8;
+		const ended = new Promise<void>(r => el.addEventListener('ended', () => {
+			endedAt = performance.now();
+			r();
+		}, { once: true }));
+		await el.play();
+		await Promise.race([ended, new Promise(r => setTimeout(r, (secs * 2 + 5) * 1000))]);
+		const end = endedAt ? secs : el.currentTime;
+		const q = el.getVideoPlaybackQuality?.();
+		return score(q, from, end, endedAt || performance.now(), m.fps, stalls);
+	} catch (err) {
+		const why = (err as Error).message;
+		post('log', {
+			dev: me.name,
+			msg: `device test ${m.key}: ${why}`,
+		}).catch(() => {});
+		return {
+			ok: false,
+			why: /DECODE|SRC_NOT_SUPPORTED|not supported|format/i.test(why)
+				? 'Not supported'
+				: 'Playback failed',
+		};
+	} finally {
+		el.pause();
+		el.removeAttribute('src');
+		el.load();
+		box.remove();
+	}
+}
+
 // TV app: the same clip through Android's own player, which counts exactly the frames it showed
 // and dropped. Video only: Dolby audio handed to the TV's own processor plays at 1x and would hold
 // the clip back from 1.25x.
@@ -259,7 +355,7 @@ async function bench(): Promise<Caps> {
 		};
 		changed();
 		if (meta.key === 'h264') net = await measureNet();
-		const r = nv ? await nativeTest(meta) : await moviTest(meta);
+		const r = nv ? await nativeTest(meta) : webOS ? await videoTest(meta) : await moviTest(meta);
 		run = {
 			...run,
 			results: {

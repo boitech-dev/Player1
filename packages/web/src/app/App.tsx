@@ -6,6 +6,8 @@ import {
 	useState,
 } from 'react';
 
+import type { ProfileSummary } from '@player1/shared/api';
+
 import {
 	ApiError,
 	get,
@@ -27,6 +29,7 @@ import { Categories } from '../screens/Categories.tsx';
 import { Discover } from '../screens/Discover.tsx';
 import { Home } from '../screens/Home.tsx';
 import { PairScreen } from '../screens/Pair.tsx';
+import { Rewatch } from '../screens/Rewatch.tsx';
 import { Search } from '../screens/Search.tsx';
 import { SettingsPage } from '../screens/Settings.tsx';
 import {
@@ -38,13 +41,19 @@ import { Welcome } from '../screens/Welcome.tsx';
 import { WhoScreen } from '../screens/Who.tsx';
 import type { PickProfile } from '../sheets/profiles.tsx';
 import { cx } from '../ui/cx.ts';
+import { usePending } from '../ui/load.ts';
 import {
 	closeSheet,
 	sheetBack,
 	SheetHost,
 } from '../ui/sheet.tsx';
 import { Toast } from '../ui/toast.tsx';
+import {
+	PagePreview,
+	preview,
+} from '../ui/Trailer.tsx';
 import s from './App.module.scss';
+import { Curtain } from './Curtain.tsx';
 import { connect } from './events.ts';
 import { Header } from './Header.tsx';
 import {
@@ -52,6 +61,7 @@ import {
 	useRoute,
 } from './router.ts';
 import {
+	app,
 	myProfile,
 	setApp,
 	useApp,
@@ -91,6 +101,7 @@ async function boot(): Promise<Phase> {
 function Page({ route }: { route: Route }) {
 	switch (route.page) {
 		case 'cats': return <Categories />;
+		case 'rewatch': return <Rewatch />;
 		case 'discover': return <Discover kind={route.kind} />;
 		case 'search': return <Search q={route.q} />;
 		case 'browse': return <Browse cat={route.key} />;
@@ -107,6 +118,7 @@ function Pages({ onPick }: { onPick: PickProfile }) {
 	if (route.page !== 'play') under.current = route;
 	useEffect(() => {
 		closeSheet();
+		preview();
 		if (route.page === 'play') return play(route.req);
 		stop();
 		scrollTo(0, 0);
@@ -114,6 +126,7 @@ function Pages({ onPick }: { onPick: PickProfile }) {
 	}, [hash]); // eslint-disable-line react-hooks/exhaustive-deps
 	return (
 		<>
+			<PagePreview />
 			<Header route={under.current} onPick={onPick} />
 			<main id="view" className={s.view}>
 				<Page key={hash.startsWith('#/play') ? 'under' : hash} route={under.current} />
@@ -134,6 +147,8 @@ window.p1Back = () => backFromNext() || sheetBack() || backFromControls();
 
 export function App() {
 	const [phase, setPhase] = useState<Phase>({ is: 'loading' });
+	// the curtain: down at the start, and over the page while another profile loads
+	const [cover, setCover] = useState<{ who?: ProfileSummary } | null>({});
 	const start = useCallback(() => {
 		boot().then(setPhase);
 	}, []);
@@ -141,21 +156,44 @@ export function App() {
 	const pick: PickProfile = useCallback(id => {
 		keep('profile', id);
 		setPhase({ is: 'loading' });
-		start();
+		setCover({ who: app().profiles.find(p => p.id === id) });
+		// the old page stays under the curtain as it comes down
+		setTimeout(start, 300);
 	}, [start]);
+	// lifts once the first page has fetched what it shows (a moment's grace: a page asks on mount)
+	const pending = usePending();
+	const [settled, setSettled] = useState<Phase | null>(null);
+	useEffect(() => {
+		if (phase.is === 'loading' || pending) return;
+		const t = setTimeout(() => setSettled(phase), 150);
+		return () => clearTimeout(t);
+	}, [phase, pending]);
+	// what shows: the page there was while the next one loads under the curtain
+	const last = useRef(phase);
+	if (phase.is !== 'loading') last.current = phase;
+	const at = last.current;
 	let screen: ReactNode = null;
 	const view = (node: ReactNode, bare = false) => (
 		<main id="view" className={cx(s.view, bare && s.bare)}>{node}</main>
 	);
-	if (phase.is === 'setup') screen = view(<SetupWizard />, true);
-	else if (phase.is === 'locked') screen = view(<SetupLocked />);
-	else if (phase.is === 'pair') screen = view(<PairScreen />);
-	else if (phase.is === 'who') screen = view(<WhoScreen onPick={pick} />);
-	else if (phase.is === 'error') screen = view(<p className={s.message}>{phase.msg}</p>);
-	else if (phase.is === 'ready') screen = <Ready onPick={pick} />;
+	if (at.is === 'setup') screen = view(<SetupWizard />, true);
+	else if (at.is === 'locked') screen = view(<SetupLocked />);
+	else if (at.is === 'pair') screen = view(<PairScreen />);
+	else if (at.is === 'who') screen = view(<WhoScreen onPick={pick} />);
+	else if (at.is === 'error') screen = view(<p className={s.message}>{at.msg}</p>);
+	// a new profile's pages start afresh
+	else if (at.is === 'ready') screen = <Ready key={app().profile} onPick={pick} />;
 	return (
 		<>
 			{screen}
+			{cover && (
+				<Curtain
+					who={cover.who}
+					done={settled === phase}
+					gate={phase.is === 'ready'}
+					onGone={() => setCover(null)}
+				/>
+			)}
 			<Player />
 			<SheetHost />
 			<Toast />

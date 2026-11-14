@@ -155,6 +155,124 @@
 	}
 }
 
+// under the board: disk space (wide) and the version
+.below {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+	align-items: start;
+	gap: 40px 56px;
+	margin-top: 56px;
+
+	@media (max-width: 900px) {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 32px;
+	}
+
+	.group > :not(h2) {
+		margin-left: 18px;
+		margin-right: 18px;
+	}
+
+	p {
+		margin: 0;
+		color: var(--brume);
+		font-size: 14px;
+	}
+
+	.version {
+		font: 900 64px/0.9 var(--display);
+		color: var(--lampe);
+		margin-bottom: 10px;
+	}
+}
+
+.quiet {
+	color: var(--brume);
+}
+
+.disk {
+	display: grid;
+	gap: 8px;
+
+	& + & {
+		margin-top: 22px;
+	}
+}
+
+.diskHead {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 4px 12px;
+
+	strong {
+		font-weight: 600;
+		font-size: 17px;
+	}
+}
+
+.path {
+	color: var(--brume);
+	font-size: 13px;
+	overflow-wrap: anywhere;
+}
+
+// Player1's share in the lamp's colour, the rest of what's used dimmer, the room left empty
+.bar {
+	display: flex;
+	height: 10px;
+	border-radius: 999px;
+	background: var(--rideau);
+	overflow: hidden;
+
+	> span {
+		background: #4a3d57;
+		transition: width 0.6s ease-out;
+	}
+
+	> .mine {
+		background: var(--lampe);
+	}
+
+	&[data-low] > span:not(.mine) {
+		background: var(--bad);
+	}
+}
+
+.disk .bad {
+	color: var(--bad);
+}
+
+// what Player1 keeps, biggest first, each with a thin bar against the biggest
+.used {
+	list-style: none;
+	padding: 0;
+	margin-top: 26px;
+	display: grid;
+	gap: 10px;
+
+	li {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 4px 16px;
+		font-size: 15px;
+	}
+}
+
+.size {
+	color: var(--brume);
+	font-variant-numeric: tabular-nums;
+}
+
+.share {
+	grid-column: 1 / -1;
+	height: 3px;
+	min-width: 3px;
+	border-radius: 999px;
+	background: var(--lampe);
+	opacity: 0.55;
+}
+
 // Save: only there once something was changed, at the bottom of the screen
 .save {
 	position: fixed;

@@ -48,8 +48,10 @@ import {
 	fetchClips,
 	SAMPLES,
 } from './samples.ts';
+import { trailerPath } from './trailers.ts';
 import {
 	requestUpdate,
+	storage,
 	updateInfo,
 } from './updates.ts';
 import { errMsg } from './upstream.ts';
@@ -103,6 +105,10 @@ const publicUrl = (req: IncomingMessage) => process.env.PUBLIC_URL || `${isHttps
 type Req = IncomingMessage;
 type Res = ServerResponse;
 async function settings(req: Req, res: Res, where: string, setupOk: boolean) {
+	if (where === '/api/settings/storage') {
+		const reply: GetRoutes['settings/storage']['reply'] = await storage();
+		return json(res, 200, reply);
+	}
 	if (req.method === 'GET') {
 		const reply: GetRoutes['settings']['reply'] = {
 			update: updateInfo(),
@@ -214,6 +220,11 @@ async function api(
 	const pub = req.method === 'POST' && (PUBLIC as string[]).includes(name);
 	if (!pub && !authed(req.headers)) return json(res, 401, { error: 'unpaired' });
 	if (where === '/api/events') return events(req, res, q);
+	const trailer = trailerPath(/^\/api\/trailers\/([\w-]+)\.mp4$/.exec(where)?.[1] ?? '');
+	if (trailer) {
+		return sendRange(req, res, trailer, 'video/mp4', 'private, max-age=86400')
+			.catch(() => res.writeHead(404).end());
+	}
 	if (/^\/api\/(wb)?file\//.test(where)) return relay(req, u, res).catch((err: unknown) => {
 		console.error(where, errMsg(err));
 		if (!res.headersSent) res.writeHead(502);

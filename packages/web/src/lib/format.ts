@@ -14,11 +14,12 @@ export const hms = (secs: number) => {
 	return h ? `${h}:${String(m).padStart(2, '0')}:${x}` : `${m}:${x}`;
 };
 
-/** 1.2 GB, 640 MB, with the unit in the interface's language */
+/** 1.2 GB, 640 MB, 12 kB, with the unit in the interface's language */
 export const bytes = (n: number) => {
 	if (n >= 1e12) return `${dec((n / 1e12).toFixed(2))}\u00a0${t`TB`}`;
 	if (n >= 1e9) return `${dec((n / 1e9).toFixed(1))}\u00a0${t`GB`}`;
-	return `${Math.round(n / 1e6)}\u00a0${t`MB`}`;
+	if (n >= 1e6) return `${Math.round(n / 1e6)}\u00a0${t`MB`}`;
+	return `${Math.ceil(n / 1e3)}\u00a0${t`kB`}`;
 };
 
 /** 10 November 2026 */

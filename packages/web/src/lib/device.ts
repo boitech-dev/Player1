@@ -17,12 +17,16 @@ import {
 const ua = navigator.userAgent;
 /** the Android TV app (the page inside its WebView) */
 export const tvApp = /Player1TV/.test(ua);
+/** an LG TV: its own <video> plays files (MKV, HEVC, AV1, HDR) on the TV's video chip */
+export const webOS = /Web0S|webOS/.test(ua);
+/** a TV, where the page may play sound before the remote is touched */
+export const tv = tvApp || webOS;
 /** phones and tablets: no automatic focus rings */
 export const touch = matchMedia('(pointer: coarse)').matches;
 
 const guess = () => {
 	if (tvApp) return t`Projector`;
-	if (/Web0S|webOS/.test(ua)) return t`LG TV`;
+	if (webOS) return t`LG TV`;
 	if (/iPhone/.test(ua)) return t`iPhone`;
 	if (/iPad/.test(ua)) return t`iPad`;
 	if (/Android/.test(ua)) return t`Phone`;
@@ -56,7 +60,9 @@ export function rename(n: string) {
 // and keeps the formats it handles with a margin; its own overrides come on top. Until tested, the
 // browser's claims stand in. ---
 
-export const CAPS_VERSION = 5;
+// LG TVs: 6 replaced the Movi test (0.3x on H.264) with the TV's own player, 7 stopped timing the start and the
+// switch to HDR; results from older tests are dropped and the TV tests again
+export const CAPS_VERSION = webOS ? 7 : 5;
 
 /** a format's name in English, as test results keep it */
 export const FORMAT_NAME: Record<Format, string> = {
@@ -143,7 +149,7 @@ export async function hwList() {
 }
 
 /** phones: originals are heavy on mobile data */
-export const directAuto = () => !touch && 'VideoDecoder' in window;
+export const directAuto = () => webOS || (!touch && 'VideoDecoder' in window);
 export const directOn = () => {
 	const o = overrides().direct;
 	return o ? o === 'on' : directAuto();

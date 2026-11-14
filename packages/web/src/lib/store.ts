@@ -2,6 +2,7 @@
 // A private window or blocked storage just forgets them.
 
 type Key = 'profile' | 'lang' | 'dev' | 'devname' | 'quality' | 'caps' | 'hwover' | 'dkind'
+	| 'searches'
 	| `subdelay:${string}`;
 
 export function load(k: Key): string | null {

@@ -8,7 +8,10 @@ import {
 } from 'react';
 
 import type {
+	DiskInfo,
 	SettingsReply,
+	StorageReply,
+	StorageUse,
 	UpdateInfo,
 } from '@player1/shared/api';
 
@@ -17,6 +20,7 @@ import {
 	post,
 } from '../lib/api.ts';
 import {
+	bytes,
 	day,
 	moment,
 } from '../lib/format.ts';
@@ -158,6 +162,9 @@ function updateSays(u: UpdateInfo): [Lamp, string] {
 function versionSays(u: UpdateInfo) {
 	const commit = u.commit ?? '?';
 	const date = u.date ? day(u.date) : '';
+	const version = u.version ?? '';
+	if (version && u.release) return t`Version ${version}, from ${date}.`;
+	if (version) return t`Version ${version} and later changes (${commit}, ${date}).`;
 	return date ? t`Version ${commit} from ${date}.` : t`Version ${commit}.`;
 }
 
@@ -328,6 +335,89 @@ function LgRow({
 	);
 }
 
+// --- under the board: the disks, and what this server runs ---
+
+const USE: Record<StorageUse, () => string> = {
+	trailers: () => t`Trailers`,
+	samples: () => t`Device test clips`,
+	tools: () => t`Tools (Node, Android build, yt-dlp)`,
+	builds: () => t`Server versions (current and previous)`,
+	tv: () => t`TV apps`,
+	household: () => t`Household data`,
+	downloads: () => t`Downloads, in the library`,
+	other: () => t`Other`,
+};
+
+const diskName = (d: DiskInfo) => {
+	if (d.holds.length > 1) return t`This server’s disk, with the library`;
+	return d.holds[0] === 'library' ? t`Library` : t`This server’s disk`;
+};
+
+/** a disk: Player1's share, everything else, and the room left, on one bar */
+function Disk({ d }: { d: DiskInfo }) {
+	const pct = (n: number) => `${d.size ? n / d.size * 100 : 0}%`;
+	const free = bytes(d.free);
+	const size = bytes(d.size);
+	const mine = bytes(d.player1);
+	const low = d.free < d.size * 0.1;
+	return (
+		<div className={css.disk}>
+			<div className={css.diskHead}>
+				<strong>{diskName(d)}</strong>
+				<span className={css.path}>{d.path}</span>
+			</div>
+			<div className={css.bar} data-low={low || undefined}>
+				<span
+					className={css.mine}
+					style={{
+						width: pct(d.player1),
+						minWidth: d.player1 ? 3 : 0,
+					}}
+				/>
+				<span style={{ width: pct(Math.max(0, d.size - d.free - d.player1)) }} />
+			</div>
+			<p className={low ? css.bad : undefined}>
+				{t`${free} free of ${size}, Player1 takes ${mine}.`}
+			</p>
+		</div>
+	);
+}
+
+function Storage() {
+	const [s, setS] = useState<StorageReply>();
+	const [failed, setFailed] = useState('');
+	useEffect(() => {
+		get('settings/storage').then(setS, (err: unknown) => setFailed((err as Error).message));
+	}, []);
+	if (!s) return <p className={css.quiet}>{failed || t`Measuring…`}</p>;
+	const top = s.used[0]?.bytes ?? 1;
+	return (
+		<>
+			{s.disks.map(d => <Disk key={d.path} d={d} />)}
+			<ul className={css.used}>
+				{s.used.map(u => (
+					<li key={u.what}>
+						<span>{USE[u.what]()}</span>
+						<span className={css.size}>{bytes(u.bytes)}</span>
+						<span className={css.share} style={{ width: `${u.bytes / top * 100}%` }} />
+					</li>
+				))}
+			</ul>
+		</>
+	);
+}
+
+function Version({ u }: { u: UpdateInfo }) {
+	const tv = u.tvVersion ?? 0;
+	return (
+		<>
+			<p className={css.version}>{u.version ?? u.commit ?? '?'}</p>
+			<p>{versionSays(u)}</p>
+			{!!tv && <p className={css.quiet}>{t`Android TV app: version ${tv}.`}</p>}
+		</>
+	);
+}
+
 // --- the page ---
 
 /** under the title: how the services are doing, once every check has answered */
@@ -396,6 +486,14 @@ function Settings({ view }: { view: SettingsReply }) {
 						setAuto={setAuto}
 						{...line('updates')}
 					/>
+				</Group>
+			</div>
+			<div className={css.below}>
+				<Group title={t`Disk space`}>
+					<Storage />
+				</Group>
+				<Group title={t`Version`}>
+					<Version u={update.u} />
 				</Group>
 			</div>
 			{(busy || f.dirty || auto !== saved) && (

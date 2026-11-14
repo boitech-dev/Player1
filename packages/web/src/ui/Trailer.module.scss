@@ -1,0 +1,42 @@
+// a trailer filling its box: fades in slowly once it really plays, out quickly
+.trailer {
+	position: absolute;
+	inset: 0;
+	container-type: size;
+	overflow: hidden;
+	opacity: 0;
+	transition: opacity 0.3s; // OUT in Trailer.tsx
+	pointer-events: none;
+
+	// covers the box, cropping YouTube's corner logo (the server's copy framed the same)
+	iframe,
+	video {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: max(100cqw, 177.78cqh);
+		height: max(56.25cqw, 100cqh);
+		transform: translate(-50%, -50%) scale(1.35);
+		border: 0;
+	}
+}
+
+// filling the screen behind the page, darkened
+.backdrop {
+	position: fixed;
+	z-index: -1;
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(#17121fee, #17121f66 30%, #17121f55 60%, #17121fdd),
+			#17121f40;
+	}
+}
+
+.playing {
+	opacity: 1;
+	transition-duration: 2s;
+}

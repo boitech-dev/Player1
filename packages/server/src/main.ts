@@ -5,7 +5,10 @@ import './dns.ts'; // before any request: public resolver first
 
 import http from 'node:http';
 
-import { catalogGets } from './catalog.ts';
+import {
+	catalogGets,
+	markAll,
+} from './catalog.ts';
 import {
 	configured,
 	setupToken,
@@ -31,6 +34,7 @@ import {
 } from './play.ts';
 import { fetchClips } from './samples.ts';
 import { sourceGets } from './sources.ts';
+import { sweepTrailers } from './trailers.ts';
 
 const PORT = Number(process.env.PORT) || 6510;
 
@@ -41,6 +45,9 @@ if (!process.env.P1_TRIAL) {
 	startDownloads();
 	void fetchClips(); // the device test's clips, the first time
 	void followAll(); // episodes finished on a version that didn't note the one after
+	void sweepTrailers(); // and daily: trailer files unused for 30 days, yt-dlp's update
+	setInterval(() => void sweepTrailers(), 864e5);
+	void markAll(); // "seen" verdicts given before Discover kept the card
 }
 setInterval(ping, 25e3); // keep proxies from closing idle SSE
 

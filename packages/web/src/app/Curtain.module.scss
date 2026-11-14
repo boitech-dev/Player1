@@ -1,0 +1,65 @@
+@use "../styles/stage" as *;
+
+// over everything but toasts while the app starts or changes profile
+.curtain {
+	@include stage;
+
+	position: fixed;
+	inset: 0;
+	z-index: 20;
+	display: grid;
+	place-content: center;
+	justify-items: center;
+	gap: 36px;
+	padding: 40px var(--gutter);
+	background: var(--velours);
+	transition: opacity 0.6s ease-in-out;
+
+	// what it shows comes softly: the name or face, then the beam or Enter in its place
+	> * {
+		animation: appear 0.4s ease-out backwards;
+	}
+}
+
+// a profile change draws it over the page that was there
+.switching {
+	animation: appear 0.3s ease-out;
+
+	> * {
+		animation-delay: 0.15s;
+	}
+}
+
+@keyframes appear {
+	from {
+		opacity: 0;
+	}
+}
+
+.up {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.brand {
+	font: 900 clamp(64px, 10vw, 128px) / 1 var(--display);
+	color: var(--lampe);
+}
+
+.who {
+	display: grid;
+	justify-items: center;
+	gap: 16px;
+	font: 800 clamp(32px, 4vw, 48px) / 1 var(--display);
+
+	> span:first-child {
+		width: 120px;
+		height: 120px;
+		font-size: 64px;
+	}
+}
+
+.enter {
+	min-width: 180px;
+	justify-content: center;
+}

@@ -104,6 +104,11 @@ export interface ListEntry {
 	poster?: string;
 }
 
+/** a title marked "already seen" in Discover; at = when (0: marked before this was noted) */
+export interface Marked extends ListEntry {
+	at: number;
+}
+
 /** title details kept with a progress entry, so "Resume" can show and replay it */
 export interface ProgressInfo {
 	id?: string;
@@ -149,6 +154,8 @@ export interface State {
 	titleModes: Record<string, Tier>;
 	/** per film (imdb) or episode (imdb:s:e) */
 	progress: Record<string, Progress>;
+	/** per type+id: titles marked "already seen" in Discover */
+	marked: Record<string, Marked>;
 }
 
 // --- sources and playback ---
@@ -418,6 +425,9 @@ export type UpdateStatus = 'latest' | 'building' | 'trial' | 'updated' | 'failed
 export interface UpdateInfo {
 	commit?: string;
 	date?: string;
+	/** the last public release this code holds (0.1.6), and whether it is exactly that release */
+	version?: string;
+	release?: boolean;
 	status?: UpdateStatus;
 	error?: string | null;
 	checked?: number;
@@ -427,6 +437,26 @@ export interface UpdateInfo {
 	tvVersion?: number;
 	/** run.mjs is in charge (automatic updates possible) */
 	supervised: boolean;
+}
+
+/** what Player1 keeps on this server's disks, folder by folder of data/ (and the library's player1/) */
+export type StorageUse = 'trailers' | 'samples' | 'tools' | 'builds' | 'tv' | 'household'
+	| 'downloads' | 'other';
+
+export interface DiskInfo {
+	/** a folder on this disk, as the server sees it */
+	path: string;
+	size: number;
+	free: number;
+	/** what Player1 keeps on it */
+	player1: number;
+	/** the data folder, the library, or both when they share the disk */
+	holds: ('data' | 'library')[];
+}
+
+export interface StorageReply {
+	disks: DiskInfo[];
+	used: { what: StorageUse; bytes: number }[];
 }
 
 export interface SettingsReply {
@@ -457,7 +487,8 @@ export interface GetRoutes {
 	browse: { query: { key: string; page: number }; reply: Row };
 	genres: { query: void; reply: Genres };
 	discover: { query: { kind: string }; reply: Item[] };
-	trailer: { query: { type: MediaType; id: string }; reply: { key?: string } };
+	trailer: { query: { type: MediaType; id: string }; reply: { key?: string; keys?: string[] } }; // keys: best first, key = keys[0] for older clients
+	trailerFile: { query: { key: string }; reply: { height: number } }; // fetched here (0: YouTube won't), then at /api/trailers/<key>.mp4
 	search: { query: { q: string }; reply: Item[] };
 	meta: { query: { type: MediaType; id: string }; reply: Meta };
 	season: { query: { id: string; n: number }; reply: Episode[] };
@@ -466,6 +497,7 @@ export interface GetRoutes {
 	devices: { query: void; reply: Device[] };
 	setup: { query: void; reply: { needed: boolean; ok: boolean } };
 	settings: { query: void; reply: SettingsReply };
+	'settings/storage': { query: void; reply: StorageReply };
 	/** public, for a device looking for Player1 on its network: the address to reach this server at */
 	here: { query: void; reply: { app: 'player1'; url: string } };
 }
@@ -504,7 +536,7 @@ export interface PostRoutes {
 	'download/cancel': { body: { id: string }; reply: Downloads };
 	'swipe': {
 		body: { item: Item; verdict: 'hide' | 'later' | 'keep' | 'seen' };
-		reply: { lists: Record<string, ListEntry[]> };
+		reply: { lists: Record<string, ListEntry[]>; marked: Record<string, Marked> };
 	};
 	'play': { body: PlayBody; reply: PlayReply };
 	'send': { body: { to: string; play: PlayRequest }; reply: object };

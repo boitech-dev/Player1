@@ -34,6 +34,7 @@ const PATHS = {
 	screen: 'M3 5h18v12H3zM8 21h8M12 17v4',
 	cats: 'M5.2 3h3.6A2.2 2.2 0 0 1 11 5.2v3.6A2.2 2.2 0 0 1 8.8 11H5.2A2.2 2.2 0 0 1 3 8.8V5.2A2.2 2.2 0 0 1 5.2 3zM15.2 3h3.6A2.2 2.2 0 0 1 21 5.2v3.6a2.2 2.2 0 0 1-2.2 2.2h-3.6A2.2 2.2 0 0 1 13 8.8V5.2A2.2 2.2 0 0 1 15.2 3zM5.2 13h3.6a2.2 2.2 0 0 1 2.2 2.2v3.6A2.2 2.2 0 0 1 8.8 21H5.2A2.2 2.2 0 0 1 3 18.8v-3.6A2.2 2.2 0 0 1 5.2 13zM15.2 13h3.6a2.2 2.2 0 0 1 2.2 2.2v3.6a2.2 2.2 0 0 1-2.2 2.2h-3.6a2.2 2.2 0 0 1-2.2-2.2v-3.6a2.2 2.2 0 0 1 2.2-2.2z',
 	discover: 'M7.5 2.5h9A2.5 2.5 0 0 1 19 5v14a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 5 19V5a2.5 2.5 0 0 1 2.5-2.5zM12 16.6s-4.2-2.5-4.2-5.4a2.3 2.3 0 0 1 4.2-1.3 2.3 2.3 0 0 1 4.2 1.3c0 2.9-4.2 5.4-4.2 5.4z',
+	rewatch: 'M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19zM10 8.3v7.4l6-3.7z',
 };
 
 export type IconName = keyof typeof PATHS;
@@ -45,7 +46,10 @@ export function Icon({
 }: { name: IconName; filled?: boolean }) {
 	return (
 		<svg className={filled ? `${s.i} ${s.f}` : s.i} viewBox="0 0 24 24" aria-hidden="true">
-			<path d={PATHS[name]} fillRule={name === 'discover' ? 'evenodd' : undefined} />
+			<path
+				d={PATHS[name]}
+				fillRule={name === 'discover' || name === 'rewatch' ? 'evenodd' : undefined}
+			/>
 		</svg>
 	);
 }

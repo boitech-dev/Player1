@@ -1,0 +1,31 @@
+// a lamp beam sweeping while something is on its way
+.beam {
+	width: min(420px, 70vw);
+	height: 4px;
+	border-radius: 2px;
+	margin: 0 auto 8px;
+	background: linear-gradient(90deg, #f5c46b00, var(--lampe), #f5c46b00) 0
+		0/40% 100% no-repeat #ffffff14;
+	animation: sweep 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes sweep {
+	to {
+		background-position: 100% 0;
+	}
+}
+
+// a page's place while it loads: the beam in the middle of the screen, once it takes a while
+.loading {
+	min-height: 100vh;
+	display: grid;
+	place-content: center;
+	opacity: 0;
+	animation: appear 0.3s 0.25s forwards;
+}
+
+@keyframes appear {
+	to {
+		opacity: 1;
+	}
+}

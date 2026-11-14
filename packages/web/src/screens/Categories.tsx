@@ -6,9 +6,11 @@ import type { Genres } from '@player1/shared/api';
 import { get } from '../lib/api.ts';
 import { Section } from '../ui/Card.tsx';
 import {
+	arrived,
 	useLanding,
 	useLoad,
 } from '../ui/load.ts';
+import { Loading } from '../ui/Loading.tsx';
 import s from './Categories.module.scss';
 import p from './page.module.scss';
 
@@ -26,10 +28,15 @@ function Tile({
 			href={`#/browse/${k}`}
 			style={a.backdrop ? { backgroundImage: `url('${a.backdrop}')` } : undefined}
 			data-land
+			data-card={a.backdrop || a.posters.length ? '' : undefined}
 		>
+			{/* the backdrop, only to know when it's in: the tile comes up with it */}
+			{a.backdrop && <img src={a.backdrop} alt="" hidden onLoad={arrived} onError={arrived} />}
 			<span className={s.name}>{name}</span>
 			<span className={s.fan}>
-				{a.posters.map(x => <img key={x} loading="lazy" src={x} alt="" />)}
+				{a.posters.map(x => (
+					<img key={x} loading="lazy" src={x} alt="" onLoad={arrived} onError={arrived} />
+				))}
 			</span>
 		</a>
 	);
@@ -39,7 +46,7 @@ export function Categories() {
 	const g = useLoad(() => get('genres'), []);
 	const ref = useRef<HTMLDivElement>(null);
 	useLanding(ref, g);
-	if (!g) return <div className={p.pad} />;
+	if (!g) return <Loading />;
 	return (
 		<div ref={ref}>
 			<div className={p.pad} />

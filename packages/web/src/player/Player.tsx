@@ -16,6 +16,7 @@ import { trackSheet } from '../sheets/tracks.tsx';
 import { Button } from '../ui/Button.tsx';
 import { cx } from '../ui/cx.ts';
 import { Icon } from '../ui/Icon.tsx';
+import { Beam } from '../ui/Loading.tsx';
 import { toast } from '../ui/toast.tsx';
 import {
 	attach,
@@ -47,7 +48,7 @@ function Wait({ view }: { view: PlayerView }) {
 		: undefined;
 	return (
 		<div className={s.wait} id="wait" hidden={!view.wait} style={{ backgroundImage: art }}>
-			<div className={s.beam} hidden={!view.wait?.spin} />
+			<Beam hidden={!view.wait?.spin} />
 			<p>{view.wait?.msg}</p>
 			<small>{view.wait?.sub}</small>
 		</div>
