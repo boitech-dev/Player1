@@ -137,38 +137,50 @@ web_server() { # what already answers on ports 80 / 443 here: apache, nginx, cad
   elif [ -f /etc/caddy/Caddyfile ] && pgrep -x caddy >/dev/null; then echo caddy
   else echo other; fi
 }
-check_dns() { # the two things only the owner can do: the domain's DNS record, the router's ports
+check_dns() { # a domain with no address yet: the one thing to do at the domain name provider
+  # (an address other than this machine's is not a mistake: a proxy or a VPN in front of it, for instance)
   PUB=$(curl -fsS4 --max-time 5 https://icanhazip.com 2>/dev/null || true)
-  DNS=$(getent ahostsv4 "$DOMAIN" 2>/dev/null | awk 'NR==1{print $1}' || true)
-  [ -n "$PUB" ] || return 0
-  if [ -z "$DNS" ]; then warn "À faire : $DOMAIN n'existe pas encore. Chez ton fournisseur de nom de domaine, crée un enregistrement A : $DOMAIN → $PUB" \
+  [ -n "$PUB" ] && ! getent ahostsv4 "$DOMAIN" >/dev/null 2>&1 || return 0
+  warn "À faire : $DOMAIN n'existe pas encore. Chez ton fournisseur de nom de domaine, crée un enregistrement A : $DOMAIN → $PUB" \
     "To do: $DOMAIN doesn't exist yet. At your domain name provider, create an A record: $DOMAIN → $PUB"
-  elif [ "$DNS" != "$PUB" ]; then warn "À vérifier : $DOMAIN pointe vers $DNS, mais l'adresse de cette machine sur internet est $PUB. Chez ton fournisseur de nom de domaine, l'enregistrement A doit être : $DOMAIN → $PUB" \
-    "To check: $DOMAIN points to $DNS, but this machine's address on the internet is $PUB. At your domain name provider, the A record should be: $DOMAIN → $PUB"
-  fi
-  hostname -I 2>/dev/null | grep -qw "$PUB" || warn "À faire : sur ta box internet (ou ton routeur), redirige les ports 80 et 443 vers cette machine ($IP)." \
-    "To do: on your internet router, forward ports 80 and 443 to this machine ($IP)."
 }
-site() { # site <example file> <where>: the example, for this domain and port
-  { echo "# written by Player1's installer"; sed -e '/^#/d' -e "s/player\.example\.com/$DOMAIN/g" -e "s/127\.0\.0\.1:6510/127.0.0.1:$PORT/g" "$1"; } | $SUDO tee "$2" >/dev/null
+site() { # site <example file> <where> [certificate folder]: the example, for this domain and port; with a certificate,
+  # in HTTPS, plain HTTP only redirecting to it (certificate challenges still get through)
+  _s="-e /^#/d -e s/player\.example\.com/$DOMAIN/g -e s/127\.0\.0\.1:6510/127.0.0.1:$PORT/g"
+  { echo "# written by Player1's installer"
+    if [ -z "${3:-}" ]; then sed $_s "$1"
+    elif [ "${1%apache*}" != "$1" ]; then
+      printf '<VirtualHost *:80>\n\tServerName %s\n\tRewriteEngine On\n\tRewriteCond %%{REQUEST_URI} !^/\\.well-known/acme-challenge/\n\tRewriteRule ^ https://%%{SERVER_NAME}%%{REQUEST_URI} [END,NE,R=permanent]\n</VirtualHost>\n' "$DOMAIN"
+      sed $_s -e 's/\*:80>/*:443>/' -e "s#^\(\tServerName .*\)#\1\n\tSSLEngine on\n\tSSLCertificateFile $3/fullchain.pem\n\tSSLCertificateKeyFile $3/privkey.pem#" "$1"
+    else
+      printf 'server {\n\tlisten 80;\n\tlisten [::]:80;\n\tserver_name %s;\n\tlocation / { return 301 https://$host$request_uri; }\n}\n' "$DOMAIN"
+      sed $_s -e 's/listen \(.*\)80;/listen \1443 ssl;/' -e "s#^\(\tserver_name .*\)#\1\n\tssl_certificate $3/fullchain.pem;\n\tssl_certificate_key $3/privkey.pem;#" "$1"
+    fi; } | $SUDO tee "$2" >/dev/null
   ! have setsebool || $SUDO setsebool -P httpd_can_network_connect 1 2>/dev/null || true
 }
-cert() { # cert <apache|nginx>: HTTPS for the site just written, from Let's Encrypt
+# A certificate for this domain alone. certonly: certbot edits no site, else it may put the certificate in another site
+# that also answers for this name (a *.example.com catch-all) instead of Player1's, and Player1 never gets HTTPS.
+cert() { # cert <apache|nginx>
   have certbot || pkg certbot "python3-certbot-$1" || die "installe certbot, puis relance cette installation" "install certbot, then run this installer again"
   say "Certificat HTTPS (Let's Encrypt) :" "HTTPS certificate (Let's Encrypt):"
-  $SUDO certbot "--$1" --redirect --keep-until-expiring -d "$DOMAIN" < /dev/tty || true
+  $SUDO certbot certonly "--$1" --keep-until-expiring --cert-name "$DOMAIN" -d "$DOMAIN" < /dev/tty
 }
 front_apache() {
-  if [ -d /etc/apache2/sites-available ]; then site docs/apache.conf.example /etc/apache2/sites-available/player1.conf; $SUDO a2enmod -q proxy proxy_http headers; $SUDO a2ensite -q player1
-  else site docs/apache.conf.example /etc/httpd/conf.d/player1.conf; fi
+  F=/etc/httpd/conf.d/player1.conf; [ ! -d /etc/apache2/sites-available ] || F=/etc/apache2/sites-available/player1.conf
+  site docs/apache.conf.example "$F"; ! have a2enmod || { $SUDO a2enmod -q proxy proxy_http headers rewrite ssl; $SUDO a2ensite -q player1; }
   $SUDO apachectl configtest 2>/dev/null; $SUDO systemctl reload apache2 2>/dev/null || $SUDO systemctl reload httpd
-  ok "Site $DOMAIN ajouté à Apache" "Site $DOMAIN added to Apache"; cert apache
+  ok "Site $DOMAIN ajouté à Apache" "Site $DOMAIN added to Apache"; cert apache || return 0
+  # older installs let certbot write the HTTPS site next to this one
+  ! have a2dissite || $SUDO a2dissite -q player1-le-ssl >/dev/null 2>&1 || true; $SUDO rm -f "${F%.conf}-le-ssl.conf"
+  site docs/apache.conf.example "$F" "/etc/letsencrypt/live/$DOMAIN"
+  $SUDO apachectl configtest 2>/dev/null; $SUDO systemctl reload apache2 2>/dev/null || $SUDO systemctl reload httpd
 }
 front_nginx() {
-  if [ -d /etc/nginx/sites-enabled ]; then site docs/nginx.conf.example /etc/nginx/sites-available/player1; $SUDO ln -sf ../sites-available/player1 /etc/nginx/sites-enabled/player1
-  else site docs/nginx.conf.example /etc/nginx/conf.d/player1.conf; fi
+  F=/etc/nginx/conf.d/player1.conf; [ ! -d /etc/nginx/sites-enabled ] || F=/etc/nginx/sites-available/player1
+  site docs/nginx.conf.example "$F"; [ ! -d /etc/nginx/sites-enabled ] || $SUDO ln -sf ../sites-available/player1 /etc/nginx/sites-enabled/player1
   $SUDO nginx -t 2>/dev/null; $SUDO systemctl reload nginx
-  ok "Site $DOMAIN ajouté à Nginx" "Site $DOMAIN added to Nginx"; cert nginx
+  ok "Site $DOMAIN ajouté à Nginx" "Site $DOMAIN added to Nginx"; cert nginx || return 0
+  site docs/nginx.conf.example "$F" "/etc/letsencrypt/live/$DOMAIN"; $SUDO nginx -t 2>/dev/null; $SUDO systemctl reload nginx
 }
 front_caddy() { # a Caddy already installed on this machine: one more site in its file
   grep -q "^$DOMAIN " /etc/caddy/Caddyfile || printf '\n%s {\n\treverse_proxy 127.0.0.1:%s\n}\n' "$DOMAIN" "$PORT" | $SUDO tee -a /etc/caddy/Caddyfile >/dev/null
@@ -517,7 +529,7 @@ if [ "$REACH" = 2 ] && [ "$FRONT" != other ]; then
   https_ok() { n=0; until curl -fsS --max-time 8 --resolve "$DOMAIN:443:127.0.0.1" "https://$DOMAIN/api/setup" 2>/dev/null | grep -q needed; do n=$((n + 1)); [ "$n" -lt 45 ] || return 1; sleep 2; done; }
   if ! step "https://$DOMAIN" https_ok; then
     say "Il ne répond pas encore. Le plus souvent :" "It doesn't answer yet. Most often:"
-    say "  - le nom de domaine ne pointe pas (ou pas encore) vers cette machine" "  - the domain name doesn't point to this machine (or not yet)"
+    say "  - le nom de domaine ne pointe pas (ou pas encore) vers cette machine${PUB:+ ($PUB)}" "  - the domain name doesn't point to this machine${PUB:+ ($PUB)} (or not yet)"
     say "  - les ports 80 et 443 n'arrivent pas jusqu'à elle : redirection sur ta box, pare-feu de ton hébergeur" "  - ports 80 and 443 don't get to it: forwarding on your router, your host's firewall"
     if [ "$FRONT" = apache ] || [ "$FRONT" = nginx ]; then say "Une fois réglé, relance cette installation." "Once that's sorted, run this installer again."
     else say "Rien à relancer : le certificat est redemandé tout seul, et le lien ci-dessous marchera dès que c'est réglé." "Nothing to run again: the certificate is asked for again by itself, and the link below will work once that's sorted."; fi

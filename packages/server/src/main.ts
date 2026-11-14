@@ -1,6 +1,7 @@
 // Player1: browse TMDB+Cinemeta, find sources via a Stremio stream addon (Torrentio+RD), play
 // through RD's HLS transcoder, or the original file with the device's own decoder.
 import './config.ts'; // first: fills process.env
+import './dns.ts'; // before any request: public resolver first
 
 import http from 'node:http';
 
