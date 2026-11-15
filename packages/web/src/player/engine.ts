@@ -16,7 +16,10 @@ import type {
 	PlayRequest,
 	ProgressInfo,
 } from '@player1/shared/api';
-import { tierTag } from '@player1/shared/langs';
+import {
+	tierTag,
+	trackAt,
+} from '@player1/shared/langs';
 import {
 	type Format,
 	FORMATS,
@@ -141,6 +144,12 @@ let idle = false;
 let wait: Wait | null = null;
 let info = '';
 let restart = false;
+// a track chosen by hand stays chosen for the title's other episodes whose files carry the same
+// tracks (a season's release): the preset's pick would undo it at every episode. Not for the same
+// episode started again: a language or version chosen since then wins
+let kept: { imdb?: string; ep: string; tracks: string; sel: typeof sel } | null = null;
+const ownTracks = () => JSON.stringify([live!.audio, live!.subs]
+	.map(l => l.filter(x => !x.ext).map(x => [x.id, x.iso])));
 
 // RD's transcoder only produces segments in order, so a far seek restarts the stream at that time
 // with ?t= (undocumented). base = where the current stream starts in the file. reach = furthest
@@ -162,8 +171,7 @@ let lastSave = 0;
 
 // the episodes around this one: named by the server when this one started, a button each in the
 // controls. The next one also gets a card as the end credits start (the last 30 s when their place
-// isn't known); at the end it starts by itself after a short countdown. Back hides the card and
-// cancels.
+// isn't known), counting down to its start. Back hides the card and cancels.
 let prevUp: PlayRequest | null = null;
 let nextUp: PlayRequest | null = null;
 let nextName = '';
@@ -499,6 +507,7 @@ function begin(p: PlayRequest, r: Playing) {
 		audio: r.pick?.audio ?? live.audio[0]?.id ?? '',
 		sub: r.pick?.sub ?? 'none',
 	};
+	keepTracks(p);
 	info = [p.ep, r.tier ? tierTag(r.tier) : t`Language not verified`, RES_LABEL[r.res]]
 		.filter(Boolean).join('   ');
 	const from = resumePoint(p);
@@ -513,6 +522,24 @@ function begin(p: PlayRequest, r: Playing) {
 
 const progressKey = (p: { imdb?: string; s?: number; e?: number }) =>
 	(p.imdb ?? '') + (p.e ? `:${p.s}:${p.e}` : '');
+
+/** the tracks chosen by hand on another episode, over the ones just picked for this one */
+function keepTracks(p: PlayRequest) {
+	const k = kept;
+	kept = null;
+	if (!k || k.imdb !== p.imdb || k.ep === progressKey(p) || k.tracks !== ownTracks()) return;
+	const sub = k.sel.sub;
+	sel = {
+		audio: k.sel.audio,
+		// OpenSubtitles files differ from one episode to the next
+		sub: sub === 'none' || live!.subs.some(x => x.id === sub) ? sub : sel.sub,
+	};
+	kept = {
+		...k,
+		ep: progressKey(p),
+		sel,
+	};
+}
 
 /** where this film/episode was left, unless it was finished */
 function resumePoint(p: PlayRequest) {
@@ -557,15 +584,21 @@ function tracks() {
 	v.player.selectSubtitleTrack?.(/^s\d+$/.test(sel.sub) ? +sel.sub.slice(1) : null);
 }
 
-// webOS lists a file's audio and embedded subtitle tracks in the file's order, like the TV app
-interface TrackList<T> { length: number; [i: number]: T }
+// webOS lists a file's audio and embedded subtitle tracks with their languages, not always in the
+// file's order: the chosen ones are found by language (trackAt). What the TV listed goes to the
+// server's log, the only place it can be read from
+interface TvTrack { enabled: boolean; language?: string }
 function videoTracks() {
 	const [a, sub] = trackOrder();
-	const el = video as HTMLVideoElement & { audioTracks?: TrackList<{ enabled: boolean }> };
-	const audio = el.audioTracks;
-	if (audio && a >= 0) for (let i = 0; i < audio.length; i++) audio[i]!.enabled = i === a;
-	const text = el.textTracks;
-	for (let i = 0; i < text.length; i++) text[i]!.mode = i === sub ? 'showing' : 'disabled';
+	const el = video as HTMLVideoElement & { audioTracks?: ArrayLike<TvTrack> };
+	const audio = Array.from(el.audioTracks ?? []), text = Array.from(el.textTracks);
+	const own = (l: Named[]) => l.filter(x => !x.ext).map(x => x.iso);
+	const at = trackAt(own(live!.audio), audio.map(x => x.language), a);
+	const st = trackAt(own(live!.subs), text.map(x => x.language), sub);
+	if (at >= 0) audio.forEach((x, i) => x.enabled = i === at);
+	text.forEach((x, i) => x.mode = i === st ? 'showing' : 'disabled');
+	const langs = (l: { language?: string }[]) => l.map(x => x.language || '?').join(',');
+	plog(`tv tracks audio=[${langs(audio)}] ${a}>${at} text=[${langs(text)}] ${sub}>${st}`);
 }
 
 function loadSource(at: number) {
@@ -605,7 +638,7 @@ function loadFile(at: number) {
 			if (at) v!.currentTime = at;
 			tracks();
 		}, { once: true });
-		v!.addEventListener('loadeddata', () => begin2(), { once: true });
+		v!.addEventListener('loadeddata', go, { once: true }); // again: the list may fill in late
 		v!.src = u;
 		return;
 	}
@@ -907,6 +940,12 @@ export function chooseTrack(kind: 'audio' | 'sub', id: string) {
 		...sel,
 		[kind]: id,
 	};
+	kept = {
+		imdb: req!.imdb,
+		ep: progressKey(req!),
+		tracks: ownTracks(),
+		sel,
+	};
 	loadCues();
 	emit();
 	if (live!.wb) tracks();
@@ -992,8 +1031,9 @@ export function goPrev() {
 	hop(prevUp);
 }
 
-// the card shows while the end credits run when their place is known (live.outro), else in the
-// last 30 s. A scene after the credits plays without it; the countdown always waits for the end.
+// the countdown starts with the end credits: where the file or TheIntroDB places them
+// (live.outro), else the last 30 s. With a scene after them, the card shows while they run, the
+// scene plays without it and the countdown waits for the end.
 function nearEnd() {
 	const at = now(), end = total(), outro = live?.outro;
 	if (!(end > 60) || at < (outro ? outro.from : end - 30)) {
@@ -1003,8 +1043,8 @@ function nearEnd() {
 		}
 		return;
 	}
-	if (end - at < 1.5) return countdown();
-	if (nextUp && !nextOff && !nextTimer) nextShown = !outro || at < outro.to;
+	if (end - at < 1.5 || !outro || outro.to > end - 1) return countdown();
+	if (nextUp && !nextOff && !nextTimer) nextShown = at < outro.to;
 }
 
 // --- the media element's events ---

@@ -169,6 +169,24 @@ const codesOf = (c: string) => {
 	return LANGS[c]?.iso ?? (iso3 ? [iso3, c] : [c]);
 };
 
+/** one language under two spellings: fre, fra, fr, fr-FR */
+export function sameLang(a = '', b = '') {
+	const [x = '', y = ''] = [a, b].map(c => c.toLowerCase().split(/[-_]/)[0]!);
+	const all = [...Object.values(LANGS).map(l => l.iso), ...Object.entries(ISO3)];
+	return !!x && (x === y || all.some(codes => codes.includes(x) && codes.includes(y)));
+}
+
+/** where a device lists a file's i-th track. Its list names languages but isn't always in the
+ *  file's order (an LG TV gave a file's two audio tracks reversed), so the track is found by its
+ *  language: the n-th in that language, as in the file. Same place when no language tells */
+export function trackAt(file: (string | undefined)[], listed: (string | undefined)[], i: number) {
+	const lang = file[i];
+	if (!lang) return i;
+	const same = (l?: string) => sameLang(l, lang);
+	const hits = listed.flatMap((l, k) => same(l) ? [k] : []);
+	return hits[file.slice(0, i).filter(same).length] ?? i;
+}
+
 /** a track of a file: audio or subtitles */
 export interface Track {
 	id: string;

@@ -10,12 +10,14 @@ import {
 	pickTracks,
 	type PresetLang,
 	resOf,
+	sameLang,
 	seedsOf,
 	type StreamTag,
 	tagStream,
 	tierAlone,
 	tiersOf,
 	tierTag,
+	trackAt,
 } from './langs.ts';
 
 const tags = (l: PresetLang[]) => choosableTiers(l).map(tierTag);
@@ -169,5 +171,30 @@ describe('candidates', () => {
 	});
 	it('takes subtitled releases first for subtitles', () => {
 		expect(candidates(all, 'sub:fr', 0, 'en')[0]!.tag.s).toEqual(['fr']);
+	});
+});
+
+describe('a file’s track in a device’s own list', () => {
+	it('knows a language under its spellings', () => {
+		expect(sameLang('fre', 'fr')).toBe(true);
+		expect(sameLang('fra', 'fr-FR')).toBe(true);
+		expect(sameLang('hin', 'hi')).toBe(true);
+		expect(sameLang('eng', 'fr')).toBe(false);
+		expect(sameLang('', '')).toBe(false);
+	});
+	it('is found by its language when the list is in another order', () => {
+		// The Office, as the LG TV played it: English first in the file
+		expect(trackAt(['eng', 'fre'], ['fr', 'en'], 1)).toBe(0);
+		expect(trackAt(['eng', 'fre'], ['fr', 'en'], 0)).toBe(1);
+		expect(trackAt(['eng', 'fre'], ['en', 'fr'], 1)).toBe(1);
+	});
+	it('keeps the file’s order among tracks in one language', () => {
+		expect(trackAt(['fre', 'fre', 'eng'], ['en', 'fr', 'fr'], 1)).toBe(2);
+	});
+	it('keeps its place when no language tells', () => {
+		expect(trackAt(['eng', 'fre'], ['', ''], 1)).toBe(1);
+		expect(trackAt(['eng', 'fre'], [], 1)).toBe(1);
+		expect(trackAt([undefined, 'fre'], ['fr', 'en'], 0)).toBe(0);
+		expect(trackAt(['eng', 'fre'], ['fr', 'en'], -1)).toBe(-1);
 	});
 });

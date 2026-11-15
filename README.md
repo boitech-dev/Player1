@@ -57,8 +57,8 @@ VOST: the original voices, subtitles in the film's own language.</sub>
 
 Start a film from the sofa and send it to the TV, or to any device that has Player1 open. The player has real
 menus for quality, audio and subtitles, resumes where you stopped and steps to the previous or next episode.
-It offers the next one as the end credits start, when it knows where they are: from the file's own chapter
-marks, else from [TheIntroDB](https://theintrodb.org).
+It starts the next one a few seconds into the end credits: where the file's own chapter marks place them, else
+[TheIntroDB](https://theintrodb.org), else the last 30 seconds. Back keeps the episode playing.
 
 Each device is tested once, in a few seconds, to learn which video formats it shows smoothly. What it can play
 as it is starts at once; the rest goes through Real-Debrid's converter.
