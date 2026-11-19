@@ -15,6 +15,7 @@ import {
 	formatName,
 	type FormatResult,
 	me,
+	overrides,
 	setCaps,
 	webOS,
 } from '../lib/device.ts';
@@ -347,14 +348,15 @@ async function bench(): Promise<Caps> {
 		key: null,
 		results: {},
 	};
-	let net = 0;
-	for (const meta of list) {
+	const net = await measureNet();
+	const off = overrides();
+	// a format set to No isn't played: one that crashes the device would stop the test every time
+	for (const meta of list.filter(m => off[m.key] !== 'off')) {
 		run = {
 			...run,
 			key: meta.key,
 		};
 		changed();
-		if (meta.key === 'h264') net = await measureNet();
 		const r = nv ? await nativeTest(meta) : webOS ? await videoTest(meta) : await moviTest(meta);
 		run = {
 			...run,
